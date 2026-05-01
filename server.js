@@ -158,7 +158,7 @@ io.on('connection', (socket) => {
                     email: username + '@gmail.com'
                 });
             }
-            socket.emit('balanceUpdate', { balance: user.balance, diamond: user.diamond });
+            socket.emit('balanceUpdate', { balance: user.balance });
             
             // Thêm vào danh sách online
             onlineSockets.set(socket.id, username);
