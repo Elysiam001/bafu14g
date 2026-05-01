@@ -784,17 +784,32 @@
         const socket = io(); // Kết nối tới Server Render
 
         socket.on('gameUpdate', (state) => {
-            const timerEl = document.getElementById('timer-count');
+            // Cập nhật Timer
+            const timerEl = document.querySelector('#timer span');
             if(timerEl) timerEl.innerText = state.timeLeft;
             
-            // Đồng bộ trạng thái cược
+            // Đồng bộ trạng thái cược tổng
             document.getElementById('tai-total').innerText = (state.totalBetTai || 0).toLocaleString('vi-VN');
             document.getElementById('xiu-total').innerText = (state.totalBetXiu || 0).toLocaleString('vi-VN');
 
-            // Xử lý mở bát khi Server báo Hết giờ
-            if(state.phase === 'result' && state.timeLeft === 10) {
-                if(typeof window.openBowl === 'function') {
-                    window.openBowl(state.lastDices[0], state.lastDices[1], state.lastDices[2]);
+            // Xử lý chuyển phase
+            if(state.phase === 'result') {
+                // Nếu vừa chuyển sang result (giây thứ 10), mở bát
+                if(state.timeLeft === 10) {
+                    if(typeof window.openBowl === 'function') {
+                        window.openBowl(state.lastDices[0], state.lastDices[1], state.lastDices[2]);
+                    }
+                    // Ẩn timer khi đang trả kết quả
+                    document.getElementById('timer').style.opacity = '0';
+                }
+            } else {
+                // Phase betting: Hiện lại timer, reset các trạng thái UI nếu cần
+                document.getElementById('timer').style.opacity = '1';
+                
+                // Reset tiền cược cá nhân hiển thị trên bàn nếu là giây đầu tiên của phiên mới
+                if(state.timeLeft === 30) {
+                    document.getElementById('tai-personal').innerText = '0';
+                    document.getElementById('xiu-personal').innerText = '0';
                 }
             }
         });
@@ -1079,132 +1094,7 @@
 
         document.addEventListener('mouseup', () => { isDragging = false; });
 
-        // --- Controller chính cho game (Gọn nhẹ) ---
-        class GameController {
-            constructor() {
-                this.timer = new GameTimer(15, document.getElementById('timer'), () => this.onTimeUp());
-                this.dice = new GameDice(document.getElementById('dice-list'));
-                this.timerEl = document.getElementById('timer');
-                this.start();
-            }
 
-            async onTimeUp() {
-                // 1. Ẩn timer
-                this.timerEl.style.opacity = '0';
-                this.timerEl.style.visibility = 'hidden';
-                
-                // 2. Kết quả xúc xắc
-                const d1 = Math.floor(Math.random() * 6) + 1;
-                const d2 = Math.floor(Math.random() * 6) + 1;
-                const d3 = Math.floor(Math.random() * 6) + 1;
-                const results = [d1, d2, d3];
-                const total = d1 + d2 + d3;
-                
-                this.dice.stopRolling(results); 
-                
-                // 3. Tính toán Win/Lose
-                setTimeout(() => {
-                    this.showResult(results, total);
-                }, 800); // Đợi xúc xắc tung xong
-                
-                // 4. Chờ 5 giây rồi reset phiên mới
-                setTimeout(() => {
-                    this.resetGame();
-                    this.start();
-                }, 6000);
-            }
-
-            showResult(results, total) {
-                const isTriple = (results[0] === results[1] && results[1] === results[2]);
-                const taiSide = document.querySelector('.side:first-child');
-                const xiuSide = document.querySelector('.side:last-child');
-                const aura = document.getElementById('solar-aura');
-
-                // 1. Hiện hào quang xoay
-                aura.style.display = 'block';
-
-                if (isTriple) {
-                    console.log("BÃO!");
-                    this.triggerMoneyEffect(0, false); // Thu thua hết
-                    return; 
-                }
-
-                const winningSide = (total >= 11) ? 'tai' : 'xiu';
-                
-                if (winningSide === 'tai') {
-                    taiSide.classList.add('winner');
-                    document.querySelector('.tai-text').classList.add('win-glow');
-                } else {
-                    xiuSide.classList.add('winner');
-                    document.querySelector('.xiu-text').classList.add('win-glow');
-                }
-
-                // 2. Xử lý tiền cược
-                this.handleBetResult(winningSide);
-            }
-
-            handleBetResult(winningSide) {
-                // Lấy số tiền từ các phần tử hiển thị để chính xác nhất
-                const taiBet = parseInt(document.getElementById('tai-personal').innerText.replace(/\./g, '')) || 0;
-                const xiuBet = parseInt(document.getElementById('xiu-personal').innerText.replace(/\./g, '')) || 0;
-                
-                let amount = (winningSide === 'tai') ? taiBet : xiuBet;
-                let isWin = (amount > 0);
-
-                if (isWin) {
-                    this.triggerMoneyEffect(amount, true);
-                } else if (taiBet > 0 || xiuBet > 0) {
-                    // Nếu có cược mà không trúng cửa thắng -> Thua
-                    const loseAmount = (winningSide === 'tai') ? xiuBet : taiBet;
-                    this.triggerMoneyEffect(loseAmount, false);
-                }
-            }
-
-            triggerMoneyEffect(amount, isWin) {
-                const container = document.getElementById('money-popup-container');
-                const el = document.createElement('div');
-                el.className = `money-popup ${isWin ? 'money-win' : 'money-lose'}`;
-                el.innerText = (isWin ? '+' : '-') + amount.toLocaleString('vi-VN');
-                container.appendChild(el);
-                
-                // Tự xóa sau khi bay xong
-                setTimeout(() => el.remove(), 2500);
-            }
-
-            resetGame() {
-                this.dice.hide();
-                this.timerEl.style.opacity = '1';
-                this.timerEl.style.visibility = 'visible';
-                document.getElementById('solar-aura').style.display = 'none';
-                document.querySelectorAll('.side').forEach(s => s.classList.remove('winner'));
-                document.querySelectorAll('.tai-text, .xiu-text').forEach(t => t.classList.remove('win-glow'));
-                
-                // --- RESET TIỀN CƯỢC ---
-                document.getElementById('tai-personal').innerText = '0';
-                document.getElementById('xiu-personal').innerText = '0';
-                
-                // Giả lập tiền cược tổng cho sòng bài nhìn cho xôm
-                document.getElementById('tai-total').innerText = (Math.floor(Math.random() * 50000000) + 10000000).toLocaleString('vi-VN');
-                document.getElementById('xiu-total').innerText = (Math.floor(Math.random() * 50000000) + 10000000).toLocaleString('vi-VN');
-
-                if (typeof currentBetAmount !== 'undefined') currentBetAmount = 0;
-                if (typeof activeSide !== 'undefined') activeSide = null;
-            }
-
-            start() {
-                this.timer.start();
-            }
-        }
-
-        // Khởi tạo Game khi mọi thứ đã sẵn sàng
-        document.addEventListener('DOMContentLoaded', () => {
-            try {
-                window.game = new GameController();
-                console.log("Game Controller Initialized");
-            } catch (e) {
-                console.error("Game Init Error:", e);
-            }
-        });
 
         // --- Betting System (giữ nguyên logic cũ) ---
         let currentBetAmount = 0;
