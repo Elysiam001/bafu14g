@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sảnh Tài Xỉu SHA256 Premium</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Bungee&family=Phudu:wght@900&family=Satisfy&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/sha_theme.css">
+    <style>
+        /* --- BEAUTY MAX OVERHAUL --- */
+        .lobby-wrapper {
+            width: 100vw !important;
+            height: 100vh !important;
+            background: 
+                linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)),
+                url('casino_bg_v2.png') no-repeat center center/cover !important;
+            display: flex !important;
+            flex-direction: column !important;
+            overflow: hidden !important;
+        }
+
+        .premium-header { 
+            height: 75px !important; 
+            background: linear-gradient(180deg, #4e342e 0%, #211613 100%) !important;
+            border-bottom: 2px solid #ffca28 !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.8) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important; /* Đẩy các nút sang 2 bên */
+            padding: 0 20px !important;
+        }
+
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .header-right { display: flex; align-items: center; gap: 15px; }
+
+        .sha-board {
+            width: 800px !important;
+            height: 420px !important;
+            background: 
+                url('https://www.transparenttextures.com/patterns/carbon-fibre.png'),
+                radial-gradient(circle at center, #00acc1 0%, #00363a 100%) !important;
+            border: 3px solid #00f2ff !important;
+            box-shadow: 0 0 60px rgba(0, 242, 255, 0.5), inset 0 0 120px rgba(0,0,0,0.8) !important;
+            position: absolute;
+            /* overflow: visible !important; */
+        }
+
+        /* Lớp nền riêng cho hiệu ứng tia sáng để không bị clip bảng cược */
+        .board-shine-layer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden;
+            border-radius: inherit;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .board-shine-layer::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 45%, rgba(255,255,255,0.1) 50%, transparent 55%);
+            animation: shine 6s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%); }
+            20% { transform: translateX(100%) translateY(100%); }
+            100% { transform: translateX(100%) translateY(100%); }
+        }
+
+
+        .b-btn {
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.5) 0%, rgba(0,242,255,0.2) 100%) !important;
+            backdrop-filter: blur(5px) !important;
+            border: 2px solid #00f2ff !important;
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.6), inset 0 0 10px rgba(255,255,255,0.3) !important;
+        }
+
+        .b-btn i {
+            filter: drop-shadow(0 0 5px #00f2ff) !important;
+        }
+
+
+        .dice-center {
+            width: 235px !important;
+            height: 235px !important;
+            flex-shrink: 0 !important;
+            background: #ffffff !important;
+            border: 2px solid #fff8e1 !important;
+            outline: 6px solid #ffca28 !important;
+            border-radius: 50% !important;
+            position: relative !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            box-shadow: 0 0 40px rgba(255, 202, 40, 0.6) !important;
+            z-index: 10 !important;
+        }
+
+        .tai-text, .xiu-text {
+            transition: all 0.3s ease !important;
+        }
+
+        .win-glow {
+            animation: win-breath 1s infinite ease-in-out !important;
+            z-index: 100 !important;
+            filter: drop-shadow(0 0 30px #ffca28) !important;
+        }
+
+        /* HÀO QUANG TOẢ SÁNG */
+        .solar-aura {
+            position: absolute !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            width: 400px !important;
+            height: 400px !important;
+            background: radial-gradient(circle, rgba(255,202,40,0.6) 0%, transparent 70%) !important;
+            z-index: 5 !important;
+            animation: aura-rotate 4s infinite linear !important;
+            pointer-events: none !important;
+            display: none;
+        }
+
+        @keyframes aura-rotate {
+            from { transform: translate(-50%, -50%) rotate(0deg) scale(0.8); opacity: 0.5; }
+            50% { transform: translate(-50%, -50%) rotate(180deg) scale(1.2); opacity: 1; }
+            to { transform: translate(-50%, -50%) rotate(360deg) scale(0.8); opacity: 0.5; }
+        }
+
+        @keyframes win-breath {
+            0% { transform: scale(1); filter: brightness(1.2); }
+            50% { transform: scale(1.2); filter: brightness(1.8); }
+            100% { transform: scale(1); filter: brightness(1.2); }
+        }
+
+        /* HIỆU ỨNG CỘNG/TRỪ TIỀN */
+        #money-popup-container {
+            position: absolute !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            z-index: 999 !important; /* Cao nhất */
+            pointer-events: none !important;
+        }
+
+        .money-popup {
+            position: absolute !important;
+            font-family: 'Bungee', cursive !important;
+            font-size: 3.5rem !important;
+            font-weight: 900 !important;
+            z-index: 999 !important;
+            pointer-events: none !important;
+            white-space: nowrap !important;
+            text-shadow: 0 0 20px rgba(0,0,0,1), 0 0 10px #000 !important;
+        }
+
+        .money-win {
+            color: #00e676 !important; /* Xanh lá rực rỡ */
+            animation: money-fly-up 2s forwards !important;
+        }
+
+        .money-lose {
+            color: #ff1744 !important; /* Đỏ rực */
+            animation: money-fly-down 2s forwards !important;
+        }
+
+        @keyframes money-fly-up {
+            0% { transform: translate(-50%, -20%) scale(0.5); opacity: 0; }
+            20% { transform: translate(-50%, -100%) scale(1.2); opacity: 1; }
+            100% { transform: translate(-50%, -250%) scale(1); opacity: 0; }
+        }
+
+        @keyframes money-fly-down {
+            0% { transform: translate(-50%, -80%) scale(0.5); opacity: 0; }
+            20% { transform: translate(-50%, 0%) scale(1.2); opacity: 1; }
+            100% { transform: translate(-50%, 100%) scale(1); opacity: 0; }
+        }
+
+        .sha-timer-circle {
+            color: #ffca28 !important;
+            font-size: 7.2rem !important;
+            font-weight: 900 !important;
+            font-family: 'Montserrat', sans-serif !important;
+            text-shadow: 2px 4px 0px rgba(0,0,0,0.3) !important;
+            letter-spacing: -2px !important;
+            /* GHIM TÂM TUYỆT ĐỐI */
+            position: absolute !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            z-index: 50 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            width: auto !important;
+            height: auto !important;
+        }
+
+        .sha-timer-circle::before, .sha-timer-circle::after {
+            content: none !important;
+            display: none !important;
+        }
+
+        .sha-timer-circle span {
+            display: inline-block !important;
+            line-height: 1 !important;
+        }
+
+        .dice-list {
+            position: absolute !important;
+            top: 50% !important; left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            display: none;
+            gap: 12px !important;
+            z-index: 20 !important;
+        }
+
+        .history-row {
+            bottom: 65px !important; /* Đẩy xuống dưới nút Đặt cược */
+            background: rgba(0,0,0,0.3) !important;
+        }
+
+        .pos-1 { top: 15px !important; left: 15px !important; } /* Lịch sử */
+        .pos-2 { top: 15px !important; left: 65px !important; } /* Cúp */
+        
+        .pos-3 { top: 15px !important; right: 65px !important; } /* Câu hỏi */
+        .pos-4 { top: 15px !important; right: 15px !important; } /* Đóng */
+
+        .pos-chat { top: 140px !important; right: 10px !important; transform: none !important; }
+        .pos-hand { bottom: 85px !important; right: 8px !important; }
+        .pos-stats { bottom: 85px !important; left: 8px !important; }
+
+        /* MODAL NẠP TIỀN STYLE */
+        .deposit-modal {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            width: 850px;
+            height: 520px;
+            background: linear-gradient(180deg, #5d4037 0%, #2b1d1a 100%);
+            border: 3px solid #ffca28;
+            border-radius: 20px;
+            z-index: 5000;
+            display: none;
+            flex-direction: column;
+            box-shadow: 0 0 100px rgba(0,0,0,0.9);
+            color: #fff;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .deposit-modal.active {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            display: flex;
+        }
+
+        .modal-header {
+            height: 60px;
+            background: linear-gradient(180deg, #8d6e63 0%, #3e2723 100%);
+            border-bottom: 2px solid #ffca28;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border-radius: 17px 17px 0 0;
+        }
+        .modal-title { font-family: 'Phudu', cursive; font-size: 1.8rem; color: #ffca28; text-shadow: 0 2px 4px #000; }
+        .close-modal { position: absolute; right: 15px; font-size: 2.2rem; cursor: pointer; color: #ffca28; line-height: 1; }
+
+        .modal-body { display: flex; flex: 1; overflow: hidden; }
+        .modal-sidebar { width: 180px; background: rgba(0,0,0,0.4); border-right: 1px solid rgba(255,202,40,0.2); }
+        .sidebar-item { padding: 22px 15px; text-align: left; padding-left: 25px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: 0.3s; font-weight: bold; color: #bcaaa4; }
+        .sidebar-item.active { background: linear-gradient(90deg, rgba(255,202,40,0.1) 0%, rgba(255,202,40,0.2) 100%); color: #ffca28; border-right: 4px solid #ffca28; }
+
+        .modal-content-area { flex: 1; padding: 35px; position: relative; overflow-y: auto; }
+        
+        .input-group { margin-bottom: 30px; }
+        .input-group label { display: block; margin-bottom: 15px; color: #ffca28; font-size: 1.2rem; font-weight: bold; }
+        .input-control { width: 100%; background: rgba(0,0,0,0.6); border: 1px solid #ffca28; padding: 15px; border-radius: 10px; color: #fff; font-size: 1.3rem; outline: none; }
+        
+        .get-info-btn { 
+            background: linear-gradient(180deg, #00c853 0%, #1b5e20 100%); 
+            color: #fff; 
+            border: 2px solid #fff; 
+            padding: 15px 40px; 
+            border-radius: 50px; 
+            font-weight: 900; 
+            font-size: 1.1rem;
+            cursor: pointer; 
+            box-shadow: 0 5px 20px rgba(0, 200, 83, 0.4);
+            transition: 0.2s;
+        }
+        .get-info-btn:hover { transform: scale(1.05); filter: brightness(1.2); }
+
+        .transfer-details { display: none; width: 100%; }
+        .details-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 25px; }
+        .info-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08); align-items: center; }
+        .info-label { color: #bcaaa4; font-size: 0.95rem; }
+        .info-value { color: #fff; font-weight: 900; display: flex; align-items: center; gap: 12px; font-size: 1.1rem; }
+        .copy-btn { color: #ffca28; cursor: pointer; font-size: 1.1rem; transition: 0.2s; }
+        .copy-btn:hover { transform: scale(1.2); }
+        
+        .qr-area { text-align: center; background: #fff; padding: 12px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .qr-image-box { width: 160px; height: 160px; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; }
+        .countdown-box { margin-top: 15px; font-size: 1.1rem; color: #00e676; font-weight: bold; text-align: center; }
+
+        .nạp-tiền-btn {
+            background: linear-gradient(180deg, #795548 0%, #3e2723 100%) !important;
+            border: 1px solid #ffca28 !important;
+            color: #fff !important;
+            padding: 8px 25px !important;
+            border-radius: 8px !important;
+            font-weight: 900 !important;
+            font-family: 'Montserrat', sans-serif !important;
+            cursor: pointer !important;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5) !important;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5) !important;
+            transition: 0.2s !important;
+        }
+        .nạp-tiền-btn:hover {
+            filter: brightness(1.2) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 0 15px rgba(255, 202, 40, 0.4) !important;
+        }
+
+        .b-btn {
+            width: 42px !important;
+            height: 42px !important;
+            background: rgba(255, 255, 255, 0.1) !important;
+            backdrop-filter: blur(10px) !important;
+            border: 1px solid rgba(0, 242, 255, 0.5) !important;
+            box-shadow: 0 0 10px rgba(0, 242, 255, 0.2) !important;
+            border-radius: 50% !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            transition: 0.2s !important;
+        }
+
+        .b-btn:hover {
+            background: rgba(0, 242, 255, 0.2) !important;
+            border-color: #00f2ff !important;
+            box-shadow: 0 0 15px #00f2ff !important;
+            transform: scale(1.1) !important;
+        }
+
+        .b-btn i {
+            color: #fff !important;
+            font-size: 18px !important;
+            opacity: 0.9;
+        }
+
+        .betting-panel {
+            display: none;
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100%);
+            width: 100%;
+            justify-content: center;
+            z-index: 1000;
+            padding-top: 5px;
+        }
+
+        .bet-frame {
+            background: url('https://www.transparenttextures.com/patterns/dark-wood.png'), linear-gradient(180deg, #4e342e 0%, #1a0f0a 100%);
+            padding: 20px 40px;
+            border-radius: 15px;
+            border: 2px solid #ffca28;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.9), inset 0 0 20px rgba(255, 202, 40, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            width: 780px; /* Khớp với độ rộng bàn 800px */
+            position: relative;
+        }
+
+        .chip-bar {
+            display: flex;
+            gap: 10px;
+            padding: 8px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            border: 1px solid #5d4037;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .s-chip {
+            width: 60px;
+            height: 36px;
+            background: linear-gradient(145deg, #3e2723, #1b110f);
+            color: #ffd54f !important;
+            font-weight: 900;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            clip-path: polygon(15% 0%, 85% 0%, 100% 50%, 85% 100%, 15% 100%, 0% 50%);
+            border: 1px solid #ffca28;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.6), inset 0 0 8px rgba(255, 213, 79, 0.3);
+            transition: 0.2s;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem;
+        }
+
+        .s-chip:hover { 
+            transform: scale(1.1) translateY(-3px); 
+            background: #5d4037; 
+            border-color: #fff;
+            box-shadow: 0 0 15px #ffca28;
+        }
+
+        .btn-premium {
+            border: none;
+            cursor: pointer;
+            font-weight: 900;
+            font-family: 'Montserrat', sans-serif;
+            transition: 0.3s;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
+            text-transform: uppercase;
+        }
+
+        .btn-confirm-big {
+            width: 240px;
+            height: 60px;
+            background: linear-gradient(180deg, #fff176 0%, #ffca28 50%, #bf360c 100%) !important;
+            color: #3e2723 !important;
+            font-size: 1.6rem !important;
+            border-radius: 12px;
+            border: 2px solid #fff !important;
+            box-shadow: 0 0 20px rgba(255, 143, 0, 0.6), inset 0 2px 4px rgba(255,255,255,0.8) !important;
+        }
+
+        .btn-x2 {
+            width: 130px;
+            height: 48px;
+            background: linear-gradient(180deg, #4caf50 0%, #1b5e20 100%) !important;
+            color: #fff !important;
+            border: 2px solid #a5d6a7 !important;
+            clip-path: polygon(15% 0, 100% 0, 85% 100%, 0 100%) !important;
+            font-size: 1.1rem !important;
+        }
+
+        .btn-cancel-red {
+            width: 130px;
+            height: 48px;
+            background: linear-gradient(180deg, #f44336 0%, #b71c1c 100%) !important;
+            color: #fff !important;
+            border: 2px solid #ef9a9a !important;
+            clip-path: polygon(0 0, 85% 0, 100% 100%, 15% 100%) !important;
+            font-size: 1.1rem !important;
+        }
+
+        .user-count {
+            position: absolute;
+            top: 65px;
+            font-size: 0.8rem;
+            color: #ffca28;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .count-left { left: 200px; }
+        .count-right { right: 200px; }
+
+        .personal-bet {
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: 900;
+            margin-top: 5px;
+            text-shadow: 0 0 5px #000;
+        }
+
+        .btn-doi-vi {
+            position: absolute;
+            bottom: 25px;
+            right: 15px;
+            background: linear-gradient(90deg, #b71c1c, #d32f2f);
+            color: #fff;
+            padding: 5px 15px;
+            font-size: 0.8rem;
+            clip-path: polygon(15% 0, 100% 0, 100% 100%, 0% 100%);
+            font-weight: 900;
+            border: 1px solid #ffca28;
+            cursor: pointer;
+            box-shadow: -3px 0 10px rgba(0,0,0,0.5);
+        }
+
+        .s-chip {
+            background: linear-gradient(180deg, #d4af37, #8b6b23) !important;
+            color: #fff !important;
+            border: 2px solid #ffd700 !important;
+        }
+
+        .btn-premium:hover { 
+            filter: brightness(1.3) contrast(1.1); 
+            transform: translateY(-4px); 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+        }
+
+        .avatar-circle {
+            width: 55px !important;
+            height: 55px !important;
+            border-width: 3px !important;
+        }
+
+        .vip-text { font-size: 1rem !important; }
+        .username-text { font-size: 0.9rem !important; margin-bottom: 2px !important; }
+
+        .balance-group {
+            flex-direction: row !important;
+            gap: 10px !important;
+        }
+
+        .balance-item {
+            background: rgba(0,0,0,0.4) !important;
+            padding: 2px 10px !important;
+            border-radius: 20px !important;
+            border: 1px solid rgba(255,202,40,0.3) !important;
+            font-size: 0.85rem !important;
+        }
+
+        .h-btn {
+            padding: 8px 30px !important;
+            font-size: 1rem !important;
+        }
+
+        .action-frame {
+            border-radius: 10px !important;
+        }
+
+        .side-val {
+            background: rgba(0, 0, 0, 0.6) !important;
+            padding: 5px 15px !important;
+            border-radius: 20px !important;
+            color: #ffca28 !important;
+            font-weight: 900 !important;
+            font-style: italic !important;
+            font-size: 1.4rem !important;
+            text-shadow: 2px 2px 0px #000, -1px -1px 0px #000, 1px -1px 0px #000, -1px 1px 0px #000 !important;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5) !important;
+            font-family: 'Montserrat', sans-serif !important;
+            margin: 15px 0 !important;
+            letter-spacing: 1px !important;
+        }
+
+        .bet-input-field {
+            display: none;
+            background: #000;
+            color: #00f2ff !important;
+            width: 200px;
+            padding: 12px;
+            font-weight: 900;
+            font-size: 1.8rem;
+            text-align: center;
+            border: 2px solid #00f2ff;
+            clip-path: polygon(15% 0%, 85% 0%, 100% 50%, 85% 100%, 15% 100%, 0% 50%);
+            box-shadow: 0 0 25px rgba(0, 242, 255, 0.6);
+            margin-top: 10px;
+        }
+        .deposit-btn-header {
+            background: linear-gradient(180deg, #795548 0%, #3e2723 100%) !important;
+            border: 2px solid #ffca28 !important;
+            color: #fff !important;
+            padding: 8px 25px !important;
+            border-radius: 8px !important;
+            font-weight: 900 !important;
+            font-family: 'Montserrat', sans-serif !important;
+            cursor: pointer !important;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5) !important;
+            box-shadow: 0 0 10px rgba(255, 202, 40, 0.3) !important;
+            z-index: 100 !important;
+        }
+        .deposit-btn-header:hover {
+            filter: brightness(1.2) !important;
+            transform: translateY(-2px) !important;
+        }
+
+        .deposit-modal {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            width: 850px;
+            height: 520px;
+            background: linear-gradient(180deg, #5d4037 0%, #2b1d1a 100%);
+            border: 3px solid #ffca28;
+            border-radius: 20px;
+            z-index: 9999 !important;
+            display: none;
+            flex-direction: column;
+            box-shadow: 0 0 100px rgba(0,0,0,0.9);
+            color: #fff;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .deposit-modal.active {
+            transform: translate(-50%, -50%) scale(1) !important;
+            opacity: 1 !important;
+            display: flex !important;
+        }
+
+        .modal-header {
+            height: 60px;
+            background: linear-gradient(180deg, #8d6e63 0%, #3e2723 100%);
+            border-bottom: 2px solid #ffca28;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border-radius: 17px 17px 0 0;
+        }
+        .modal-title { font-family: 'Phudu', cursive; font-size: 1.8rem; color: #ffca28; text-shadow: 0 2px 4px #000; }
+        .close-modal { position: absolute; right: 15px; font-size: 2.2rem; cursor: pointer; color: #ffca28; line-height: 1; }
+
+        .modal-body { display: flex; flex: 1; overflow: hidden; }
+        .modal-sidebar { width: 180px; background: rgba(0,0,0,0.4); border-right: 1px solid rgba(255,202,40,0.2); }
+        .sidebar-item { padding: 22px 15px; text-align: left; padding-left: 25px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: 0.3s; font-weight: bold; color: #bcaaa4; }
+        .sidebar-item.active { background: linear-gradient(90deg, rgba(255,202,40,0.1) 0%, rgba(255,202,40,0.2) 100%); color: #ffca28; border-right: 4px solid #ffca28; }
+
+        .modal-content-area { flex: 1; padding: 35px; position: relative; }
+        
+        .input-group { margin-bottom: 30px; }
+        .input-group label { display: block; margin-bottom: 15px; color: #ffca28; font-size: 1.2rem; font-weight: bold; }
+        .input-control { width: 100%; background: rgba(0,0,0,0.6); border: 1px solid #ffca28; padding: 15px; border-radius: 10px; color: #fff; font-size: 1.3rem; outline: none; }
+        
+        .get-info-btn { 
+            background: linear-gradient(180deg, #00c853 0%, #1b5e20 100%); 
+            color: #fff; 
+            border: 2px solid #fff; 
+            padding: 15px 40px; 
+            border-radius: 50px; 
+            font-weight: 900; 
+            font-size: 1.1rem;
+            cursor: pointer; 
+            box-shadow: 0 5px 20px rgba(0, 200, 83, 0.4);
+        }
+
+        .transfer-details { display: none; width: 100%; }
+        .details-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 25px; }
+        .info-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08); align-items: center; }
+        .info-label { color: #bcaaa4; font-size: 0.95rem; }
+        .info-value { color: #fff; font-weight: 900; display: flex; align-items: center; gap: 12px; font-size: 1.1rem; }
+        .copy-btn { color: #ffca28; cursor: pointer; font-size: 1.1rem; }
+        
+        .qr-area { text-align: center; background: #fff; padding: 12px; border-radius: 12px; }
+        .qr-image-box { width: 160px; height: 160px; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; }
+        .countdown-box { margin-top: 15px; font-size: 1.1rem; color: #00e676; font-weight: bold; text-align: center; }
+
+        /* MODAL RÚT TIỀN STYLE */
+        .withdraw-modal {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            width: 900px;
+            height: 620px; /* Tăng chiều cao để hiện nút */
+            background: linear-gradient(180deg, #5d4037 0%, #2b1d1a 100%);
+            border: 3px solid #ffca28;
+            border-radius: 20px;
+            z-index: 9999 !important;
+            display: none;
+            flex-direction: column;
+            box-shadow: 0 0 100px rgba(0,0,0,0.9);
+            color: #fff;
+            opacity: 0;
+            transition: 0.3s;
+        }
+        .withdraw-modal.active { transform: translate(-50%, -50%) scale(1); opacity: 1; display: flex; }
+
+        .withdraw-content { 
+            flex: 1; 
+            padding: 25px; 
+            display: grid; 
+            grid-template-columns: 1.6fr 1fr; /* Tăng không gian cho cột trái */
+            gap: 30px; 
+            align-items: start;
+        }
+        .form-withdraw { display: flex; flex-direction: column; gap: 15px; width: 100%; }
+        .w-input-group { position: relative; width: 100%; }
+        .w-input-group label { display: block; font-size: 0.85rem; color: #bcaaa4; margin-bottom: 8px; font-weight: bold; }
+        .w-input { 
+            width: 100%; 
+            max-width: 100%;
+            box-sizing: border-box; /* Đảm bảo padding không làm nở input */
+            background: #fff; 
+            border: none; 
+            padding: 12px 15px; 
+            border-radius: 8px; 
+            color: #333; 
+            font-weight: 600; 
+            outline: none;
+            font-size: 1rem;
+        }
+        
+        .bank-selector-btn {
+            background: #2b1d1a;
+            border: 1px solid #ffca28;
+            padding: 10px 15px;
+            border-radius: 8px;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .btn-confirm-withdraw {
+            margin-top: 15px;
+            background: linear-gradient(180deg, #009688 0%, #004d40 100%);
+            border: 1px solid #4db6ac;
+            padding: 12px;
+            border-radius: 50px;
+            color: #fff;
+            font-weight: 900;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        }
+
+        /* BANK GRID POPUP */
+        .bank-popup {
+            position: absolute;
+            top: 60px; left: 0;
+            width: 320px;
+            background: #fff;
+            border-radius: 10px;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            padding: 10px;
+            z-index: 100;
+            box-shadow: 0 10px 30px #000;
+        }
+        .bank-item { padding: 5px; cursor: pointer; transition: 0.2s; border: 1px solid #eee; border-radius: 5px; display: flex; align-items: center; justify-content: center; }
+        .bank-item:hover { border-color: #ffca28; background: #fff8e1; }
+        .bank-item img { width: 100%; height: auto; }
+
+        .rules-withdraw {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 20px;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            color: #bcaaa4;
+        }
+        .rules-withdraw b { color: #ffca28; }
+
+        .w-tab-content { display: none; width: 100%; height: 100%; }
+        .w-tab-content.active { display: block; }
+        
+        .w-input-group { margin-bottom: 18px !important; }
+
+        .dep-action-btn {
+            padding: 12px 25px !important;
+            border-radius: 50px !important;
+            font-weight: 900 !important;
+            font-size: 0.9rem !important;
+            cursor: pointer !important;
+            transition: 0.2s !important;
+            border: 1px solid #fff !important;
+            text-transform: uppercase !important;
+            white-space: nowrap !important;
+            min-width: 160px !important;
+        }
+        .btn-create-new { background: rgba(255,255,255,0.1) !important; color: #fff !important; }
+        .btn-confirm-dep { background: linear-gradient(180deg, #00c853 0%, #1b5e20 100%) !important; color: #fff !important; }
+        .dep-action-btn:hover { transform: scale(1.05); filter: brightness(1.2); }
+    </style>
+</head>
+<body>
+    <!-- MODAL NẠP TIỀN -->
+    <div class="deposit-modal" id="deposit-modal">
+        <div class="modal-header">
+            <div class="modal-title">NẠP TIỀN</div>
+            <div class="close-modal" onclick="closeDepositModal()">&times;</div>
+        </div>
+        <div class="modal-body">
+            <div class="modal-sidebar">
+                <div class="sidebar-item active">Ngân hàng</div>
+                <div class="sidebar-item">Ví điện tử</div>
+                <div class="sidebar-item">Tiền ảo</div>
+                <div class="sidebar-item">Thẻ cào</div>
+            </div>
+            <div class="modal-content-area">
+                <div id="deposit-step-1">
+                    <div class="input-group">
+                        <label>Số tiền muốn nạp (VNĐ)</label>
+                        <input type="number" class="input-control" id="deposit-amount-input" placeholder="Nhập số tiền giao dịch">
+                    </div>
+                    <div style="text-align: center; margin-top: 50px;">
+                        <button class="get-info-btn" onclick="showTransferDetails()">LẤY THÔNG TIN CHUYỂN KHOẢN</button>
+                    </div>
+                    <ul style="margin-top: 40px; color: #bcaaa4; font-size: 0.9rem; line-height: 1.8;">
+                        <li>• Nhập số tiền chuyển.</li>
+                        <li>• Lấy thông tin chuyển khoản.</li>
+                        <li>• Liên hệ LiveChat để được hỗ trợ.</li>
+                    </ul>
+                </div>
+                <div id="deposit-step-2" class="transfer-details">
+                    <div class="details-grid">
+                        <div class="info-column">
+                            <div class="info-row"><span class="info-label">Ngân hàng</span><span class="info-value">MBBank</span></div>
+                            <div class="info-row"><span class="info-label">Số tiền</span><span class="info-value"><span id="disp-amt">50.000</span> <i class="fas fa-copy copy-btn" onclick="copyD('disp-amt')"></i></span></div>
+                            <div class="info-row"><span class="info-label">Tài khoản</span><span class="info-value">0395420402 <i class="fas fa-copy copy-btn" onclick="copyD('0395420402', true)"></i></span></div>
+                            <div class="info-row"><span class="info-label">Tên tài khoản</span><span class="info-value">Tống Văn Dũng</span></div>
+                            <div class="info-row" style="border: none;"><span class="info-label">Nội dung</span><span class="info-value" style="color: #ffca28;"><span id="memo-code">DUNG123456</span> <i class="fas fa-copy copy-btn" onclick="copyD('memo-code')"></i></span></div>
+                            <div style="margin-top: 30px; text-align: center; display: flex; gap: 15px; justify-content: center;">
+                                <button class="dep-action-btn btn-create-new" onclick="resetDeposit()">TẠO ĐƠN MỚI</button>
+                                <button class="dep-action-btn btn-confirm-dep" onclick="closeDepositModal()">XÁC NHẬN CHUYỂN KHOẢN</button>
+                            </div>
+                        </div>
+                        <div class="qr-column">
+                            <div class="qr-area"><div class="qr-image-box"><img src="" id="qr-img" style="width: 100%;"></div><div style="color: #000; font-size: 0.8rem; font-weight: 900;">Mở App quét QRCode</div></div>
+                            <div class="countdown-box">Hết hạn sau: <span id="dep-timer">30:00</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="lobby-wrapper">
+        <!-- Premium Header Bar -->
+        <header class="premium-header">
+            <button class="deposit-btn-header" onclick="openDepositModal()">NẠP TIỀN</button>
+            <div class="user-section">
+                <div class="avatar-circle">
+                    <img src="https://i.pravatar.cc/150?u=okwww" alt="Avatar">
+                </div>
+                <div class="user-meta">
+                    <span class="vip-text">VIP 0</span>
+                    <span class="username-text">okwwwwwwee</span>
+                    <div class="balance-group">
+                        <div class="balance-item">
+                            <i class="fas fa-coins" style="color: #f3c34d;"></i> 0
+                        </div>
+                        <div class="balance-item">
+                            <i class="fas fa-gem" style="color: #00f2ff;"></i> 0
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="header-center">
+                <div class="action-frame">
+                    <button class="h-btn btn-withdraw" onclick="openWithdrawModal()">RÚT TIỀN</button>
+                    <button class="h-btn btn-deposit" onclick="openDepositModal()">NẠP TIỀN</button>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <i class="fas fa-wallet h-icon" title="Ví"></i>
+                <i class="fas fa-bell h-icon" title="Thông báo"><span class="dot-notify"></span></i>
+                <i class="fas fa-cog h-icon" title="Cài đặt"></i>
+                <i class="fas fa-sign-out-alt h-icon logout" title="Đăng xuất" onclick="window.location.href='index.html'"></i>
+            </div>
+        </header>
+
+        <!-- Main Table Area -->
+        <div class="table-container">
+            <div class="sha-board">
+                <!-- Lớp hiệu ứng tia sáng -->
+                <div class="board-shine-layer"></div>
+                
+                <!-- Top SHA Label -->
+                <div class="board-top">
+                    <div class="sha-label">TÀI XỈU BAFU</div>
+                    <!-- Bubble Buttons -->
+                    <div class="b-btn pos-1"><i class="fas fa-history"></i></div>
+                    <div class="b-btn pos-2"><i class="fas fa-trophy"></i></div>
+                    <div class="b-btn pos-3"><i class="fas fa-question"></i></div>
+                    <div class="b-btn pos-4"><i class="fas fa-times"></i></div>
+                </div>
+
+                <div class="b-btn pos-chat"><i class="fas fa-comments"></i></div>
+
+                <div class="betting-grid">
+                    <div class="side">
+                        <h2 class="tai-text">TÀI</h2>
+                        <div class="side-val" id="tai-total">10.358.001</div>
+                        <button class="bet-button" onclick="showBetPanel('tai')">ĐẶT CƯỢC</button>
+                        <div class="personal-bet" id="tai-personal">0</div>
+                        <div id="tai-input" class="bet-input-field">0</div>
+                    </div>
+
+                    <div class="user-count count-left"><i class="fas fa-user"></i> 320</div>
+                    <div class="user-count count-right"><i class="fas fa-user"></i> 1020</div>
+
+                    <div class="dice-center" id="game-bowl-container">
+                        <div class="solar-aura" id="solar-aura"></div>
+                        <div class="dice-list" id="dice-list">
+                            <i class="fas fa-dice-one"></i>
+                            <i class="fas fa-dice-three"></i>
+                            <i class="fas fa-dice-five"></i>
+                        </div>
+                        <div class="sha-timer-circle" id="timer" style="position: absolute !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important;">
+                            <span>15</span>
+                        </div>
+                        <!-- MODAL NẠP TIỀN -->
+    <div class="deposit-modal" id="deposit-modal">
+        <div class="modal-header">
+            <div class="modal-title">NẠP TIỀN</div>
+            <div class="close-modal" onclick="closeDepositModal()">&times;</div>
+        </div>
+        <div class="modal-body">
+            <div class="modal-sidebar">
+                <div class="sidebar-item active">Ngân hàng</div>
+                <div class="sidebar-item">Ví điện tử</div>
+                <div class="sidebar-item">Tiền ảo</div>
+                <div class="sidebar-item">Thẻ cào</div>
+            </div>
+            <div class="modal-content-area">
+                <!-- VIEW 1: NHẬP SỐ TIỀN -->
+                <div id="deposit-step-1">
+                    <div class="input-group">
+                        <label>Số tiền muốn nạp (VNĐ)</label>
+                        <input type="number" class="input-control" id="deposit-amount-input" placeholder="Nhập số tiền giao dịch">
+                    </div>
+                    <div style="text-align: center; margin-top: 50px;">
+                        <button class="get-info-btn" onclick="showTransferDetails()">LẤY THÔNG TIN CHUYỂN KHOẢN</button>
+                    </div>
+                    <ul style="margin-top: 40px; color: #bcaaa4; font-size: 0.9rem; line-height: 1.6;">
+                        <li>• Nhập số tiền chuyển.</li>
+                        <li>• Lấy thông tin chuyển khoản.</li>
+                        <li>• Liên hệ LiveChat để được hỗ trợ.</li>
+                    </ul>
+                </div>
+
+                <!-- VIEW 2: THÔNG TIN CHUYỂN KHOẢN -->
+                <div id="deposit-step-2" class="transfer-details">
+                    <div class="details-grid">
+                        <div class="info-column">
+                            <div class="info-row">
+                                <span class="info-label">Ngân hàng</span>
+                                <span class="info-value">MBBank</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Số tiền</span>
+                                <span class="info-value"><span id="display-deposit-amount">50.000</span> <i class="fas fa-copy copy-btn" onclick="copyText('display-deposit-amount')"></i></span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Tài khoản</span>
+                                <span class="info-value">0779100509 <i class="fas fa-copy copy-btn" onclick="copyText('0779100509', true)"></i></span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Tên tài khoản</span>
+                                <span class="info-value">NGUYEN THI HONG NHUNG</span>
+                            </div>
+                            <div class="info-row" style="border: none;">
+                                <span class="info-label">Nội dung</span>
+                                <span class="info-value" style="color: #ffca28;">Tam chuyen khoan <span id="memo-code">629952</span> <i class="fas fa-copy copy-btn" onclick="copyText('memo-code')"></i></span>
+                            </div>
+                            <div style="margin-top: 15px; text-align: center;">
+                                <button class="b-btn" style="padding: 5px 20px; font-size: 0.8rem; color: #00f2ff;" onclick="resetDeposit()">TẠO MỚI</button>
+                            </div>
+                        </div>
+                        <div class="qr-column">
+                            <div class="qr-area">
+                                <div class="qr-placeholder">
+                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=ThanhToanTaiXiu" id="qr-image" style="width: 100%;">
+                                </div>
+                                <div style="color: #000; font-size: 0.8rem; font-weight: bold;">Mở App ngân hàng để quét QRCode</div>
+                            </div>
+                            <div class="countdown-text">Hết hạn sau: <span id="deposit-timer">30:00</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+                    </div>
+
+                    <div class="side">
+                        <h2 class="xiu-text">xỉu</h2>
+                        <div class="side-val" id="xiu-total">105.856.418</div>
+                        <button class="bet-button" onclick="showBetPanel('xiu')">ĐẶT CƯỢC</button>
+                        <div class="personal-bet" id="xiu-personal">0</div>
+                        <div id="xiu-input" class="bet-input-field">0</div>
+                    </div>
+                </div>
+
+                <div class="b-btn pos-stats"><i class="fas fa-chart-bar"></i></div>
+                <div class="b-btn pos-hand"><i class="fas fa-hand-paper"></i></div>
+
+                <div class="history-row" id="history-row">
+                    <div class="h-dot red"></div><div class="h-dot white"></div><div class="h-dot red"></div>
+                    <div class="h-dot red"></div><div class="h-dot red"></div><div class="h-dot white"></div>
+                    <div class="h-dot white"></div><div class="h-dot red"></div><div class="h-dot red"></div>
+                    <div class="h-dot white"></div><div class="h-dot white"></div><div class="h-dot red"></div>
+                </div>
+
+                <div class="betting-panel" id="betting-panel">
+                    <div class="bet-frame">
+                        <div class="chip-bar">
+                            <div class="s-chip" onclick="addMoney(1000)">1K</div>
+                            <div class="s-chip" onclick="addMoney(10000)">10K</div>
+                            <div class="s-chip" onclick="addMoney(50000)">50K</div>
+                            <div class="s-chip" onclick="addMoney(100000)">100K</div>
+                            <div class="s-chip" onclick="addMoney(500000)">500K</div>
+                            <div class="s-chip" onclick="addMoney(1000000)">1M</div>
+                            <div class="s-chip" onclick="addMoney(5000000)">5M</div>
+                            <div class="s-chip" onclick="addMoney(10000000)">10M</div>
+                        </div>
+                        <div class="action-row">
+                            <button class="btn-premium btn-x2" onclick="doubleBet()">X2</button>
+                            <button class="btn-premium btn-confirm-big" onclick="confirmBet()">ĐẶT CƯỢC</button>
+                            <button class="btn-premium btn-cancel-red" onclick="hideBetPanel()">HUỶ</button>
+                        </div>
+                        <div class="btn-doi-vi">ĐỔI VÍ</div>
+                    </div>
+                </div>
+
+                <div class="bottom-sha">
+                    <div class="btn-sha-label">Chuỗi KQ</div>
+                    <div class="hash-input">#3WK19L0Q_knlocdroez8{6-5-5}j</div>
+                    <div class="btn-copy">COPY</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/timer.js"></script>
+    <script src="assets/js/bowl.js"></script>
+    <script src="assets/js/dice.js"></script>
+    <script>
+        const board = document.querySelector('.sha-board');
+        let isDragging = false;
+        let startX, startY, initialLeft, initialTop;
+
+        board.addEventListener('mousedown', (e) => {
+            if (e.target.closest('button') || e.target.closest('.b-btn') || e.target.closest('.copy-btn')) return;
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            initialLeft = board.offsetLeft;
+            initialTop = board.offsetTop;
+            board.style.transform = 'none';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+            board.style.left = (initialLeft + dx) + 'px';
+            board.style.top = (initialTop + dy) + 'px';
+        });
+
+        document.addEventListener('mouseup', () => { isDragging = false; });
+
+        // --- Controller chính cho game (Gọn nhẹ) ---
+        class GameController {
+            constructor() {
+                this.timer = new GameTimer(15, document.getElementById('timer'), () => this.onTimeUp());
+                this.dice = new GameDice(document.getElementById('dice-list'));
+                this.timerEl = document.getElementById('timer');
+                this.start();
+            }
+
+            async onTimeUp() {
+                // 1. Ẩn timer
+                this.timerEl.style.opacity = '0';
+                this.timerEl.style.visibility = 'hidden';
+                
+                // 2. Kết quả xúc xắc
+                const d1 = Math.floor(Math.random() * 6) + 1;
+                const d2 = Math.floor(Math.random() * 6) + 1;
+                const d3 = Math.floor(Math.random() * 6) + 1;
+                const results = [d1, d2, d3];
+                const total = d1 + d2 + d3;
+                
+                this.dice.stopRolling(results); 
+                
+                // 3. Tính toán Win/Lose
+                setTimeout(() => {
+                    this.showResult(results, total);
+                }, 800); // Đợi xúc xắc tung xong
+                
+                // 4. Chờ 5 giây rồi reset phiên mới
+                setTimeout(() => {
+                    this.resetGame();
+                    this.start();
+                }, 6000);
+            }
+
+            showResult(results, total) {
+                const isTriple = (results[0] === results[1] && results[1] === results[2]);
+                const taiSide = document.querySelector('.side:first-child');
+                const xiuSide = document.querySelector('.side:last-child');
+                const aura = document.getElementById('solar-aura');
+
+                // 1. Hiện hào quang xoay
+                aura.style.display = 'block';
+
+                if (isTriple) {
+                    console.log("BÃO!");
+                    this.triggerMoneyEffect(0, false); // Thu thua hết
+                    return; 
+                }
+
+                const winningSide = (total >= 11) ? 'tai' : 'xiu';
+                
+                if (winningSide === 'tai') {
+                    taiSide.classList.add('winner');
+                    document.querySelector('.tai-text').classList.add('win-glow');
+                } else {
+                    xiuSide.classList.add('winner');
+                    document.querySelector('.xiu-text').classList.add('win-glow');
+                }
+
+                // 2. Xử lý tiền cược
+                this.handleBetResult(winningSide);
+            }
+
+            handleBetResult(winningSide) {
+                // Lấy số tiền từ các phần tử hiển thị để chính xác nhất
+                const taiBet = parseInt(document.getElementById('tai-personal').innerText.replace(/\./g, '')) || 0;
+                const xiuBet = parseInt(document.getElementById('xiu-personal').innerText.replace(/\./g, '')) || 0;
+                
+                let amount = (winningSide === 'tai') ? taiBet : xiuBet;
+                let isWin = (amount > 0);
+
+                if (isWin) {
+                    this.triggerMoneyEffect(amount, true);
+                } else if (taiBet > 0 || xiuBet > 0) {
+                    // Nếu có cược mà không trúng cửa thắng -> Thua
+                    const loseAmount = (winningSide === 'tai') ? xiuBet : taiBet;
+                    this.triggerMoneyEffect(loseAmount, false);
+                }
+            }
+
+            triggerMoneyEffect(amount, isWin) {
+                const container = document.getElementById('money-popup-container');
+                const el = document.createElement('div');
+                el.className = `money-popup ${isWin ? 'money-win' : 'money-lose'}`;
+                el.innerText = (isWin ? '+' : '-') + amount.toLocaleString('vi-VN');
+                container.appendChild(el);
+                
+                // Tự xóa sau khi bay xong
+                setTimeout(() => el.remove(), 2500);
+            }
+
+            resetGame() {
+                this.dice.hide();
+                this.timerEl.style.opacity = '1';
+                this.timerEl.style.visibility = 'visible';
+                document.getElementById('solar-aura').style.display = 'none';
+                document.querySelectorAll('.side').forEach(s => s.classList.remove('winner'));
+                document.querySelectorAll('.tai-text, .xiu-text').forEach(t => t.classList.remove('win-glow'));
+                
+                // --- RESET TIỀN CƯỢC ---
+                document.getElementById('tai-personal').innerText = '0';
+                document.getElementById('xiu-personal').innerText = '0';
+                
+                // Giả lập tiền cược tổng cho sòng bài nhìn cho xôm
+                document.getElementById('tai-total').innerText = (Math.floor(Math.random() * 50000000) + 10000000).toLocaleString('vi-VN');
+                document.getElementById('xiu-total').innerText = (Math.floor(Math.random() * 50000000) + 10000000).toLocaleString('vi-VN');
+
+                if (typeof currentBetAmount !== 'undefined') currentBetAmount = 0;
+                if (typeof activeSide !== 'undefined') activeSide = null;
+            }
+
+            start() {
+                this.timer.start();
+            }
+        }
+
+        // Khởi tạo Game khi mọi thứ đã sẵn sàng
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                window.game = new GameController();
+                console.log("Game Controller Initialized");
+            } catch (e) {
+                console.error("Game Init Error:", e);
+            }
+        });
+
+        // --- Betting System (giữ nguyên logic cũ) ---
+        let currentBetAmount = 0;
+        let activeSide = null;
+
+        function showBetPanel(side) {
+            activeSide = side;
+            currentBetAmount = 0;
+            document.querySelectorAll('.bet-button').forEach(btn => btn.style.display = 'none');
+            const inputField = document.getElementById(side + '-input');
+            inputField.style.display = 'block';
+            inputField.innerText = '0';
+            document.getElementById('history-row').style.display = 'none';
+            document.getElementById('betting-panel').style.display = 'flex';
+        }
+
+        function hideBetPanel() {
+            document.querySelectorAll('.bet-button').forEach(btn => btn.style.display = 'block');
+            document.querySelectorAll('.bet-input-field').forEach(f => f.style.display = 'none');
+            document.getElementById('history-row').style.display = 'flex';
+            document.getElementById('betting-panel').style.display = 'none';
+            activeSide = null;
+            currentBetAmount = 0;
+        }
+
+        function addMoney(amount) {
+            if (!activeSide) return;
+            currentBetAmount += amount;
+            document.getElementById(activeSide + '-input').innerText = currentBetAmount.toLocaleString('vi-VN');
+        }
+
+        function doubleBet() {
+            if (!activeSide || currentBetAmount <= 0) return;
+            currentBetAmount *= 2;
+            document.getElementById(activeSide + '-input').innerText = currentBetAmount.toLocaleString('vi-VN');
+        }
+
+        function confirmBet() {
+            if (currentBetAmount <= 0) {
+                alert('Vui lòng chọn số tiền cược!');
+                return;
+            }
+            const personalEl = document.getElementById(activeSide + '-personal');
+            const currentPersonal = parseInt(personalEl.innerText.replace(/\./g, '')) || 0;
+            personalEl.innerText = (currentPersonal + currentBetAmount).toLocaleString('vi-VN');
+
+            const totalEl = document.getElementById(activeSide + '-total');
+            const currentTotal = parseInt(totalEl.innerText.replace(/\./g, '')) || 0;
+            totalEl.innerText = (currentTotal + currentBetAmount).toLocaleString('vi-VN');
+            
+            alert('Bạn đã đặt ' + currentBetAmount.toLocaleString('vi-VN') + ' vào cửa ' + activeSide.toUpperCase());
+            hideBetPanel();
+        }
+
+        // --- MODAL NẠP TIỀN LOGIC ---
+        function openDepositModal() {
+            const modal = document.getElementById('deposit-modal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('active'), 10);
+        }
+
+        function closeDepositModal() {
+            const modal = document.getElementById('deposit-modal');
+            modal.classList.remove('active');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
+        function showTransferDetails() {
+            const amt = document.getElementById('deposit-amount-input').value;
+            if (!amt || amt < 10000) {
+                alert("Vui lòng nhập số tiền nạp tối thiểu 10.000 VNĐ");
+                return;
+            }
+            
+            document.getElementById('disp-amt').innerText = parseInt(amt).toLocaleString('vi-VN');
+            
+            // Tạo mã nội dung 10 ký tự ngẫu nhiên
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let memo = '';
+            for (let i = 0; i < 10; i++) {
+                memo += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById('memo-code').innerText = memo;
+            
+            document.getElementById('qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=MBBank|0395420402|${amt}|${memo}`;
+
+            // --- LƯU ĐƠN NẠP VÀO DATABASE ---
+            let deposits = JSON.parse(localStorage.getItem('casino_deposits') || '[]');
+            deposits.push({
+                user: 'okwwwwwwee', // Tạm lấy username cố định hoặc từ session
+                memo: memo,
+                amount: parseInt(amt).toLocaleString('vi-VN'),
+                gate: 'MBBank',
+                time: new Date().toLocaleString('vi-VN'),
+                status: 'Pending'
+            });
+            localStorage.setItem('casino_deposits', JSON.stringify(deposits));
+
+            document.getElementById('deposit-step-1').style.display = 'none';
+            document.getElementById('deposit-step-2').style.display = 'block';
+            
+            startDepTimer();
+        }
+
+        function resetDeposit() {
+            document.getElementById('deposit-step-1').style.display = 'block';
+            document.getElementById('deposit-step-2').style.display = 'none';
+            clearInterval(depInterval);
+        }
+
+        let depInterval;
+        function startDepTimer() {
+            let time = 30 * 60;
+            const display = document.getElementById('dep-timer');
+            clearInterval(depInterval);
+            depInterval = setInterval(() => {
+                let m = Math.floor(time / 60);
+                let s = time % 60;
+                display.innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+                if (--time < 0) clearInterval(depInterval);
+            }, 1000);
+        }
+
+        function copyD(id, isLit = false) {
+            const text = isLit ? id : document.getElementById(id).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Đã sao chép: " + text);
+            });
+        }
+
+        // --- RÚT TIỀN LOGIC ---
+        function openWithdrawModal() {
+            const modal = document.getElementById('withdraw-modal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('active'), 10);
+        }
+        function closeWithdrawModal() {
+            const modal = document.getElementById('withdraw-modal');
+            modal.classList.remove('active');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+        function toggleBankPopup() {
+            const p = document.getElementById('bank-popup');
+            p.style.display = (p.style.display === 'grid') ? 'none' : 'grid';
+        }
+        function selectBank(name) {
+            document.getElementById('selected-bank-name').innerText = name;
+            document.getElementById('bank-popup').style.display = 'none';
+        }
+        function submitWithdraw() {
+            const bank = document.getElementById('selected-bank-name').innerText;
+            const account = document.querySelector('#withdraw-modal input[placeholder="Số tài khoản"]').value;
+            const name = document.querySelector('#withdraw-modal input[placeholder="Tên người nhận"]').value;
+            const amt = document.querySelector('#withdraw-modal input[placeholder="Số tiền giao dịch"]').value;
+
+            if(!account || !name || !amt) {
+                alert("Vui lòng nhập đầy đủ thông tin!");
+                return;
+            }
+
+            // --- LƯU ĐƠN RÚT VÀO DATABASE ---
+            let withdraws = JSON.parse(localStorage.getItem('casino_withdrawals') || '[]');
+            withdraws.push({
+                user: 'okwwwwwwee',
+                bank: bank,
+                account: account,
+                name: name,
+                amount: parseInt(amt).toLocaleString('vi-VN'),
+                time: new Date().toLocaleString('vi-VN'),
+                status: 'Pending'
+            });
+            localStorage.setItem('casino_withdrawals', JSON.stringify(withdraws));
+
+            alert("Yêu cầu rút tiền đã được gửi! Vui lòng chờ Admin duyệt.");
+            closeWithdrawModal();
+        }
+        function switchWTab(el, type) {
+            document.querySelectorAll('#withdraw-modal .sidebar-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+            
+            // Ẩn tất cả views
+            document.querySelectorAll('.w-tab-content').forEach(v => v.classList.remove('active'));
+            // Hiện view tương ứng
+            document.getElementById('w-view-' + type).classList.add('active');
+        }
+        // --- AUTO SYNC USER TO ADMIN ---
+        window.addEventListener('DOMContentLoaded', () => {
+            let users = JSON.parse(localStorage.getItem('casino_users') || '[]');
+            const exists = users.find(u => u.username === 'okwwwwwwee');
+            if(!exists) {
+                users.push({
+                    username: 'okwwwwwwee',
+                    email: 'dungpro@gmail.com',
+                    balance: 10000000000, // Số dư khủng của bạn
+                    joinedDate: new Date().toLocaleDateString('vi-VN'),
+                    status: 'Active'
+                });
+                localStorage.setItem('casino_users', JSON.stringify(users));
+            }
+        });
+    </script>
+    <!-- MODAL NẠP TIỀN -->
+    <div class="deposit-modal" id="deposit-modal">
+        <div class="modal-header">
+            <div class="modal-title">NẠP TIỀN</div>
+            <div class="close-modal" onclick="closeDepositModal()">&times;</div>
+        </div>
+        <div class="modal-body">
+            <div class="modal-sidebar">
+                <div class="sidebar-item active">Ngân hàng</div>
+                <div class="sidebar-item">Ví điện tử</div>
+                <div class="sidebar-item">Tiền ảo</div>
+                <div class="sidebar-item">Thẻ cào</div>
+            </div>
+            <div class="modal-content-area">
+                <!-- BƯỚC 1: NHẬP SỐ TIỀN -->
+                <div id="deposit-step-1">
+                    <div class="input-group">
+                        <label>Số tiền muốn nạp (VNĐ)</label>
+                        <input type="number" class="input-control" id="deposit-amount-input" placeholder="Nhập số tiền giao dịch">
+                    </div>
+                    <div style="text-align: center; margin-top: 50px;">
+                        <button class="get-info-btn" onclick="showTransferDetails()">LẤY THÔNG TIN CHUYỂN KHOẢN</button>
+                    </div>
+                    <ul style="margin-top: 40px; color: #bcaaa4; font-size: 0.9rem; line-height: 1.8;">
+                        <li>• Nhập số tiền chuyển.</li>
+                        <li>• Lấy thông tin chuyển khoản.</li>
+                        <li>• Liên hệ LiveChat để được hỗ trợ.</li>
+                    </ul>
+                </div>
+
+                <!-- BƯỚC 2: THÔNG TIN CHUYỂN KHOẢN -->
+                <div id="deposit-step-2" class="transfer-details">
+                    <div class="details-grid">
+                        <div class="info-column">
+                            <div class="info-row">
+                                <span class="info-label">Ngân hàng</span>
+                                <span class="info-value">MBBank</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Số tiền</span>
+                                <span class="info-value"><span id="disp-amt">50.000</span> <i class="fas fa-copy copy-btn" onclick="copyD('disp-amt')"></i></span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Tài khoản</span>
+                                <span class="info-value">0779100509 <i class="fas fa-copy copy-btn" onclick="copyD('0779100509', true)"></i></span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Tên tài khoản</span>
+                                <span class="info-value">NGUYEN THI HONG NHUNG</span>
+                            </div>
+                            <div class="info-row" style="border: none;">
+                                <span class="info-label">Nội dung</span>
+                                <span class="info-value" style="color: #ffca28;">Tam chuyen khoan <span id="memo-code">629952</span> <i class="fas fa-copy copy-btn" onclick="copyD('memo-code')"></i></span>
+                            </div>
+                            <div style="margin-top: 20px; text-align: center;">
+                                <button class="b-btn" style="width: auto !important; height: auto !important; padding: 10px 25px; border-radius: 50px;" onclick="resetDeposit()">TẠO GIAO DỊCH MỚI</button>
+                            </div>
+                        </div>
+                        <div class="qr-column">
+                            <div class="qr-area">
+                                <div class="qr-image-box">
+                                    <img src="" id="qr-img" style="width: 100%; border-radius: 5px;">
+                                </div>
+                                <div style="color: #000; font-size: 0.8rem; font-weight: 900;">Mở App ngân hàng quét QRCode</div>
+                            </div>
+                            <div class="countdown-box">Hết hạn sau: <span id="dep-timer">30:00</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- MODAL RÚT TIỀN -->
+    <div class="withdraw-modal" id="withdraw-modal">
+        <div class="modal-header">
+            <div class="modal-title">RÚT TIỀN</div>
+            <div class="close-modal" onclick="closeWithdrawModal()">&times;</div>
+        </div>
+        <div class="modal-body">
+            <div class="modal-sidebar">
+                <div class="sidebar-item active" onclick="switchWTab(this, 'bank')">Ngân hàng</div>
+                <div class="sidebar-item" onclick="switchWTab(this, 'card')">Thẻ cào</div>
+                <div class="sidebar-item" onclick="switchWTab(this, 'crypto')">Tiền ảo</div>
+            </div>
+            <div class="modal-content-area">
+                <!-- VIEW NGÂN HÀNG -->
+                <div id="w-view-bank" class="w-tab-content active">
+                    <div class="withdraw-content">
+                        <div class="form-withdraw">
+                            <div class="w-input-group">
+                                <label>Ngân hàng</label>
+                                <div class="bank-selector-btn" onclick="toggleBankPopup()">
+                                    <span id="selected-bank-name">Chọn ngân hàng</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="bank-popup" id="bank-popup">
+                                    <div class="bank-item" onclick="selectBank('VietinBank')"><img src="https://api.vietqr.io/img/ICB.png"></div>
+                                    <div class="bank-item" onclick="selectBank('Techcombank')"><img src="https://api.vietqr.io/img/TCB.png"></div>
+                                    <div class="bank-item" onclick="selectBank('Vietcombank')"><img src="https://api.vietqr.io/img/VCB.png"></div>
+                                    <div class="bank-item" onclick="selectBank('BIDV')"><img src="https://api.vietqr.io/img/BIDV.png"></div>
+                                    <div class="bank-item" onclick="selectBank('MBBank')"><img src="https://api.vietqr.io/img/MB.png"></div>
+                                    <div class="bank-item" onclick="selectBank('Agribank')"><img src="https://api.vietqr.io/img/VBA.png"></div>
+                                </div>
+                            </div>
+                            <div class="w-input-group">
+                                <label>Số tài khoản nhận</label>
+                                <input type="text" class="w-input" placeholder="Số tài khoản">
+                            </div>
+                            <div class="w-input-group">
+                                <label>Người nhận</label>
+                                <input type="text" class="w-input" placeholder="Tên người nhận">
+                            </div>
+                            <div class="w-input-group">
+                                <label>Số tiền</label>
+                                <input type="number" class="w-input" placeholder="Số tiền giao dịch">
+                            </div>
+                            <button class="btn-confirm-withdraw" onclick="submitWithdraw()">RÚT</button>
+                        </div>
+                        <div class="rules-withdraw">
+                            <ul>
+                                <li>• Điền đúng thông tin tài khoản, tên người nhận.</li>
+                                <li>• Chọn ngân hàng cần rút tiền.</li>
+                                <li>• Nạp/Rút duy nhất <b>một chủ tài khoản</b>.</li>
+                                <li>• Liên hệ <b>Livechat</b> để được hỗ trợ.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW THẺ CÀO -->
+                <div id="w-view-card" class="w-tab-content">
+                    <div style="display: flex; gap: 10px; margin-bottom: 25px; justify-content: center;">
+                        <button class="dep-action-btn btn-create-new" style="min-width: 120px !important;">Viettel</button>
+                        <button class="dep-action-btn" style="min-width: 120px !important; background: rgba(0,0,0,0.3); border-color: #666 !important;">Mobifone</button>
+                        <button class="dep-action-btn" style="min-width: 120px !important; background: rgba(0,0,0,0.3); border-color: #666 !important;">Vinaphone</button>
+                    </div>
+                    <div class="card-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,202,40,0.1);">
+                        <div style="display: flex; justify-content: space-between; padding: 10px; background: rgba(255,202,40,0.1); border-radius: 8px; border: 1px solid #ffca28; color: #ffca28; font-weight: 900;"><span>50.000</span> <span>50.000</span></div>
+                        <div style="display: flex; justify-content: space-between; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);"><span>100.000</span> <span>100.000</span></div>
+                        <div style="display: flex; justify-content: space-between; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);"><span>200.000</span> <span>200.000</span></div>
+                        <div style="display: flex; justify-content: space-between; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);"><span>500.000</span> <span>500.000</span></div>
+                    </div>
+                    <div style="text-align: center; margin-top: 30px;">
+                        <button class="btn-confirm-withdraw" style="width: 250px;" onclick="submitWithdraw()">RÚT</button>
+                    </div>
+                </div>
+
+                <!-- VIEW TIỀN ẢO -->
+                <div id="w-view-crypto" class="w-tab-content" style="text-align: center; padding: 50px;">
+                    <i class="fab fa-bitcoin" style="font-size: 5rem; color: #ffca28; margin-bottom: 20px;"></i>
+                    <h3>TÍNH NĂNG ĐANG PHÁT TRIỂN</h3>
+                    <p style="color: #bcaaa4; margin-top: 10px;">Vui lòng quay lại sau!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

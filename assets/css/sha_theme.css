@@ -1,0 +1,483 @@
+:root {
+    --sha-cyan: #00f2ff;
+    --sha-teal: #007c8a;
+    --sha-dark: #003b44;
+    --header-brown: #2d1b10;
+    --header-gold: #f3c34d;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    overflow: hidden;
+}
+
+.lobby-wrapper {
+    width: 100vw;
+    height: 100vh;
+    background: url('https://w0.peakpx.com/wallpaper/434/935/HD-wallpaper-casino-background-with-poker-cards-and-chips-on-a-dark-background-poker-concepts-gambling-casino-poker-background.jpg') no-repeat center/cover;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Premium Top Header --- */
+.premium-header {
+    width: 100%;
+    height: 100px;
+    background: linear-gradient(180deg, #3e2723 0%, #1a0f0a 100%);
+    border-bottom: 3px solid #f3c34d;
+    display: grid; /* Chuyển sang Grid 3 cột */
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 0 40px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.9);
+    z-index: 100;
+}
+
+.user-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    min-width: 300px;
+}
+
+.avatar-circle {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 4px solid #f3c34d;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(243, 195, 77, 0.3);
+}
+
+.avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
+
+.user-meta {
+    display: flex;
+    flex-direction: column;
+}
+
+.vip-text { color: #f3c34d; font-weight: 900; font-style: italic; font-size: 1.3rem; }
+.username-text { color: #fff; font-weight: 700; font-size: 1.1rem; margin-bottom: 5px; }
+
+.balance-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.balance-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1rem;
+    color: #fff;
+    font-weight: 700;
+}
+
+.balance-item img { width: 16px; }
+
+/* Header Center Buttons */
+.header-center {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.action-frame {
+    display: flex;
+    background: linear-gradient(180deg, #5d4037 0%, #2d1b10 100%);
+    padding: 3px;
+    border-radius: 12px;
+    border: 2px solid #f3c34d;
+    box-shadow: 0 0 20px rgba(243, 195, 77, 0.4);
+}
+
+.h-btn {
+    padding: 12px 45px;
+    color: white;
+    font-weight: 900;
+    font-size: 1.2rem;
+    cursor: pointer;
+    text-shadow: 1px 1px 2px #000;
+    transition: 0.2s;
+    border: none;
+    background: transparent;
+}
+
+.h-btn:hover { color: #f3c34d; }
+.btn-withdraw { border-right: 1px solid rgba(243, 195, 77, 0.5); }
+
+/* Header Right Icons */
+.header-right {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    justify-content: flex-end; /* Ép về bên phải */
+    padding-right: 60px; /* Dịch vào trong nhiều hơn nữa */
+}
+
+.h-icon {
+    font-size: 1.6rem;
+    color: #f3c34d;
+    cursor: pointer;
+    transition: 0.2s;
+    position: relative;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+}
+
+.h-icon:hover { background: rgba(243, 195, 77, 0.2); color: #fff; }
+
+.h-icon.logout { 
+    background: rgba(255, 82, 82, 0.2); 
+    color: #ff5252; 
+    border: 1px solid rgba(255, 82, 82, 0.5);
+}
+.h-icon.logout:hover { background: #ff5252; color: #fff; }
+.dot-notify {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 8px;
+    height: 8px;
+    background: red;
+    border-radius: 50%;
+    border: 1px solid #fff;
+}
+
+/* --- SHA256 REFINED TABLE --- */
+.table-container {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 80px; /* Nâng bàn lên cao hơn */
+}
+
+.sha-board {
+    width: 680px; /* Nhỏ hơn nữa */
+    height: 380px; /* Nhỏ hơn nữa */
+    background: radial-gradient(circle at center, #007c8a 0%, #003b44 100%);
+    border-radius: 30px;
+    border: 3px solid #00f2ff;
+    box-shadow: 0 0 40px rgba(0, 242, 255, 0.4), inset 0 0 80px rgba(0,0,0,0.6);
+    position: absolute; /* Chuyển sang absolute để kéo thả */
+    top: 150px; /* Cách Header */
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    cursor: grab; /* Hiển thị bàn tay khi rà chuột vào */
+    user-select: none;
+    z-index: 50;
+}
+
+.sha-board:active {
+    cursor: grabbing;
+}
+
+.board-top {
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+.sha-label {
+    background: #003b44;
+    padding: 6px 30px;
+    border-radius: 0 0 15px 15px;
+    border: 2px solid #f3c34d;
+    border-top: none;
+    color: #f3c34d;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    box-shadow: 0 0 15px rgba(243, 195, 77, 0.4);
+    white-space: nowrap;
+}
+
+/* Bubble Buttons */
+.b-btn {
+    width: 42px; /* Nhỏ lại một chút */
+    height: 42px;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, rgba(0,242,255,0.2) 100%);
+    border: 2px solid #fff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+    position: absolute;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    transition: 0.2s;
+}
+
+.b-btn:hover { transform: scale(1.1); box-shadow: 0 0 20px #00f2ff; }
+
+.pos-1 { top: 0; left: 0; }
+.pos-2 { top: 0; left: 120px; }
+.pos-3 { top: 0; right: 120px; }
+.pos-4 { top: 0; right: 0; }
+.pos-chat { top: 50%; right: -25px; transform: translateY(-50%); }
+.pos-stats { bottom: 60px; left: 30px; }
+.pos-hand { bottom: 60px; right: 30px; }
+
+/* Main Betting Area */
+.betting-grid {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
+    padding: 0 40px;
+}
+
+.side {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 250px;
+}
+
+.side h2 {
+    font-size: 3.5rem; /* Giảm cỡ chữ */
+    font-weight: 900;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+.tai-text { color: #ff3d00; text-shadow: 3px 3px 0 #fff, 5px 5px 10px rgba(0,0,0,0.5); }
+.xiu-text { color: #fff; text-shadow: 3px 3px 0 #999, 5px 5px 10px rgba(0,0,0,0.5); }
+
+.side-val {
+    margin: 10px 0;
+}
+
+.bet-button {
+    background: linear-gradient(180deg, #00f2ff 0%, #007c8a 100%);
+    border: 2px solid #fff;
+    border-radius: 40px;
+    padding: 10px 40px;
+    color: #fff;
+    font-weight: 900;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* Dice Center */
+.dice-center {
+    width: 200px; /* Giảm từ 240px xuống 200px */
+    height: 200px;
+    background: radial-gradient(circle, #002e35 0%, #003b44 100%);
+    border: 4px solid #00f2ff;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 25px rgba(0,242,255,0.2);
+}
+
+.dice-list { display: flex; gap: 10px; margin-bottom: 15px; }
+.dice-list i { font-size: 45px; color: #fff; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.5)); }
+
+.sha-timer-circle {
+    background: #000;
+    color: #fff;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.4rem;
+    font-weight: 900;
+    border: 2px solid #f3c34d;
+}
+
+/* History */
+.history-row {
+    position: absolute;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+    background: rgba(0,0,0,0.5);
+    padding: 6px 15px;
+    border-radius: 20px;
+}
+
+.h-dot { width: 14px; height: 14px; border-radius: 50%; }
+.h-dot.red { background: radial-gradient(circle at 30% 30%, #ff5252, #b71c1c); box-shadow: 0 0 5px #ff5252; }
+.h-dot.white { background: radial-gradient(circle at 30% 30%, #fff, #9e9e9e); box-shadow: 0 0 5px #fff; }
+
+/* Bottom Bar */
+.bottom-sha {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-sha-label {
+    background: linear-gradient(180deg, #00f2ff 0%, #007c8a 100%);
+    padding: 4px 15px;
+    border-radius: 15px;
+    color: #000;
+    font-weight: 800;
+    font-size: 0.8rem;
+}
+
+.hash-input {
+    background: rgba(0,0,0,0.8);
+    color: #777;
+    padding: 5px 15px;
+    width: 350px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.7rem;
+    border-bottom: 2px solid #00f2ff;
+}
+
+.btn-copy {
+    background: linear-gradient(180deg, #00f2ff 0%, #007c8a 100%);
+    padding: 4px 20px;
+    border-radius: 15px;
+    color: #000;
+    font-weight: 800;
+    font-size: 0.8rem;
+/* --- High-Fidelity Betting Panel --- */
+.betting-panel {
+    display: none;
+    position: absolute;
+    bottom: -15px; /* Đặt ở cạnh dưới của bàn */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    justify-content: center;
+    z-index: 100;
+}
+
+.bet-frame {
+    background: linear-gradient(180deg, #5d4037 0%, #2d1b10 100%);
+    padding: 15px 30px;
+    border-radius: 20px;
+    border: 2px solid #f3c34d;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 0 15px rgba(243, 195, 77, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    min-width: 700px;
+}
+
+.chip-bar {
+    display: flex;
+    gap: 10px;
+    padding: 5px;
+    justify-content: center;
+    width: 100%;
+    border-bottom: 1px solid rgba(243, 195, 77, 0.3);
+    padding-bottom: 15px;
+}
+
+.s-chip {
+    width: 65px;
+    height: 38px;
+    background: #3e2723;
+    color: #fff;
+    font-weight: 900;
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    clip-path: polygon(15% 0%, 85% 0%, 100% 50%, 85% 100%, 15% 100%, 0% 50%);
+    border: 2px solid #f3c34d;
+    box-shadow: inset 0 0 10px #000, 0 3px 5px rgba(0,0,0,0.5);
+    transition: 0.2s;
+}
+
+.s-chip:hover { transform: scale(1.1); background: #5d4037; border-color: #fff; }
+
+.action-row {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.btn-premium {
+    border: none;
+    cursor: pointer;
+    font-weight: 900;
+    font-family: 'Montserrat', sans-serif;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+    transition: 0.2s;
+}
+
+.btn-x2 {
+    width: 120px;
+    height: 45px;
+    background: linear-gradient(180deg, #1d4d42 0%, #0a2d26 100%);
+    color: #64ffda;
+    border: 2px solid #64ffda;
+    clip-path: polygon(0 0, 90% 0, 100% 100%, 10% 100%);
+    font-size: 1.1rem;
+}
+
+.btn-confirm-big {
+    width: 220px;
+    height: 60px;
+    background: linear-gradient(180deg, #fff7ad 0%, #f3c34d 30%, #b38600 70%, #6d5100 100%);
+    color: #3e2723;
+    font-size: 1.6rem;
+    border-radius: 10px;
+    border: 2px solid #fff;
+    box-shadow: 0 0 15px rgba(243, 195, 77, 0.6);
+}
+
+.btn-cancel-red {
+    width: 120px;
+    height: 45px;
+    background: linear-gradient(180deg, #c62828 0%, #8e0000 100%);
+    color: #fff;
+    border: 2px solid #ff5252;
+    clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+    font-size: 1.1rem;
+}
+
+.btn-premium:hover { filter: brightness(1.2); transform: translateY(-3px); }
+
+/* Custom Hexagon Input Box */
+.bet-input-field {
+    display: none;
+    background: #000;
+    color: #fff;
+    width: 180px;
+    padding: 10px;
+    font-weight: 900;
+    font-size: 1.5rem;
+    text-align: center;
+    border: 2px solid #00f2ff;
+    clip-path: polygon(15% 0%, 85% 0%, 100% 50%, 85% 100%, 15% 100%, 0% 50%);
+    box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
+    margin-top: 10px;
+    z-index: 10;
+}
