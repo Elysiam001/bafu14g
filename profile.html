@@ -188,9 +188,19 @@
             font-size: 6rem;
             font-weight: 900;
             color: #ffca28;
-            text-shadow: 0 0 20px rgba(255,202,40,0.8), 0 0 40px rgba(0,0,0,0.5);
+            text-shadow: 0 0 20px rgba(255,202,40,0.8);
             z-index: 150;
             pointer-events: none;
+            background: transparent !important;
+            transition: all 0.5s ease-in-out;
+        }
+
+        /* Khi mở bát: Đưa giây lên phía trên xúc xắc và làm nhỏ lại */
+        #game-bowl-container.phase-result .sha-timer-circle {
+            top: 20px;
+            font-size: 2.5rem;
+            transform: translate(-50%, 0);
+            text-shadow: 0 0 10px rgba(255,202,40,0.5);
         }
 
         .dice-list { display: none; gap: 15px; position: absolute; z-index: 10; top: 50%; left: 50%; transform: translate(-50%, -50%); }
@@ -554,6 +564,7 @@
             document.getElementById('xiu-total').innerText = (state.totalBetXiu || 0).toLocaleString('vi-VN');
 
             if(state.phase === 'result') {
+                document.getElementById('game-bowl-container').classList.add('phase-result');
                 if(state.timeLeft > 8) {
                     gameBowl.shake();
                 } else if(state.timeLeft === 8) {
@@ -568,6 +579,7 @@
                     });
                 }
             } else {
+                document.getElementById('game-bowl-container').classList.remove('phase-result');
                 if(state.timeLeft === 30) {
                     myBets = { Tai: 0, Xiu: 0 };
                     document.getElementById('tai-personal').innerText = '0';
