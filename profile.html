@@ -196,29 +196,33 @@
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             width: 220px; height: 220px;
-            background: radial-gradient(circle at 30% 30%, #ffffff 0%, #f9f9f9 45%, #e0e0e0 100%);
+            /* Màu Xanh Teal đậm đồng bộ với mặt bàn nhưng có chiều sâu 3D */
+            background: radial-gradient(circle at 35% 35%, 
+                #0097a7 0%, 
+                #006064 45%, 
+                #003133 100%);
             border: 6px solid #ffca28;
             border-radius: 50%;
             z-index: 100;
             transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             pointer-events: none;
             box-shadow: 
-                0 20px 40px rgba(0,0,0,0.6),
-                inset -10px -10px 20px rgba(0,0,0,0.05),
-                inset 10px 10px 20px rgba(255,255,255,0.8);
+                0 30px 60px rgba(0,0,0,0.8),
+                inset -12px -12px 25px rgba(0,0,0,0.6),
+                inset 10px 10px 25px rgba(255,255,255,0.15);
         }
 
-        /* Quai cầm tinh tế */
+        /* Quai cầm bằng Vàng bóng bẩy */
         .bowl-overlay::after {
             content: '';
             position: absolute;
             top: -12px; left: 50%;
             transform: translateX(-50%);
-            width: 45px; height: 20px;
-            background: linear-gradient(180deg, #ffca28, #bf360c);
+            width: 45px; height: 22px;
+            background: linear-gradient(180deg, #fff176 0%, #ffca28 40%, #b8860b 100%);
             border-radius: 15px 15px 0 0;
             border: 2px solid #fff;
-            box-shadow: 0 5px 10px rgba(0,0,0,0.5);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.6);
         }
 
         .bowl-overlay.shaking {
