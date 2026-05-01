@@ -940,81 +940,9 @@
                             <i class="fas fa-dice-three"></i>
                             <i class="fas fa-dice-five"></i>
                         </div>
-                        <div class="sha-timer-circle" id="timer" style="position: absolute !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important;">
+                        <div class="sha-timer-circle" id="timer">
                             <span>15</span>
                         </div>
-                        <!-- MODAL NẠP TIỀN -->
-    <div class="deposit-modal" id="deposit-modal">
-        <div class="modal-header">
-            <div class="modal-title">NẠP TIỀN</div>
-            <div class="close-modal" onclick="closeDepositModal()">&times;</div>
-        </div>
-        <div class="modal-body">
-            <div class="modal-sidebar">
-                <div class="sidebar-item active">Ngân hàng</div>
-                <div class="sidebar-item">Ví điện tử</div>
-                <div class="sidebar-item">Tiền ảo</div>
-                <div class="sidebar-item">Thẻ cào</div>
-            </div>
-            <div class="modal-content-area">
-                <!-- VIEW 1: NHẬP SỐ TIỀN -->
-                <div id="deposit-step-1">
-                    <div class="input-group">
-                        <label>Số tiền muốn nạp (VNĐ)</label>
-                        <input type="number" class="input-control" id="deposit-amount-input" placeholder="Nhập số tiền giao dịch">
-                    </div>
-                    <div style="text-align: center; margin-top: 50px;">
-                        <button class="get-info-btn" onclick="showTransferDetails()">LẤY THÔNG TIN CHUYỂN KHOẢN</button>
-                    </div>
-                    <ul style="margin-top: 40px; color: #bcaaa4; font-size: 0.9rem; line-height: 1.6;">
-                        <li>• Nhập số tiền chuyển.</li>
-                        <li>• Lấy thông tin chuyển khoản.</li>
-                        <li>• Liên hệ LiveChat để được hỗ trợ.</li>
-                    </ul>
-                </div>
-
-                <!-- VIEW 2: THÔNG TIN CHUYỂN KHOẢN -->
-                <div id="deposit-step-2" class="transfer-details">
-                    <div class="details-grid">
-                        <div class="info-column">
-                            <div class="info-row">
-                                <span class="info-label">Ngân hàng</span>
-                                <span class="info-value">MBBank</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="info-label">Số tiền</span>
-                                <span class="info-value"><span id="display-deposit-amount">50.000</span> <i class="fas fa-copy copy-btn" onclick="copyText('display-deposit-amount')"></i></span>
-                            </div>
-                            <div class="info-row">
-                                <span class="info-label">Tài khoản</span>
-                                <span class="info-value">0779100509 <i class="fas fa-copy copy-btn" onclick="copyText('0779100509', true)"></i></span>
-                            </div>
-                            <div class="info-row">
-                                <span class="info-label">Tên tài khoản</span>
-                                <span class="info-value">NGUYEN THI HONG NHUNG</span>
-                            </div>
-                            <div class="info-row" style="border: none;">
-                                <span class="info-label">Nội dung</span>
-                                <span class="info-value" style="color: #ffca28;">Tam chuyen khoan <span id="memo-code">629952</span> <i class="fas fa-copy copy-btn" onclick="copyText('memo-code')"></i></span>
-                            </div>
-                            <div style="margin-top: 15px; text-align: center;">
-                                <button class="b-btn" style="padding: 5px 20px; font-size: 0.8rem; color: #00f2ff;" onclick="resetDeposit()">TẠO MỚI</button>
-                            </div>
-                        </div>
-                        <div class="qr-column">
-                            <div class="qr-area">
-                                <div class="qr-placeholder">
-                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=ThanhToanTaiXiu" id="qr-image" style="width: 100%;">
-                                </div>
-                                <div style="color: #000; font-size: 0.8rem; font-weight: bold;">Mở App ngân hàng để quét QRCode</div>
-                            </div>
-                            <div class="countdown-text">Hết hạn sau: <span id="deposit-timer">30:00</span></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
                     </div>
 
                     <div class="side">
@@ -1304,12 +1232,58 @@
             }
         });
 
-        // Lắng nghe kết quả cược
-        socket.on('betResult', (data) => {
-            if(data.win) {
-                console.log("Chúc mừng! Bạn đã thắng: " + data.amount.toLocaleString('vi-VN'));
+        // --- KHỞI TẠO CÁC THÀNH PHẦN GAME ---
+        let gameDice, gameBowl;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            gameDice = new GameDice(document.getElementById('dice-list'));
+            gameBowl = new GameBowl(document.getElementById('game-bowl-container'));
+        });
+
+        // Hàm mở bát công khai để socket gọi
+        window.openBowl = async function(d1, d2, d3) {
+            if(!gameDice || !gameBowl) return;
+            
+            // 1. Dừng lắc (nếu có) và gán kết quả
+            gameDice.stopRolling([d1, d2, d3]);
+            
+            // 2. Mở bát
+            await gameBowl.open();
+            
+            // 3. Hiệu ứng hào quang
+            document.getElementById('solar-aura').style.display = 'block';
+            
+            // 4. Hiệu ứng tiền bay (sẽ xử lý trong betResult)
+        };
+
+        function resetGameUI() {
+            if(gameDice) gameDice.hide();
+            if(gameBowl) gameBowl.reset();
+            document.getElementById('solar-aura').style.display = 'none';
+            document.querySelectorAll('.side').forEach(s => s.classList.remove('winner'));
+            document.querySelectorAll('.tai-text, .xiu-text').forEach(t => t.classList.remove('win-glow'));
+        }
+
+        // Cập nhật lại socket listener để gọi reset khi bắt đầu phiên mới
+        socket.on('gameUpdate', (state) => {
+            const timerEl = document.querySelector('#timer span');
+            if(timerEl) timerEl.innerText = state.timeLeft;
+            
+            document.getElementById('tai-total').innerText = (state.totalBetTai || 0).toLocaleString('vi-VN');
+            document.getElementById('xiu-total').innerText = (state.totalBetXiu || 0).toLocaleString('vi-VN');
+
+            if(state.phase === 'result') {
+                if(state.timeLeft === 10) {
+                    window.openBowl(state.lastDices[0], state.lastDices[1], state.lastDices[2]);
+                    document.getElementById('timer').style.opacity = '0';
+                }
             } else {
-                console.log("Rất tiếc! Bạn đã thua phiên này.");
+                document.getElementById('timer').style.opacity = '1';
+                if(state.timeLeft === 30) {
+                    resetGameUI();
+                    document.getElementById('tai-personal').innerText = '0';
+                    document.getElementById('xiu-personal').innerText = '0';
+                }
             }
         });
     </script>
