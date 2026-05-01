@@ -923,6 +923,25 @@
             // Cập nhật lại số tiền mình cược từ bộ nhớ tạm
             document.getElementById('tai-personal').innerText = myBets.Tai.toLocaleString('vi-VN');
             document.getElementById('xiu-personal').innerText = myBets.Xiu.toLocaleString('vi-VN');
+
+            // Cập nhật lịch sử xúc xắc (Chuỗi hạt)
+            const historyRow = document.getElementById('history-row');
+            if(historyRow && state.history) {
+                historyRow.innerHTML = '';
+                state.history.forEach(item => {
+                    const dot = document.createElement('div');
+                    dot.className = `h-dot ${item.result === 'Tai' ? 'red' : 'white'}`;
+                    historyRow.appendChild(dot);
+                });
+            }
+
+            // Cập nhật Chuỗi Hash (Giả lập để trông chuyên nghiệp)
+            const hashEl = document.querySelector('.hash-input');
+            if(hashEl && state.phase === 'betting') {
+                // Tạo một hash giả dựa trên thời gian và phiên
+                const fakeHash = 'SHA256:' + btoa(state.timeLeft + 'seed').substring(0, 32);
+                hashEl.innerText = fakeHash;
+            }
         });
     </script>
 </head>
