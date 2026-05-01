@@ -604,6 +604,12 @@
             document.getElementById('hash-text').innerText = 'SHA256:' + btoa(state.timeLeft + 'bafu').substring(0, 24);
         });
 
+        socket.on('betConfirmed', (data) => {
+            myBets[data.side] += data.amount;
+            document.getElementById(data.side.toLowerCase() + '-personal').innerText = (myBets[data.side] || 0).toLocaleString('vi-VN');
+            showToast(`Đã đặt ${data.amount.toLocaleString()} vào ${data.side}`, 'success');
+        });
+
         socket.on('betResult', (data) => {
             if(data.win) {
                 const overlay = document.getElementById('win-overlay');
@@ -634,9 +640,7 @@
         
         function confirmBet() {
             if(currentBetAmount <= 0) return;
-            socket.emit('placeBet', { username: myUsername, side: activeSide, amount: currentBetAmount });
-            myBets[activeSide] += currentBetAmount;
-            showToast(`Đã đặt ${currentBetAmount.toLocaleString()} vào ${activeSide}`, 'success');
+            socket.emit('placeBet', { username: myUsername, type: activeSide, amount: currentBetAmount });
             hideBetPanel();
         }
 

@@ -173,13 +173,14 @@ io.on('connection', (socket) => {
         if (gameState.phase !== 'betting') return;
         
         try {
-            const user = await User.findOne({ username: data.username });
-            if (!user) return socket.emit('errorMsg', 'Người dùng không tồn tại!');
-            if (user.balance < data.amount) return socket.emit('errorMsg', 'Số dư không đủ!');
+            // Trừ tiền nguyên tử (Atomic Update) để tránh lỗi race condition khi click nhanh
+            const user = await User.findOneAndUpdate(
+                { username: data.username, balance: { $gte: data.amount } },
+                { $inc: { balance: -data.amount } },
+                { new: true }
+            );
 
-            // Trừ tiền ngay khi cược
-            user.balance -= data.amount;
-            await user.save();
+            if (!user) return socket.emit('errorMsg', 'Số dư không đủ để thực hiện đặt cược!');
 
             // Lưu cược vào game state
             gameState.bets.push({
@@ -197,6 +198,8 @@ io.on('connection', (socket) => {
             
             // Cập nhật lại số dư cho người chơi
             socket.emit('balanceUpdate', { balance: user.balance });
+            // Gửi xác nhận đặt cược thành công
+            socket.emit('betConfirmed', { side: data.type, amount: data.amount });
             // Cập nhật tổng cược cho mọi người
             io.emit('gameUpdate', gameState);
         } catch (err) {
