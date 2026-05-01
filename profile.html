@@ -841,6 +841,45 @@
             50% { opacity: 0.3; }
             100% { opacity: 0; }
         }
+        /* --- CUSTOM TOAST NOTIFICATION --- */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10001;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .toast {
+            background: linear-gradient(135deg, #2d1b10 0%, #1a0f0a 100%);
+            border: 2px solid #f3c34d;
+            border-radius: 12px;
+            padding: 15px 25px;
+            color: #fff;
+            font-weight: 700;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.8);
+            min-width: 300px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            animation: toastIn 0.4s ease-out forwards;
+        }
+        @keyframes toastIn {
+            0% { transform: translateX(100%); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+        .toast.fade-out {
+            animation: toastOut 0.4s ease-in forwards;
+        }
+        @keyframes toastOut {
+            0% { transform: translateX(0); opacity: 1; }
+            100% { transform: translateX(100%); opacity: 0; }
+        }
+        .toast-icon {
+            color: #f3c34d;
+            font-size: 1.5rem;
+        }
     </style>
     <!-- Socket.io -->
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
@@ -1066,6 +1105,7 @@
         </div>
         <div id="win-glow" class="win-glow-screen"></div>
         <div id="money-particles-container"></div>
+        <div id="toast-container" class="toast-container"></div>
     </div>
 
     <script src="assets/js/timer.js"></script>
@@ -1136,7 +1176,7 @@
 
         function confirmBet() {
             if (currentBetAmount <= 0) {
-                alert('Vui lòng chọn số tiền cược!');
+                showToast('Vui lòng chọn số tiền cược!', 'warning');
                 return;
             }
             
@@ -1147,7 +1187,7 @@
                 type: activeSide === 'tai' ? 'Tai' : 'Xiu'
             });
 
-            alert('Đã gửi lệnh cược ' + currentBetAmount.toLocaleString('vi-VN') + ' vào cửa ' + activeSide.toUpperCase());
+            showToast('Đã gửi lệnh cược ' + currentBetAmount.toLocaleString('vi-VN') + ' vào cửa ' + activeSide.toUpperCase(), 'success');
             hideBetPanel();
         }
 
@@ -1167,7 +1207,7 @@
         function showTransferDetails() {
             const amt = document.getElementById('deposit-amount-input').value;
             if (!amt || amt < 10000) {
-                alert("Vui lòng nhập số tiền nạp tối thiểu 10.000 VNĐ");
+                showToast("Vui lòng nhập số tiền nạp tối thiểu 10.000 VNĐ", "error");
                 return;
             }
             
@@ -1218,7 +1258,7 @@
         function copyD(id, isLit = false) {
             const text = isLit ? id : document.getElementById(id).innerText;
             navigator.clipboard.writeText(text).then(() => {
-                alert("Đã sao chép: " + text);
+                showToast("Đã sao chép: " + text, "success");
             });
         }
 
@@ -1265,7 +1305,7 @@
             });
             localStorage.setItem('casino_withdrawals', JSON.stringify(withdraws));
 
-            alert("Yêu cầu rút tiền đã được gửi! Vui lòng chờ Admin duyệt.");
+            showToast("Yêu cầu rút tiền đã được gửi! Vui lòng chờ Admin duyệt.", "success");
             closeWithdrawModal();
         }
         function switchWTab(el, type) {
@@ -1319,6 +1359,31 @@
             setTimeout(() => p.remove(), 2000);
         }
 
+        // HÀM HIỆN THÔNG BÁO CUSTOM
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            let icon = 'fa-info-circle';
+            if(type === 'success') icon = 'fa-check-circle';
+            if(type === 'error') icon = 'fa-exclamation-triangle';
+            if(type === 'warning') icon = 'fa-exclamation-circle';
+
+            toast.innerHTML = `
+                <i class="fas ${icon} toast-icon"></i>
+                <div class="toast-message">${message}</div>
+            `;
+            
+            container.appendChild(toast);
+
+            // Tự động xóa sau 3 giây
+            setTimeout(() => {
+                toast.classList.add('fade-out');
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+
         // --- AUTO SYNC USER ---
         window.addEventListener('DOMContentLoaded', () => {
             const username = 'okwwwwwwee'; // Tên người dùng hiện tại
@@ -1337,14 +1402,14 @@
 
         // Lắng nghe thông báo lỗi
         socket.on('errorMsg', (msg) => {
-            alert(msg);
+            showToast(msg, "error");
         });
 
         // Lắng nghe cập nhật số dư cho thông báo chung (khi Admin duyệt nạp)
         socket.on('balanceUpdateNotification', (data) => {
             if (data.username === 'okwwwwwwee') {
                 document.getElementById('user-balance').innerText = Math.floor(data.balance).toLocaleString('vi-VN');
-                alert("Đơn nạp tiền của bạn đã được duyệt thành công!");
+                showToast("Đơn nạp tiền của bạn đã được duyệt thành công!", "success");
             }
         });
 
