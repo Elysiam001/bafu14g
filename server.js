@@ -252,6 +252,24 @@ io.on('connection', (socket) => {
         const deps = await Deposit.find({ status: 'Pending' }).sort({ createdAt: -1 });
         socket.emit('receivePendingDeposits', deps);
     });
+
+    socket.on('getAdminStats', async () => {
+        try {
+            const totalUsers = await User.countDocuments();
+            const pendingDep = await Deposit.countDocuments({ status: 'Pending' });
+            // Cập nhật lại danh sách onlineUsers chắc chắn
+            gameState.onlineUsers = Array.from(new Set(onlineSockets.values()));
+            
+            socket.emit('adminStatsUpdate', {
+                totalUsers,
+                pendingDep,
+                onlineCount: gameState.onlineUsers.length,
+                onlineUsers: gameState.onlineUsers
+            });
+        } catch (err) {
+            console.error('Lỗi lấy stats:', err);
+        }
+    });
 });
 
 const PORT = process.env.PORT || 3000;

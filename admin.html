@@ -278,9 +278,30 @@
         }
 
         function updateStats() {
-            // Cập nhật thống kê tạm thời
+            socket.emit('getAdminStats');
             socket.emit('getPendingDeposits');
         }
+
+        socket.on('adminStatsUpdate', (data) => {
+            document.getElementById('stat-users').innerText = data.totalUsers;
+            document.getElementById('stat-dep').innerText = data.pendingDep;
+            document.getElementById('stat-online').innerText = data.onlineCount;
+            
+            // Cập nhật danh sách username online (giống như gameUpdate)
+            const onlineList = document.getElementById('online-users-list');
+            if (data.onlineUsers.length === 0) {
+                onlineList.innerHTML = '<p style="color: var(--text-muted);">Không có ai trực tuyến</p>';
+            } else {
+                onlineList.innerHTML = '';
+                data.onlineUsers.forEach(user => {
+                    onlineList.innerHTML += `
+                        <div style="background: rgba(16, 185, 129, 0.1); color: var(--success); padding: 8px 15px; border-radius: 20px; font-weight: 700; border: 1px solid var(--success);">
+                            <i class="fas fa-circle" style="font-size: 0.6rem; margin-right: 5px;"></i> ${user}
+                        </div>
+                    `;
+                });
+            }
+        });
 
         window.onload = () => {
             updateStats();
