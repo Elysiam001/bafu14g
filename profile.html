@@ -864,10 +864,10 @@
                     <span class="username-text">okwwwwwwee</span>
                     <div class="balance-group">
                         <div class="balance-item">
-                            <i class="fas fa-coins" style="color: #f3c34d;"></i> 0
+                            <i class="fas fa-coins" style="color: #f3c34d;"></i> <span id="user-balance">0</span>
                         </div>
                         <div class="balance-item">
-                            <i class="fas fa-gem" style="color: #00f2ff;"></i> 0
+                            <i class="fas fa-gem" style="color: #00f2ff;"></i> <span id="user-diamond">0</span>
                         </div>
                     </div>
                 </div>
@@ -1291,17 +1291,12 @@
             
             document.getElementById('qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=MBBank|0395420402|${amt}|${memo}`;
 
-            // --- LƯU ĐƠN NẠP VÀO DATABASE ---
-            let deposits = JSON.parse(localStorage.getItem('casino_deposits') || '[]');
-            deposits.push({
-                user: 'okwwwwwwee', // Tạm lấy username cố định hoặc từ session
-                memo: memo,
-                amount: parseInt(amt).toLocaleString('vi-VN'),
-                gate: 'MBBank',
-                time: new Date().toLocaleString('vi-VN'),
-                status: 'Pending'
+            // --- LƯU ĐƠN NẠP LÊN SERVER ---
+            socket.emit('createDeposit', {
+                username: 'okwwwwwwee',
+                amount: parseInt(amt),
+                memo: memo
             });
-            localStorage.setItem('casino_deposits', JSON.stringify(deposits));
 
             document.getElementById('deposit-step-1').style.display = 'none';
             document.getElementById('deposit-step-2').style.display = 'block';
@@ -1390,19 +1385,41 @@
             // Hiện view tương ứng
             document.getElementById('w-view-' + type).classList.add('active');
         }
-        // --- AUTO SYNC USER TO ADMIN ---
+        // --- AUTO SYNC USER ---
         window.addEventListener('DOMContentLoaded', () => {
-            let users = JSON.parse(localStorage.getItem('casino_users') || '[]');
-            const exists = users.find(u => u.username === 'okwwwwwwee');
-            if(!exists) {
-                users.push({
-                    username: 'okwwwwwwee',
-                    email: 'dungpro@gmail.com',
-                    balance: 10000000000, // Số dư khủng của bạn
-                    joinedDate: new Date().toLocaleDateString('vi-VN'),
-                    status: 'Active'
-                });
-                localStorage.setItem('casino_users', JSON.stringify(users));
+            const username = 'okwwwwwwee'; // Tên người dùng hiện tại
+            socket.emit('getUserInfo', username);
+        });
+
+        // Lắng nghe cập nhật số dư từ server
+        socket.on('balanceUpdate', (data) => {
+            if(data.balance !== undefined) {
+                document.getElementById('user-balance').innerText = Math.floor(data.balance).toLocaleString('vi-VN');
+            }
+            if(data.diamond !== undefined) {
+                document.getElementById('user-diamond').innerText = Math.floor(data.diamond).toLocaleString('vi-VN');
+            }
+        });
+
+        // Lắng nghe thông báo lỗi
+        socket.on('errorMsg', (msg) => {
+            alert(msg);
+        });
+
+        // Lắng nghe cập nhật số dư cho thông báo chung (khi Admin duyệt nạp)
+        socket.on('balanceUpdateNotification', (data) => {
+            if (data.username === 'okwwwwwwee') {
+                document.getElementById('user-balance').innerText = Math.floor(data.balance).toLocaleString('vi-VN');
+                alert("Đơn nạp tiền của bạn đã được duyệt thành công!");
+            }
+        });
+
+        // Lắng nghe kết quả cược
+        socket.on('betResult', (data) => {
+            if(data.win) {
+                console.log("Chúc mừng! Bạn đã thắng: " + data.amount.toLocaleString('vi-VN'));
+            } else {
+                console.log("Rất tiếc! Bạn đã thua phiên này.");
             }
         });
     </script>

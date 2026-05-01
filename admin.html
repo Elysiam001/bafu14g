@@ -160,7 +160,10 @@
         </section>
     </main>
 
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script>
+        const socket = io();
+
         function switchTab(el, tabId) {
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
@@ -177,37 +180,39 @@
         }
 
         function loadUsers() {
-            const users = JSON.parse(localStorage.getItem('casino_users') || '[]');
+            // Hiện tại users vẫn lấy demo hoặc từ server nếu bạn muốn mở rộng thêm API get users
             const body = document.getElementById('user-table-body');
-            body.innerHTML = users.length ? '' : '<tr><td colspan="4" style="text-align:center;">Chưa có người dùng</td></tr>';
-            users.forEach((u, i) => {
-                body.innerHTML += `<tr>
-                    <td><b>${u.username}</b></td>
-                    <td style="color: var(--accent);">${(u.balance || 0).toLocaleString()}</td>
-                    <td>${u.joinedDate || '---'}</td>
-                    <td><button class="btn btn-reject" onclick="deleteUser(${i})">Xóa</button></td>
-                </tr>`;
-            });
+            body.innerHTML = '<tr><td colspan="4" style="text-align:center;">Dữ liệu người dùng đồng bộ từ Database</td></tr>';
         }
 
         function loadDeposits() {
-            const data = JSON.parse(localStorage.getItem('casino_deposits') || '[]');
+            socket.emit('getPendingDeposits');
+        }
+
+        socket.on('receivePendingDeposits', (data) => {
             const body = document.getElementById('deposit-table-body');
-            body.innerHTML = data.length ? '' : '<tr><td colspan="4" style="text-align:center;">Không có đơn nạp</td></tr>';
-            data.reverse().forEach((d, i) => {
-                const idx = data.length - 1 - i;
+            body.innerHTML = data.length ? '' : '<tr><td colspan="4" style="text-align:center;">Không có đơn nạp chờ duyệt</td></tr>';
+            data.forEach((d) => {
                 body.innerHTML += `<tr>
-                    <td>${d.user}</td>
+                    <td><b>${d.user}</b></td>
                     <td style="color: var(--accent); font-family: monospace;">${d.memo}</td>
-                    <td>${d.amount}</td>
+                    <td>${(d.amount || 0).toLocaleString()}</td>
                     <td>
-                        ${d.status === 'Pending' ? 
-                        `<button class="btn btn-approve" onclick="processDep(${idx}, 'Approved')">Duyệt</button>` : 
-                        `<span class="badge badge-success">${d.status}</span>`}
+                        <button class="btn btn-approve" onclick="processDep('${d._id}')">Duyệt</button>
                     </td>
                 </tr>`;
             });
-        }
+        });
+
+        socket.on('depositStatusUpdated', (dep) => {
+            loadDeposits();
+            updateStats();
+        });
+
+        socket.on('newDepositNotification', (dep) => {
+            console.log("Có đơn nạp mới!");
+            loadDeposits();
+        });
 
         function loadWithdrawals() {
             const data = JSON.parse(localStorage.getItem('casino_withdrawals') || '[]');
@@ -228,12 +233,10 @@
             });
         }
 
-        function processDep(idx, status) {
-            let data = JSON.parse(localStorage.getItem('casino_deposits'));
-            data[idx].status = status;
-            localStorage.setItem('casino_deposits', JSON.stringify(data));
-            loadDeposits();
-            updateStats();
+        function processDep(id) {
+            if(confirm("Duyệt đơn nạp này và cộng tiền cho user?")) {
+                socket.emit('approveDeposit', id);
+            }
         }
 
         function processWit(idx, status) {
@@ -245,25 +248,14 @@
         }
 
         function updateStats() {
-            const users = JSON.parse(localStorage.getItem('casino_users') || '[]');
-            const deps = JSON.parse(localStorage.getItem('casino_deposits') || '[]');
-            const wits = JSON.parse(localStorage.getItem('casino_withdrawals') || '[]');
-            document.getElementById('stat-users').innerText = users.length;
-            document.getElementById('stat-dep').innerText = deps.filter(x => x.status === 'Pending').length;
-            document.getElementById('stat-wit').innerText = wits.filter(x => x.status === 'Pending').length;
+            // Cập nhật thống kê tạm thời
+            socket.emit('getPendingDeposits');
         }
 
-        function deleteUser(idx) {
-            if(confirm("Xóa người dùng này?")) {
-                let users = JSON.parse(localStorage.getItem('casino_users'));
-                users.splice(idx, 1);
-                localStorage.setItem('casino_users', JSON.stringify(users));
-                loadUsers();
-                updateStats();
-            }
-        }
-
-        window.onload = updateStats;
+        window.onload = () => {
+            updateStats();
+            loadDeposits();
+        };
     </script>
 </body>
 </html>
