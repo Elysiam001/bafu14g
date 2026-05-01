@@ -425,7 +425,7 @@
                     <img src="https://i.pravatar.cc/150?u=bafu" alt="Avatar">
                 </div>
                 <div class="user-meta">
-                    <span class="vip-text">VIP 0</span>
+                    <span class="vip-text" id="user-vip">VIP 0</span>
                     <span class="username-text" id="user-display-name">Loading...</span>
                     <div class="balance-group">
                         <div class="balance-item"><i class="fas fa-coins" style="color: #ffca28;"></i> <span id="user-balance">0</span></div>
@@ -541,8 +541,24 @@
             socket.emit('getUserData', myUsername);
         });
 
+        function updateVIP(balance) {
+            let level = 0;
+            if (balance >= 100000000000000) level = 10;
+            else if (balance >= 10000000000000) level = 9;
+            else if (balance >= 1000000000000) level = 8;
+            else if (balance >= 100000000000) level = 7;
+            else if (balance >= 10000000000) level = 6;
+            else if (balance >= 1000000000) level = 5;
+            else if (balance >= 100000000) level = 4;
+            else if (balance >= 10000000) level = 3;
+            else if (balance >= 1000000) level = 2;
+            else if (balance >= 100000) level = 1;
+            document.getElementById('user-vip').innerText = 'VIP ' + level;
+        }
+
         socket.on('userDataUpdate', (user) => {
             document.getElementById('user-balance').innerText = user.balance.toLocaleString('vi-VN');
+            updateVIP(user.balance);
             document.getElementById('user-display-name').innerText = user.displayName || user.username;
 
             const modal = document.getElementById('display-name-modal');
@@ -626,6 +642,7 @@
 
         socket.on('balanceUpdate', (data) => {
             document.getElementById('user-balance').innerText = Math.floor(data.balance).toLocaleString('vi-VN');
+            updateVIP(data.balance);
         });
 
         socket.on('errorMsg', (msg) => showToast(msg, 'error'));
