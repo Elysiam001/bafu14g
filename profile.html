@@ -172,11 +172,12 @@
         .dice-center {
             width: 235px; height: 235px;
             background: radial-gradient(circle, #002e35 0%, #003b44 100%);
-            border: 4px solid #00f2ff;
+            border: 4px solid #ffca28;
             border-radius: 50%;
             position: relative;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 40px rgba(0, 242, 255, 0.4);
+            box-shadow: 0 0 50px rgba(255, 202, 40, 0.4);
+            z-index: 10;
         }
 
         .sha-timer-circle {
@@ -194,20 +195,43 @@
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 235px; height: 235px;
-            background: #ffffff;
-            border: 2px solid #fff8e1;
-            outline: 6px solid #ffca28;
-            outline-offset: -6px;
+            width: 220px; height: 220px;
+            background: radial-gradient(circle at 30% 30%, #ffffff 0%, #f9f9f9 45%, #e0e0e0 100%);
+            border: 6px solid #ffca28;
             border-radius: 50%;
-            z-index: 20;
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 100;
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             pointer-events: none;
-            box-shadow: 0 0 40px rgba(255, 202, 40, 0.6);
+            box-shadow: 
+                0 20px 40px rgba(0,0,0,0.6),
+                inset -10px -10px 20px rgba(0,0,0,0.05),
+                inset 10px 10px 20px rgba(255,255,255,0.8);
+        }
+
+        /* Quai cầm tinh tế */
+        .bowl-overlay::after {
+            content: '';
+            position: absolute;
+            top: -12px; left: 50%;
+            transform: translateX(-50%);
+            width: 45px; height: 20px;
+            background: linear-gradient(180deg, #ffca28, #bf360c);
+            border-radius: 15px 15px 0 0;
+            border: 2px solid #fff;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.5);
+        }
+
+        .bowl-overlay.shaking {
+            animation: bowl-shake 0.1s infinite alternate;
+        }
+
+        @keyframes bowl-shake {
+            0% { transform: translate(-51%, -49%) rotate(-2deg); }
+            100% { transform: translate(-49%, -51%) rotate(2deg); }
         }
 
         .bowl-overlay.opening {
-            transform: translate(60%, -150%) rotate(60deg);
+            transform: translate(70%, -160%) rotate(70deg);
             opacity: 0;
         }
 
@@ -534,7 +558,10 @@
             document.getElementById('xiu-total').innerText = (state.totalBetXiu || 0).toLocaleString('vi-VN');
 
             if(state.phase === 'result') {
-                if(state.timeLeft === 10) {
+                if(state.timeLeft > 8) {
+                    gameBowl.shake();
+                } else if(state.timeLeft === 8) {
+                    gameBowl.stopShaking();
                     gameDice.stopRolling(state.lastDices);
                     gameBowl.open();
                     const sum = state.lastDices.reduce((a,b) => a+b, 0);
