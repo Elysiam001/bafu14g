@@ -138,6 +138,12 @@
             100% { transform: scale(1); filter: brightness(1.2); }
         }
 
+        .winner .tai-text, .winner .xiu-text {
+            animation: win-breath 1s infinite ease-in-out !important;
+            filter: drop-shadow(0 0 15px #ffca28) !important;
+            color: #fff !important;
+        }
+
         /* HIỆU ỨNG CỘNG/TRỪ TIỀN */
         #money-popup-container {
             position: absolute !important;
@@ -921,6 +927,14 @@
                         window.openBowl(state.lastDices[0], state.lastDices[1], state.lastDices[2]);
                     }
                     if(timerDiv) timerDiv.style.opacity = '0';
+                    
+                    // Highlight bên thắng
+                    const sum = state.lastDices.reduce((a, b) => a + b, 0);
+                    const winningSide = sum >= 11 ? 'tai' : 'xiu';
+                    document.querySelectorAll('.side').forEach(s => {
+                        if(s.querySelector(`.${winningSide}-text`)) s.classList.add('winner');
+                        else s.classList.remove('winner');
+                    });
                 }
             } else {
                 if(timerDiv) timerDiv.style.opacity = '1';
