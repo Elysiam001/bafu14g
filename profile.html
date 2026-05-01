@@ -592,8 +592,8 @@
             position: fixed;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%) scale(0.9);
-            width: 850px;
-            height: 520px;
+            width: 900px;
+            height: 540px;
             background: linear-gradient(180deg, #5d4037 0%, #2b1d1a 100%);
             border: 3px solid #ffca28;
             border-radius: 20px;
@@ -630,7 +630,7 @@
         .sidebar-item { padding: 22px 15px; text-align: left; padding-left: 25px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: 0.3s; font-weight: bold; color: #bcaaa4; }
         .sidebar-item.active { background: linear-gradient(90deg, rgba(255,202,40,0.1) 0%, rgba(255,202,40,0.2) 100%); color: #ffca28; border-right: 4px solid #ffca28; }
 
-        .modal-content-area { flex: 1; padding: 35px; position: relative; }
+        .modal-content-area { flex: 1; padding: 25px; position: relative; overflow: hidden; }
         
         .input-group { margin-bottom: 30px; }
         .input-group label { display: block; margin-bottom: 15px; color: #ffca28; font-size: 1.2rem; font-weight: bold; }
@@ -649,20 +649,22 @@
         }
 
         .transfer-details { display: none; width: 100%; height: 100%; }
-        .details-grid { display: grid; grid-template-columns: 1fr 180px; gap: 20px; height: 100%; align-items: start; }
+        .details-grid { display: grid; grid-template-columns: 1fr 200px; gap: 30px; height: 100%; align-items: start; }
         .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.08); align-items: center; }
-        .info-label { color: #bcaaa4; font-size: 0.9rem; }
-        .info-value { color: #fff; font-weight: 900; display: flex; align-items: center; gap: 10px; font-size: 1rem; }
-        .copy-btn { color: #ffca28; cursor: pointer; font-size: 1rem; }
+        .info-label { color: #bcaaa4; font-size: 0.95rem; }
+        .info-value { color: #fff; font-weight: 900; display: flex; align-items: center; gap: 10px; font-size: 1.1rem; text-align: right; }
+        .copy-btn { color: #ffca28; cursor: pointer; font-size: 1.1rem; }
         
         .qr-area { 
             background: #fff; 
             padding: 10px; 
             border-radius: 12px; 
-            width: 180px;
+            width: 100%;
             margin-top: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
-        .qr-image-box { width: 150px; height: 150px; margin: 0 auto 5px; display: flex; align-items: center; justify-content: center; }
+        .qr-image-box { width: 100%; max-width: 180px; height: auto; aspect-ratio: 1/1; margin: 0 auto 5px; display: flex; align-items: center; justify-content: center; }
+        .qr-image-box img { width: 100%; height: 100%; object-fit: contain; }
         .countdown-box { margin-top: 10px; font-size: 1rem; color: #00e676; font-weight: bold; text-align: center; }
 
         /* MODAL RÚT TIỀN STYLE */
