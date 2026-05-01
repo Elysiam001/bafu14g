@@ -1188,6 +1188,12 @@
             });
 
             showToast('Đã gửi lệnh cược ' + currentBetAmount.toLocaleString('vi-VN') + ' vào cửa ' + activeSide.toUpperCase(), 'success');
+            
+            // Cập nhật số tiền mình cược hiển thị ở dưới nút
+            const personalEl = document.getElementById(activeSide + '-personal');
+            let currentPersonal = parseInt(personalEl.innerText.replace(/\./g, '')) || 0;
+            personalEl.innerText = (currentPersonal + currentBetAmount).toLocaleString('vi-VN');
+
             hideBetPanel();
         }
 
