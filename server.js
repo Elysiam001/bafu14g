@@ -1,17 +1,16 @@
 const express = require('express');
 const http = require('http');
-const { Server } = require('socket.io');
+const { Server } = require("socket.io");
 const cors = require('cors');
 const mongoose = require('mongoose');
 require('dotenv').config();
-
 const path = require('path');
+
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, './'))); // Phục vụ toàn bộ thư mục gốc
+app.use(express.static(path.join(__dirname, './'))); 
 
-// Mặc định vào trang index.html khi truy cập link
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
@@ -24,45 +23,47 @@ const io = new Server(server, {
     }
 });
 
-// --- KẾT NỐI DATABASE ---
-const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/taixiu_bafu";
-mongoose.connect(MONGO_URI)
-    .then(() => console.log("✅ Đã kết nối MongoDB"))
-    .catch(err => console.log("❌ Lỗi kết nối MongoDB:", err));
+// Kết nối MongoDB
+mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/taixiu')
+    .then(() => console.log('✅ Đã kết nối MongoDB'))
+    .catch(err => console.error('❌ Lỗi kết nối MongoDB:', err));
 
-// --- LOGIC GAME (VÒNG LẶP VĨNH CỬU) ---
+// Trạng thái Game
 let gameState = {
-    phase: 'betting', // betting, result
     timeLeft: 30,
-    lastDices: [1, 2, 3],
+    phase: 'betting', // betting, result
+    lastDices: [1, 1, 1],
     totalBetTai: 0,
     totalBetXiu: 0,
     history: []
 };
 
+// Vòng lặp Game
 function runGameLoop() {
     setInterval(() => {
         gameState.timeLeft--;
 
         if (gameState.timeLeft <= 0) {
             if (gameState.phase === 'betting') {
-                // HẾT THỜI GIAN CƯỢC -> LẮC XÚC XẮC
+                // Hết thời gian cược, chuyển sang trả kết quả
                 gameState.phase = 'result';
                 gameState.timeLeft = 10;
                 
-                const d1 = Math.floor(Math.random() * 6) + 1;
-                const d2 = Math.floor(Math.random() * 6) + 1;
-                const d3 = Math.floor(Math.random() * 6) + 1;
-                gameState.lastDices = [d1, d2, d3];
+                // Lắc xúc xắc ngẫu nhiên
+                gameState.lastDices = [
+                    Math.floor(Math.random() * 6) + 1,
+                    Math.floor(Math.random() * 6) + 1,
+                    Math.floor(Math.random() * 6) + 1
+                ];
                 
-                const sum = d1 + d2 + d3;
-                const resultType = sum >= 11 ? 'Tai' : 'Xiu';
-                gameState.history.push(resultType === 'Tai' ? 1 : 0);
-                if(gameState.history.length > 20) gameState.history.shift();
+                const sum = gameState.lastDices.reduce((a, b) => a + b, 0);
+                const result = sum >= 11 ? 'Tai' : 'Xiu';
+                gameState.history.push({ dices: gameState.lastDices, result });
+                if (gameState.history.length > 20) gameState.history.shift();
 
-                console.log(`🎰 Kết quả: ${d1}-${d2}-${d3} (${sum}) -> ${resultType}`);
+                console.log(`Kết quả: ${gameState.lastDices.join(', ')} - ${result}`);
             } else {
-                // HẾT THỜI GIAN TRẢ THƯỞNG -> VÁN MỚI
+                // Hết thời gian chờ, quay lại đặt cược
                 gameState.phase = 'betting';
                 gameState.timeLeft = 30;
                 gameState.totalBetTai = 0;
@@ -70,36 +71,36 @@ function runGameLoop() {
             }
         }
 
-        // Gửi trạng thái game cho TẤT CẢ người chơi
+        // Gửi trạng thái mới nhất cho tất cả người chơi
         io.emit('gameUpdate', gameState);
     }, 1000);
 }
 
-// --- XỬ LÝ KẾT NỐI NGƯỜI CHƠI ---
+runGameLoop();
+
 io.on('connection', (socket) => {
-    console.log('👤 Người chơi mới kết nối:', socket.id);
+    console.log('Một người chơi đã kết nối:', socket.id);
     
-    // Gửi dữ liệu hiện tại ngay khi vừa vào
+    // Gửi trạng thái hiện tại cho người mới vào
     socket.emit('gameUpdate', gameState);
 
-    // Xử lý đặt cược
     socket.on('placeBet', (data) => {
-        // data: { username, amount, type }
         if (gameState.phase !== 'betting') return;
-
-        if (data.type === 'Tai') gameState.totalBetTai += data.amount;
-        else gameState.totalBetXiu += data.amount;
-
-        console.log(`💸 ${data.username} cược ${data.amount} vào ${data.type}`);
-        io.emit('betUpdate', { tai: gameState.totalBetTai, xiu: gameState.totalBetXiu });
+        
+        if (data.type === 'Tai') {
+            gameState.totalBetTai += data.amount;
+        } else {
+            gameState.totalBetXiu += data.amount;
+        }
+        
+        // Cập nhật cho mọi người
+        io.emit('gameUpdate', gameState);
     });
 
     socket.on('disconnect', () => {
-        console.log('❌ Người chơi ngắt kết nối');
+        console.log('Người chơi ngắt kết nối:', socket.id);
     });
 });
-
-runGameLoop();
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
