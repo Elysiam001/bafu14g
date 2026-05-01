@@ -776,6 +776,71 @@
         .btn-create-new { background: rgba(255,255,255,0.1) !important; color: #fff !important; }
         .btn-confirm-dep { background: linear-gradient(180deg, #00c853 0%, #1b5e20 100%) !important; color: #fff !important; }
         .dep-action-btn:hover { transform: scale(1.05); filter: brightness(1.2); }
+        /* --- HIỆU ỨNG THẮNG TRẦM TRỒ --- */
+        .win-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            pointer-events: none;
+            animation: fadeIn 0.5s forwards;
+        }
+        .win-box {
+            position: relative;
+            text-align: center;
+            animation: winPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .win-title {
+            font-size: 5rem;
+            font-weight: 900;
+            background: linear-gradient(to bottom, #fff7ad 0%, #f3c34d 45%, #b38600 55%, #6d5100 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 20px rgba(243, 195, 77, 0.8));
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        .win-amount {
+            font-size: 3.5rem;
+            color: #fff;
+            font-weight: 900;
+            text-shadow: 0 0 15px #f3c34d;
+            font-family: 'Montserrat', sans-serif;
+        }
+        @keyframes winPop {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .money-particle {
+            position: fixed;
+            font-size: 2rem;
+            color: #f3c34d;
+            pointer-events: none;
+            z-index: 10000;
+            animation: moneyFloat 2s ease-out forwards;
+        }
+        @keyframes moneyFloat {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-300px) rotate(360deg); opacity: 0; }
+        }
+        .win-glow-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            box-shadow: inset 0 0 100px #f3c34d;
+            pointer-events: none;
+            z-index: 9998;
+            opacity: 0;
+            animation: glowPulse 2s infinite;
+        }
+        @keyframes glowPulse {
+            0% { opacity: 0; }
+            50% { opacity: 0.3; }
+            100% { opacity: 0; }
+        }
     </style>
     <!-- Socket.io -->
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
@@ -991,6 +1056,16 @@
                 </div>
             </div>
         </div>
+
+        <!-- Cấu trúc cho hiệu ứng thắng -->
+        <div id="win-overlay" class="win-overlay">
+            <div class="win-box">
+                <div class="win-title">THẮNG LỚN</div>
+                <div class="win-amount" id="win-amount-text">+0</div>
+            </div>
+        </div>
+        <div id="win-glow" class="win-glow-screen"></div>
+        <div id="money-particles-container"></div>
     </div>
 
     <script src="assets/js/timer.js"></script>
@@ -1202,6 +1277,48 @@
             // Hiện view tương ứng
             document.getElementById('w-view-' + type).classList.add('active');
         }
+
+        // Lắng nghe kết quả cược
+        socket.on('betResult', (data) => {
+            if(data.win) {
+                showWinEffect(data.amount);
+            } else {
+                console.log("Rất tiếc! Bạn đã thua phiên này.");
+            }
+        });
+
+        function showWinEffect(amount) {
+            const overlay = document.getElementById('win-overlay');
+            const glow = document.getElementById('win-glow');
+            const amtText = document.getElementById('win-amount-text');
+            
+            amtText.innerText = "+" + amount.toLocaleString('vi-VN');
+            overlay.style.display = 'flex';
+            glow.style.opacity = '1';
+
+            // Tạo các hạt tiền bay
+            for(let i=0; i<20; i++) {
+                setTimeout(() => createMoneyParticle(), i * 100);
+            }
+
+            // Tự động ẩn sau 4 giây
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                glow.style.opacity = '0';
+            }, 4500);
+        }
+
+        function createMoneyParticle() {
+            const container = document.getElementById('money-particles-container');
+            const p = document.createElement('div');
+            p.className = 'money-particle';
+            p.innerHTML = '<i class="fas fa-coins"></i>';
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.top = (Math.random() * 20 + 80) + 'vh';
+            container.appendChild(p);
+            setTimeout(() => p.remove(), 2000);
+        }
+
         // --- AUTO SYNC USER ---
         window.addEventListener('DOMContentLoaded', () => {
             const username = 'okwwwwwwee'; // Tên người dùng hiện tại
