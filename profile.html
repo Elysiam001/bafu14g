@@ -947,12 +947,19 @@
             document.getElementById('user-display-name').innerText = dispName;
 
             // Nếu chưa có tên hiển thị thì hiện bảng yêu cầu đặt tên
+            const modal = document.getElementById('display-name-modal');
             if(!user.displayName) {
-                document.getElementById('display-name-modal').classList.add('active');
-                document.getElementById('display-name-modal').style.opacity = '1';
-                document.getElementById('display-name-modal').style.display = 'flex';
+                modal.classList.add('active');
+                modal.style.opacity = '1';
+                modal.style.display = 'flex';
             } else {
-                document.getElementById('display-name-modal').style.display = 'none';
+                modal.classList.remove('active');
+                modal.style.opacity = '0';
+                setTimeout(() => { modal.style.display = 'none'; }, 300);
+                if(document.getElementById('new-display-name').value) {
+                    showToast("Đã thiết lập tên hiển thị thành công!", "success");
+                    document.getElementById('new-display-name').value = ''; // Reset input
+                }
             }
         });
 
