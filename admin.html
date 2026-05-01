@@ -245,36 +245,44 @@
         });
 
         function loadWithdrawals() {
-            const data = JSON.parse(localStorage.getItem('casino_withdrawals') || '[]');
+            socket.emit('getPendingWithdrawals');
+        }
+
+        socket.on('receivePendingWithdrawals', (data) => {
             const body = document.getElementById('withdraw-table-body');
-            body.innerHTML = data.length ? '' : '<tr><td colspan="4" style="text-align:center;">Không có đơn rút</td></tr>';
-            data.reverse().forEach((w, i) => {
-                const idx = data.length - 1 - i;
+            body.innerHTML = data.length ? '' : '<tr><td colspan="4" style="text-align:center;">Không có đơn rút chờ duyệt</td></tr>';
+            data.forEach((w) => {
                 body.innerHTML += `<tr>
-                    <td>${w.user}</td>
-                    <td>${w.bank}<br><small>${w.account}</small></td>
-                    <td style="color: var(--danger);">-${w.amount}</td>
+                    <td><b>${w.user}</b></td>
+                    <td>${w.bank}<br><small>${w.account} - ${w.name}</small></td>
+                    <td style="color: var(--danger); font-weight: 800;">-${(w.amount || 0).toLocaleString()}</td>
                     <td>
-                        ${w.status === 'Pending' ? 
-                        `<button class="btn btn-approve" onclick="processWit(${idx}, 'Approved')">Duyệt Chi</button>` : 
-                        `<span class="badge badge-success">${w.status}</span>`}
+                        <button class="btn btn-approve" onclick="processWit('${w._id}')">Duyệt Chi</button>
                     </td>
                 </tr>`;
             });
+        });
+
+        function processWit(id) {
+            if(confirm("Duyệt chi số tiền này cho người chơi?")) {
+                socket.emit('approveWithdraw', id);
+            }
         }
+
+        socket.on('withdrawStatusUpdated', (wit) => {
+            loadWithdrawals();
+            updateStats();
+        });
+
+        socket.on('newWithdrawNotification', (wit) => {
+            loadWithdrawals();
+            updateStats();
+        });
 
         function processDep(id) {
             if(confirm("Duyệt đơn nạp này và cộng tiền cho user?")) {
                 socket.emit('approveDeposit', id);
             }
-        }
-
-        function processWit(idx, status) {
-            let data = JSON.parse(localStorage.getItem('casino_withdrawals'));
-            data[idx].status = status;
-            localStorage.setItem('casino_withdrawals', JSON.stringify(data));
-            loadWithdrawals();
-            updateStats();
         }
 
         function updateStats() {
@@ -285,6 +293,7 @@
         socket.on('adminStatsUpdate', (data) => {
             document.getElementById('stat-users').innerText = data.totalUsers;
             document.getElementById('stat-dep').innerText = data.pendingDep;
+            document.getElementById('stat-wit').innerText = data.pendingWit;
             document.getElementById('stat-online').innerText = data.onlineCount;
             
             // Cập nhật danh sách username online (giống như gameUpdate)

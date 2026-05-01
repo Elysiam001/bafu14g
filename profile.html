@@ -1308,20 +1308,15 @@
                 return;
             }
 
-            // --- LƯU ĐƠN RÚT VÀO DATABASE ---
-            let withdraws = JSON.parse(localStorage.getItem('casino_withdrawals') || '[]');
-            withdraws.push({
+            // Gửi lệnh rút lên server
+            socket.emit('createWithdraw', {
                 user: 'okwwwwwwee',
                 bank: bank,
                 account: account,
                 name: name,
-                amount: parseInt(amt).toLocaleString('vi-VN'),
-                time: new Date().toLocaleString('vi-VN'),
-                status: 'Pending'
+                amount: parseInt(amt)
             });
-            localStorage.setItem('casino_withdrawals', JSON.stringify(withdraws));
 
-            showToast("Yêu cầu rút tiền đã được gửi! Vui lòng chờ Admin duyệt.", "success");
             closeWithdrawModal();
         }
         function switchWTab(el, type) {

@@ -49,6 +49,18 @@ const depositSchema = new mongoose.Schema({
 });
 const Deposit = mongoose.model('Deposit', depositSchema);
 
+// Schema Rút tiền
+const withdrawSchema = new mongoose.Schema({
+    user: String,
+    bank: String,
+    account: String,
+    name: String,
+    amount: Number,
+    status: { type: String, default: 'Pending' },
+    createdAt: { type: Date, default: Date.now }
+});
+const Withdraw = mongoose.model('Withdraw', withdrawSchema);
+
 // Trạng thái Game
 let gameState = {
     timeLeft: 30,
@@ -263,11 +275,59 @@ io.on('connection', (socket) => {
             socket.emit('adminStatsUpdate', {
                 totalUsers,
                 pendingDep,
+                pendingWit: await Withdraw.countDocuments({ status: 'Pending' }),
                 onlineCount: gameState.onlineUsers.length,
                 onlineUsers: gameState.onlineUsers
             });
         } catch (err) {
             console.error('Lỗi lấy stats:', err);
+        }
+    });
+
+    // --- XỬ LÝ RÚT TIỀN ---
+    socket.on('createWithdraw', async (data) => {
+        try {
+            const user = await User.findOne({ username: data.user });
+            if (!user || user.balance < data.amount) {
+                return socket.emit('errorMsg', 'Số dư không đủ để rút!');
+            }
+            
+            // Trừ tiền ngay khi tạo lệnh rút (treo tiền)
+            user.balance -= data.amount;
+            await user.save();
+            socket.emit('balanceUpdate', { balance: user.balance });
+
+            const newWit = await Withdraw.create({
+                user: data.user,
+                bank: data.bank,
+                account: data.account,
+                name: data.name,
+                amount: data.amount
+            });
+            console.log(`Đơn rút mới: ${data.user} - ${data.amount}`);
+            io.emit('newWithdrawNotification', newWit);
+            showToast('Yêu cầu rút tiền đã được gửi!', 'success');
+        } catch (err) {
+            console.error('Lỗi tạo đơn rút:', err);
+        }
+    });
+
+    socket.on('getPendingWithdrawals', async () => {
+        const wits = await Withdraw.find({ status: 'Pending' }).sort({ createdAt: -1 });
+        socket.emit('receivePendingWithdrawals', wits);
+    });
+
+    socket.on('approveWithdraw', async (withdrawId) => {
+        try {
+            const wit = await Withdraw.findById(withdrawId);
+            if (wit && wit.status === 'Pending') {
+                wit.status = 'Approved';
+                await wit.save();
+                console.log(`Đã duyệt rút tiền: ${wit.user} - ${wit.amount}`);
+                io.emit('withdrawStatusUpdated', wit);
+            }
+        } catch (err) {
+            console.error('Lỗi duyệt rút:', err);
         }
     });
 });
