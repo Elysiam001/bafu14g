@@ -90,9 +90,8 @@
             width: 235px !important;
             height: 235px !important;
             flex-shrink: 0 !important;
-            background: #ffffff !important;
-            border: 2px solid #fff8e1 !important;
-            outline: 6px solid #ffca28 !important;
+            background: radial-gradient(circle, #002e35 0%, #003b44 100%) !important;
+            border: 4px solid #00f2ff !important;
             border-radius: 50% !important;
             position: relative !important;
             display: flex !important;
@@ -1266,21 +1265,33 @@
 
         // Cập nhật lại socket listener để gọi reset khi bắt đầu phiên mới
         socket.on('gameUpdate', (state) => {
-            const timerEl = document.querySelector('#timer span');
-            if(timerEl) timerEl.innerText = state.timeLeft;
+            const timerDiv = document.getElementById('timer');
+            const timerSpan = timerDiv ? timerDiv.querySelector('span') : null;
+            
+            if(timerSpan) timerSpan.innerText = state.timeLeft;
             
             document.getElementById('tai-total').innerText = (state.totalBetTai || 0).toLocaleString('vi-VN');
             document.getElementById('xiu-total').innerText = (state.totalBetXiu || 0).toLocaleString('vi-VN');
 
             if(state.phase === 'result') {
                 if(state.timeLeft === 10) {
-                    window.openBowl(state.lastDices[0], state.lastDices[1], state.lastDices[2]);
-                    document.getElementById('timer').style.opacity = '0';
+                    // Mở bát và gán xúc xắc
+                    if(gameDice) {
+                        gameDice.stopRolling(state.lastDices);
+                    }
+                    // Ẩn timer khi trả kết quả
+                    if(timerDiv) timerDiv.style.display = 'none';
+                    document.getElementById('solar-aura').style.display = 'block';
                 }
             } else {
-                document.getElementById('timer').style.opacity = '1';
+                // Phase betting
+                if(timerDiv) timerDiv.style.display = 'flex';
                 if(state.timeLeft === 30) {
-                    resetGameUI();
+                    // Reset cho phiên mới
+                    if(gameDice) gameDice.hide();
+                    document.getElementById('solar-aura').style.display = 'none';
+                    document.querySelectorAll('.side').forEach(s => s.classList.remove('winner'));
+                    document.querySelectorAll('.tai-text, .xiu-text').forEach(t => t.classList.remove('win-glow'));
                     document.getElementById('tai-personal').innerText = '0';
                     document.getElementById('xiu-personal').innerText = '0';
                 }
