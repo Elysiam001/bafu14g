@@ -57,8 +57,11 @@ document.addEventListener('DOMContentLoaded', () => {
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const username = document.getElementById('login-username').value;
-        alert('Chào mừng ' + username + '! Bạn đã đăng nhập thành công (Bản Demo).');
-        // Redirect to profile or game
+        
+        // Lưu lại username để trang profile dùng
+        localStorage.setItem('currentUser', username);
+        
+        alert('Chào mừng ' + username + '! Bạn đã đăng nhập thành công.');
         window.location.href = 'profile.html';
     });
 
