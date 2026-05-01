@@ -604,6 +604,7 @@
             color: #fff;
             opacity: 0;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
         }
         .deposit-modal.active {
             transform: translate(-50%, -50%) scale(1) !important;
@@ -647,16 +648,22 @@
             box-shadow: 0 5px 20px rgba(0, 200, 83, 0.4);
         }
 
-        .transfer-details { display: none; width: 100%; }
-        .details-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 25px; }
-        .info-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08); align-items: center; }
-        .info-label { color: #bcaaa4; font-size: 0.95rem; }
-        .info-value { color: #fff; font-weight: 900; display: flex; align-items: center; gap: 12px; font-size: 1.1rem; }
-        .copy-btn { color: #ffca28; cursor: pointer; font-size: 1.1rem; }
+        .transfer-details { display: none; width: 100%; height: 100%; }
+        .details-grid { display: grid; grid-template-columns: 1fr 180px; gap: 20px; height: 100%; align-items: start; }
+        .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.08); align-items: center; }
+        .info-label { color: #bcaaa4; font-size: 0.9rem; }
+        .info-value { color: #fff; font-weight: 900; display: flex; align-items: center; gap: 10px; font-size: 1rem; }
+        .copy-btn { color: #ffca28; cursor: pointer; font-size: 1rem; }
         
-        .qr-area { text-align: center; background: #fff; padding: 12px; border-radius: 12px; }
-        .qr-image-box { width: 160px; height: 160px; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; }
-        .countdown-box { margin-top: 15px; font-size: 1.1rem; color: #00e676; font-weight: bold; text-align: center; }
+        .qr-area { 
+            background: #fff; 
+            padding: 10px; 
+            border-radius: 12px; 
+            width: 180px;
+            margin-top: 10px;
+        }
+        .qr-image-box { width: 150px; height: 150px; margin: 0 auto 5px; display: flex; align-items: center; justify-content: center; }
+        .countdown-box { margin-top: 10px; font-size: 1rem; color: #00e676; font-weight: bold; text-align: center; }
 
         /* MODAL RÚT TIỀN STYLE */
         .withdraw-modal {
@@ -675,6 +682,7 @@
             color: #fff;
             opacity: 0;
             transition: 0.3s;
+            overflow: hidden;
         }
         .withdraw-modal.active { transform: translate(-50%, -50%) scale(1); opacity: 1; display: flex; }
 
