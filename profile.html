@@ -194,34 +194,56 @@
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 210px; height: 210px;
-            background: radial-gradient(circle at 35% 35%, #fff176 0%, #ffca28 40%, #8d6e63 100%);
-            border: 4px solid #ffca28;
+            width: 220px; height: 220px;
+            background: radial-gradient(circle at 35% 35%, 
+                #ffffff 0%, 
+                #ffca28 25%, 
+                #8d6e63 65%, 
+                #3e2723 100%);
+            border: 6px solid #ffca28;
             border-radius: 50%;
             z-index: 20;
             transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             pointer-events: none;
             box-shadow: 
-                0 15px 35px rgba(0,0,0,0.8),
-                inset -10px -10px 20px rgba(0,0,0,0.4),
-                inset 10px 10px 20px rgba(255,255,255,0.5);
+                0 30px 60px rgba(0,0,0,0.9),
+                inset -20px -20px 40px rgba(0,0,0,0.7),
+                inset 20px 20px 40px rgba(255,255,255,0.4);
         }
 
-        /* Quai cầm trên bát */
+        /* Quai cầm trên bát (Handle) */
         .bowl-overlay::after {
             content: '';
             position: absolute;
-            top: -12px; left: 50%;
+            top: -15px; left: 50%;
             transform: translateX(-50%);
-            width: 45px; height: 20px;
-            background: linear-gradient(180deg, #ffca28, #bf360c);
-            border-radius: 15px 15px 0 0;
-            border: 2px solid #fff;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            width: 55px; height: 30px;
+            background: linear-gradient(180deg, #ffca28, #795548);
+            border-radius: 25px 25px 0 0;
+            border: 3px solid #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+        }
+
+        /* Hiệu ứng vành bát */
+        .bowl-overlay::before {
+            content: '';
+            position: absolute;
+            top: 10px; left: 10px; right: 10px; bottom: 10px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+        }
+
+        .bowl-overlay.shaking {
+            animation: bowl-shake 0.1s infinite alternate;
+        }
+
+        @keyframes bowl-shake {
+            0% { transform: translate(-52%, -48%) rotate(-3deg); }
+            100% { transform: translate(-48%, -52%) rotate(3deg); }
         }
 
         .bowl-overlay.opening {
-            transform: translate(50%, -120%) rotate(45deg);
+            transform: translate(60%, -150%) rotate(60deg);
             opacity: 0;
         }
 
@@ -247,17 +269,22 @@
         }
         .hash-input { flex: 1; margin: 0 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-        /* WIN RADIANT EFFECT */
+        /* WIN RADIANT EFFECT - ULTRA INTENSE */
         .winner .tai-text, .winner .xiu-text {
-            animation: radiant-pulse 0.8s infinite alternate !important;
+            animation: radiant-pulse 0.5s infinite alternate !important;
             color: #fff !important;
-            text-shadow: 0 0 10px #fff, 0 0 20px #ffca28, 0 0 40px #ffca28, 0 0 60px #ffca28 !important;
+            text-shadow: 
+                0 0 10px #fff, 
+                0 0 20px #ffca28, 
+                0 0 40px #ffca28, 
+                0 0 80px #ffca28,
+                0 0 120px #ff9100 !important;
             z-index: 100 !important;
             position: relative;
         }
         @keyframes radiant-pulse {
-            from { transform: scale(1.1); filter: brightness(1.2) drop-shadow(0 0 10px #ffca28); }
-            to { transform: scale(1.35); filter: brightness(2) drop-shadow(0 0 30px #ffca28); }
+            from { transform: scale(1.1); filter: brightness(1.2) drop-shadow(0 0 15px #ffca28); }
+            to { transform: scale(1.4); filter: brightness(2.5) drop-shadow(0 0 40px #ffca28); }
         }
         .side.winner::before {
             content: '';
@@ -543,7 +570,10 @@
             document.getElementById('xiu-total').innerText = (state.totalBetXiu || 0).toLocaleString('vi-VN');
 
             if(state.phase === 'result') {
-                if(state.timeLeft === 10) {
+                if(state.timeLeft > 8) {
+                    gameBowl.shake();
+                } else if(state.timeLeft === 8) {
+                    gameBowl.stopShaking();
                     gameDice.stopRolling(state.lastDices);
                     gameBowl.open();
                     const sum = state.lastDices.reduce((a,b) => a+b, 0);
@@ -563,8 +593,8 @@
                 }
             }
             
-            document.getElementById('tai-personal').innerText = myBets.Tai.toLocaleString('vi-VN');
-            document.getElementById('xiu-personal').innerText = myBets.Xiu.toLocaleString('vi-VN');
+            document.getElementById('tai-personal').innerText = (myBets.Tai || 0).toLocaleString('vi-VN');
+            document.getElementById('xiu-personal').innerText = (myBets.Xiu || 0).toLocaleString('vi-VN');
 
             // History
             const hRow = document.getElementById('history-row');
@@ -580,9 +610,16 @@
         socket.on('betResult', (data) => {
             if(data.win) {
                 const overlay = document.getElementById('win-overlay');
-                document.getElementById('win-amount-text').innerText = "+" + data.amount.toLocaleString('vi-VN');
+                document.getElementById('win-amount-text').innerText = "+" + Math.floor(data.amount).toLocaleString('vi-VN');
                 overlay.style.display = 'flex';
-                setTimeout(() => overlay.style.display = 'none', 4000);
+                setTimeout(() => { overlay.style.display = 'none'; }, 5000);
+            }
+        });
+
+        socket.on('balanceUpdateNotification', (data) => {
+            if(data.username === myUsername) {
+                document.getElementById('user-balance').innerText = Math.floor(data.balance).toLocaleString('vi-VN');
+                showToast("Số dư đã được cập nhật!", "success");
             }
         });
 
@@ -610,6 +647,14 @@
             const name = document.getElementById('new-display-name').value;
             if(name.length < 3) return showToast("Tên quá ngắn!", "error");
             socket.emit('updateDisplayName', { username: myUsername, displayName: name });
+            // Cập nhật ngay lập tức UI mà không cần đợi server hoàn toàn (optimistic update)
+            document.getElementById('user-display-name').innerText = name;
+            const modal = document.getElementById('display-name-modal');
+            modal.classList.remove('active');
+            setTimeout(() => { 
+                modal.style.display = 'none';
+                showToast("Đã cập nhật tên hiển thị!", "success");
+            }, 300);
         }
 
         function logout() { localStorage.removeItem('currentUser'); window.location.href = 'index.html'; }
