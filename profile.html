@@ -181,11 +181,16 @@
         }
 
         .sha-timer-circle {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
             font-family: 'Montserrat', sans-serif;
-            font-size: 7rem;
+            font-size: 6rem;
             font-weight: 900;
             color: #ffca28;
-            text-shadow: 0 0 20px rgba(255,202,40,0.5);
+            text-shadow: 0 0 20px rgba(255,202,40,0.8), 0 0 40px rgba(0,0,0,0.5);
+            z-index: 150;
+            pointer-events: none;
         }
 
         .dice-list { display: none; gap: 15px; position: absolute; z-index: 10; top: 50%; left: 50%; transform: translate(-50%, -50%); }
@@ -451,13 +456,13 @@
                         <div class="username-text" style="color: #fff; margin-top: 5px;">Bạn: <span id="tai-personal" style="color: #ffca28;">0</span></div>
                     </div>
 
-                    <div class="dice-center" id="game-bowl-container">
-                        <div class="dice-list" id="dice-list">
-                            <i class="fas fa-dice-one"></i><i class="fas fa-dice-two"></i><i class="fas fa-dice-three"></i>
+                        <div class="dice-center" id="game-bowl-container">
+                            <div class="dice-list" id="dice-list">
+                                <i class="fas fa-dice-one"></i><i class="fas fa-dice-two"></i><i class="fas fa-dice-three"></i>
+                            </div>
+                            <div class="bowl-overlay" id="actual-bowl"></div>
+                            <div class="sha-timer-circle" id="timer"><span>30</span></div>
                         </div>
-                        <div class="sha-timer-circle" id="timer"><span>30</span></div>
-                        <div class="bowl-overlay" id="actual-bowl"></div>
-                    </div>
 
                     <div class="side" id="side-xiu">
                         <h2 class="xiu-text">XỈU</h2>
