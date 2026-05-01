@@ -8,6 +8,7 @@ require('dotenv').config();
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.static('./')); // Phục vụ file giao diện tĩnh
 
 const server = http.createServer(app);
 const io = new Server(server, {

@@ -778,6 +778,27 @@
         .btn-confirm-dep { background: linear-gradient(180deg, #00c853 0%, #1b5e20 100%) !important; color: #fff !important; }
         .dep-action-btn:hover { transform: scale(1.05); filter: brightness(1.2); }
     </style>
+    <!-- Socket.io -->
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script>
+        const socket = io(); // Kết nối tới Server Render
+
+        socket.on('gameUpdate', (state) => {
+            const timerEl = document.getElementById('timer-count');
+            if(timerEl) timerEl.innerText = state.timeLeft;
+            
+            // Đồng bộ trạng thái cược
+            document.getElementById('tai-total').innerText = (state.totalBetTai || 0).toLocaleString('vi-VN');
+            document.getElementById('xiu-total').innerText = (state.totalBetXiu || 0).toLocaleString('vi-VN');
+
+            // Xử lý mở bát khi Server báo Hết giờ
+            if(state.phase === 'result' && state.timeLeft === 10) {
+                if(typeof window.openBowl === 'function') {
+                    window.openBowl(state.lastDices[0], state.lastDices[1], state.lastDices[2]);
+                }
+            }
+        });
+    </script>
 </head>
 <body>
     <!-- MODAL NẠP TIỀN -->
@@ -1226,15 +1247,15 @@
                 alert('Vui lòng chọn số tiền cược!');
                 return;
             }
-            const personalEl = document.getElementById(activeSide + '-personal');
-            const currentPersonal = parseInt(personalEl.innerText.replace(/\./g, '')) || 0;
-            personalEl.innerText = (currentPersonal + currentBetAmount).toLocaleString('vi-VN');
-
-            const totalEl = document.getElementById(activeSide + '-total');
-            const currentTotal = parseInt(totalEl.innerText.replace(/\./g, '')) || 0;
-            totalEl.innerText = (currentTotal + currentBetAmount).toLocaleString('vi-VN');
             
-            alert('Bạn đã đặt ' + currentBetAmount.toLocaleString('vi-VN') + ' vào cửa ' + activeSide.toUpperCase());
+            // Gửi lệnh cược lên Server
+            socket.emit('placeBet', {
+                username: 'okwwwwwwee', // Tên của bạn
+                amount: currentBetAmount,
+                type: activeSide === 'tai' ? 'Tai' : 'Xiu'
+            });
+
+            alert('Đã gửi lệnh cược ' + currentBetAmount.toLocaleString('vi-VN') + ' vào cửa ' + activeSide.toUpperCase());
             hideBetPanel();
         }
 
