@@ -649,7 +649,7 @@
         }
 
         .transfer-details { display: none; width: 100%; height: 100%; }
-        .details-grid { display: grid; grid-template-columns: 1fr 200px; gap: 30px; height: 100%; align-items: start; }
+        .details-grid { display: grid; grid-template-columns: 1fr 220px; gap: 40px; height: 100%; align-items: start; }
         .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.08); align-items: center; }
         .info-label { color: #bcaaa4; font-size: 0.95rem; }
         .info-value { color: #fff; font-weight: 900; display: flex; align-items: center; gap: 10px; font-size: 1.1rem; text-align: right; }
@@ -657,11 +657,15 @@
         
         .qr-area { 
             background: #fff; 
-            padding: 10px; 
+            padding: 15px; 
             border-radius: 12px; 
             width: 100%;
             margin-top: 10px;
+            margin-right: 20px; /* Cách lề phải khung */
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .qr-image-box { width: 100%; max-width: 180px; height: auto; aspect-ratio: 1/1; margin: 0 auto 5px; display: flex; align-items: center; justify-content: center; }
         .qr-image-box img { width: 100%; height: 100%; object-fit: contain; }
