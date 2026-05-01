@@ -886,35 +886,43 @@
     <script>
         const socket = io(); // Kết nối tới Server Render
 
+        let myBets = { Tai: 0, Xiu: 0 };
+
         socket.on('gameUpdate', (state) => {
             // Cập nhật Timer
-            const timerEl = document.querySelector('#timer span');
-            if(timerEl) timerEl.innerText = state.timeLeft;
+            const timerDiv = document.getElementById('timer');
+            const timerSpan = timerDiv ? timerDiv.querySelector('span') : null;
+            if(timerSpan) timerSpan.innerText = state.timeLeft;
             
             // Đồng bộ trạng thái cược tổng
-            document.getElementById('tai-total').innerText = (state.totalBetTai || 0).toLocaleString('vi-VN');
-            document.getElementById('xiu-total').innerText = (state.totalBetXiu || 0).toLocaleString('vi-VN');
+            const taiTotal = document.getElementById('tai-total');
+            const xiuTotal = document.getElementById('xiu-total');
+            if(taiTotal) taiTotal.innerText = (state.totalBetTai || 0).toLocaleString('vi-VN');
+            if(xiuTotal) xiuTotal.innerText = (state.totalBetXiu || 0).toLocaleString('vi-VN');
 
             // Xử lý chuyển phase
             if(state.phase === 'result') {
-                // Nếu vừa chuyển sang result (giây thứ 10), mở bát
                 if(state.timeLeft === 10) {
                     if(typeof window.openBowl === 'function') {
                         window.openBowl(state.lastDices[0], state.lastDices[1], state.lastDices[2]);
                     }
-                    // Ẩn timer khi đang trả kết quả
-                    document.getElementById('timer').style.opacity = '0';
+                    if(timerDiv) timerDiv.style.opacity = '0';
                 }
             } else {
-                // Phase betting: Hiện lại timer, reset các trạng thái UI nếu cần
-                document.getElementById('timer').style.opacity = '1';
+                if(timerDiv) timerDiv.style.opacity = '1';
                 
-                // Reset tiền cược cá nhân hiển thị trên bàn nếu là giây đầu tiên của phiên mới
+                // Reset phiên mới
                 if(state.timeLeft === 30) {
+                    myBets = { Tai: 0, Xiu: 0 };
                     document.getElementById('tai-personal').innerText = '0';
                     document.getElementById('xiu-personal').innerText = '0';
+                    if(typeof resetGameUI === 'function') resetGameUI();
                 }
             }
+            
+            // Cập nhật lại số tiền mình cược từ bộ nhớ tạm
+            document.getElementById('tai-personal').innerText = myBets.Tai.toLocaleString('vi-VN');
+            document.getElementById('xiu-personal').innerText = myBets.Xiu.toLocaleString('vi-VN');
         });
     </script>
 </head>
@@ -1189,10 +1197,12 @@
 
             showToast('Đã gửi lệnh cược ' + currentBetAmount.toLocaleString('vi-VN') + ' vào cửa ' + activeSide.toUpperCase(), 'success');
             
-            // Cập nhật số tiền mình cược hiển thị ở dưới nút
-            const personalEl = document.getElementById(activeSide + '-personal');
-            let currentPersonal = parseInt(personalEl.innerText.replace(/\./g, '')) || 0;
-            personalEl.innerText = (currentPersonal + currentBetAmount).toLocaleString('vi-VN');
+            // Cập nhật vào bộ nhớ tạm để gameUpdate không ghi đè mất
+            const sideKey = activeSide === 'tai' ? 'Tai' : 'Xiu';
+            myBets[sideKey] += currentBetAmount;
+            
+            // Cập nhật hiển thị ngay lập tức
+            document.getElementById(activeSide + '-personal').innerText = myBets[sideKey].toLocaleString('vi-VN');
 
             hideBetPanel();
         }
