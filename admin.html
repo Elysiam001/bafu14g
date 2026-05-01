@@ -117,9 +117,19 @@
         <section id="dashboard-sec" class="content-section active">
             <div class="stats-grid">
                 <div class="stat-card"><span class="stat-label">Tổng người chơi</span><span class="stat-value" id="stat-users">0</span></div>
+                <div class="stat-card"><span class="stat-label">Người đang ON</span><span class="stat-value" id="stat-online">0</span></div>
                 <div class="stat-card"><span class="stat-label">Đơn nạp chờ</span><span class="stat-value" id="stat-dep">0</span></div>
-                <div class="stat-card"><span class="stat-label">Đơn rút chờ</span><span class="stat-value" id="stat-wit">0</span></div>
                 <div class="stat-card"><span class="stat-label">Trạng thái</span><span class="stat-value" style="color: var(--success);">ONLINE</span></div>
+            </div>
+
+            <!-- DANH SÁCH ONLINE -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3>Người chơi đang trực tuyến</h3>
+                </div>
+                <div id="online-users-list" style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    <p style="color: var(--text-muted);">Đang tải danh sách...</p>
+                </div>
             </div>
         </section>
 
@@ -178,6 +188,26 @@
             if(tabId === 'withdraws') loadWithdrawals();
             updateStats();
         }
+
+        socket.on('gameUpdate', (state) => {
+            // Cập nhật thống kê online
+            document.getElementById('stat-online').innerText = state.onlineUsers.length;
+            
+            // Cập nhật danh sách username online
+            const onlineList = document.getElementById('online-users-list');
+            if (state.onlineUsers.length === 0) {
+                onlineList.innerHTML = '<p style="color: var(--text-muted);">Không có ai trực tuyến</p>';
+            } else {
+                onlineList.innerHTML = '';
+                state.onlineUsers.forEach(user => {
+                    onlineList.innerHTML += `
+                        <div style="background: rgba(16, 185, 129, 0.1); color: var(--success); padding: 8px 15px; border-radius: 20px; font-weight: 700; border: 1px solid var(--success);">
+                            <i class="fas fa-circle" style="font-size: 0.6rem; margin-right: 5px;"></i> ${user}
+                        </div>
+                    `;
+                });
+            }
+        });
 
         function loadUsers() {
             // Hiện tại users vẫn lấy demo hoặc từ server nếu bạn muốn mở rộng thêm API get users

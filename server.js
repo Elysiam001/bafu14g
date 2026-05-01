@@ -57,7 +57,9 @@ let gameState = {
     totalBetTai: 0,
     totalBetXiu: 0,
     history: [],
-    bets: [] // Lưu trữ các cược trong phiên: { username, amount, type, socketId }
+    bets: [],
+    lastDices: [1, 2, 3],
+    onlineUsers: []
 };
 
 // Vòng lặp Game
@@ -123,6 +125,8 @@ function runGameLoop() {
 
 runGameLoop();
 
+const onlineSockets = new Map(); // socket.id -> username
+
 io.on('connection', (socket) => {
     console.log('Một người chơi đã kết nối:', socket.id);
     
@@ -142,6 +146,11 @@ io.on('connection', (socket) => {
                 });
             }
             socket.emit('balanceUpdate', { balance: user.balance, diamond: user.diamond });
+            
+            // Thêm vào danh sách online
+            onlineSockets.set(socket.id, username);
+            gameState.onlineUsers = Array.from(new Set(onlineSockets.values()));
+            io.emit('gameUpdate', gameState);
         } catch (err) {
             console.error('Lỗi lấy user:', err);
         }
@@ -184,6 +193,13 @@ io.on('connection', (socket) => {
     });
 
     socket.on('disconnect', () => {
+        const username = onlineSockets.get(socket.id);
+        if (username) {
+            onlineSockets.delete(socket.id);
+            // Cập nhật lại danh sách onlineUsers trong gameState
+            gameState.onlineUsers = Array.from(new Set(onlineSockets.values()));
+            io.emit('gameUpdate', gameState);
+        }
         console.log('Người chơi ngắt kết nối:', socket.id);
     });
 
