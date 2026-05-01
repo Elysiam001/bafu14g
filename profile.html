@@ -931,7 +931,39 @@
     <script>
         const socket = io(); // Kết nối tới Server Render
 
+        const myUsername = 'okwwwwwwee'; // Giả lập username đăng nhập
         let myBets = { Tai: 0, Xiu: 0 };
+
+        // Lấy thông tin user khi load
+        socket.emit('getUserData', myUsername);
+
+        socket.on('userDataUpdate', (user) => {
+            // Cập nhật số dư
+            document.getElementById('user-balance').innerText = user.balance.toLocaleString('vi-VN');
+            document.getElementById('user-diamond').innerText = user.diamond.toLocaleString('vi-VN');
+            
+            // Cập nhật tên hiển thị
+            const dispName = user.displayName || user.username;
+            document.getElementById('user-display-name').innerText = dispName;
+
+            // Nếu chưa có tên hiển thị thì hiện bảng yêu cầu đặt tên
+            if(!user.displayName) {
+                document.getElementById('display-name-modal').classList.add('active');
+                document.getElementById('display-name-modal').style.opacity = '1';
+                document.getElementById('display-name-modal').style.display = 'flex';
+            } else {
+                document.getElementById('display-name-modal').style.display = 'none';
+            }
+        });
+
+        function confirmDisplayName() {
+            const newName = document.getElementById('new-display-name').value;
+            if(!newName || newName.length < 3) {
+                showToast("Tên hiển thị phải ít nhất 3 ký tự!", "error");
+                return;
+            }
+            socket.emit('updateDisplayName', { username: myUsername, displayName: newName });
+        }
 
         socket.on('gameUpdate', (state) => {
             // Cập nhật Timer
@@ -1049,6 +1081,18 @@
             </div>
         </div>
     </div>
+
+    <!-- MODAL TÊN HIỂN THỊ -->
+    <div class="deposit-modal" id="display-name-modal" style="height: auto; width: 400px;">
+        <div class="modal-header">
+            <div class="modal-title">TÊN HIỂN THỊ</div>
+        </div>
+        <div class="modal-body" style="flex-direction: column; padding: 25px; text-align: center;">
+            <p style="color: #bcaaa4; margin-bottom: 15px; font-size: 0.9rem;">Vui lòng thiết lập tên hiển thị của bạn:</p>
+            <input type="text" id="new-display-name" class="input-control" placeholder="Nhập tên hiển thị..." style="text-align: center;">
+            <button class="get-info-btn" style="margin-top: 25px; width: 100%;" onclick="confirmDisplayName()">XÁC NHẬN</button>
+        </div>
+    </div>
     <div class="lobby-wrapper">
         <!-- Premium Header Bar -->
         <header class="premium-header">
@@ -1059,7 +1103,7 @@
                 </div>
                 <div class="user-meta">
                     <span class="vip-text">VIP 0</span>
-                    <span class="username-text">okwwwwwwee</span>
+                    <span class="username-text" id="user-display-name">...</span>
                     <div class="balance-group">
                         <div class="balance-item">
                             <i class="fas fa-coins" style="color: #f3c34d;"></i> <span id="user-balance">0</span>

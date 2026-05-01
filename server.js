@@ -31,6 +31,7 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/taixiu')
 // Schema Người dùng
 const userSchema = new mongoose.Schema({
     username: { type: String, unique: true, required: true },
+    displayName: { type: String, default: '' },
     balance: { type: Number, default: 0 },
     diamond: { type: Number, default: 0 },
     email: String,
@@ -201,6 +202,33 @@ io.on('connection', (socket) => {
         } catch (err) {
             console.error('Lỗi đặt cược:', err);
             socket.emit('errorMsg', 'Đã xảy ra lỗi khi đặt cược!');
+        }
+    });
+
+    // Lấy thông tin User
+    socket.on('getUserData', async (username) => {
+        try {
+            let user = await User.findOne({ username });
+            if (!user) {
+                user = new User({ username });
+                await user.save();
+            }
+            socket.emit('userDataUpdate', user);
+        } catch (err) {
+            console.error(err);
+        }
+    });
+
+    socket.on('updateDisplayName', async (data) => {
+        try {
+            const user = await User.findOneAndUpdate(
+                { username: data.username },
+                { displayName: data.displayName },
+                { new: true }
+            );
+            if(user) socket.emit('userDataUpdate', user);
+        } catch (err) {
+            console.error(err);
         }
     });
 
