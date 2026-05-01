@@ -82,22 +82,23 @@
         .h-icon:hover { transform: scale(1.2); color: #fff; }
         .dot-notify { position: absolute; top: -2px; right: -2px; width: 10px; height: 10px; background: #ff1744; border-radius: 50%; border: 2px solid #211613; }
 
-        /* SHA BOARD DRAGGABLE */
+        /* SHA BOARD - Tăng chiều cao để không bị chèn */
         .sha-board {
-            width: 800px;
-            height: 420px;
+            width: 820px;
+            height: 480px;
             background: 
                 url('https://www.transparenttextures.com/patterns/carbon-fibre.png'),
                 radial-gradient(circle at center, #00acc1 0%, #00363a 100%) !important;
-            border: 3px solid #00f2ff !important;
-            box-shadow: 0 0 60px rgba(0, 242, 255, 0.5), inset 0 0 120px rgba(0,0,0,0.8) !important;
+            border: 3px solid #ffca28 !important;
+            box-shadow: 0 0 60px rgba(0, 0, 0, 0.8), inset 0 0 120px rgba(0,0,0,0.8) !important;
             position: absolute;
             left: 50%; top: 50%;
             transform: translate(-50%, -50%);
-            border-radius: 30px;
+            border-radius: 40px;
             display: flex;
             flex-direction: column;
             user-select: none;
+            overflow: hidden;
         }
 
         .board-top {
@@ -133,10 +134,11 @@
         .betting-grid {
             flex: 1;
             display: grid;
-            grid-template-columns: 1fr 240px 1fr;
-            padding: 20px;
+            grid-template-columns: 1fr 280px 1fr;
+            padding: 10px 30px;
             align-items: center;
             text-align: center;
+            gap: 20px;
         }
 
         .side { display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative; }
@@ -242,24 +244,34 @@
         }
 
         .history-row {
-            height: 40px;
-            background: rgba(0,0,0,0.4);
-            display: flex; align-items: center; justify-content: center; gap: 8px;
+            height: 35px;
+            background: rgba(0,0,0,0.6);
+            display: flex; align-items: center; justify-content: center; gap: 6px;
             padding: 0 20px;
-            border-radius: 0 0 30px 30px;
+            position: absolute;
+            bottom: 55px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 20px;
+            border: 1px solid rgba(255,202,40,0.2);
+            z-index: 5;
         }
-        .h-dot { width: 14px; height: 14px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); }
+        .h-dot { width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); }
         .h-dot.red { background: #ff1744; box-shadow: 0 0 10px #ff1744; }
         .h-dot.white { background: #fff; box-shadow: 0 0 10px #fff; }
 
         .bottom-sha {
-            height: 40px;
-            background: rgba(0,0,0,0.8);
+            height: 45px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.9), #000);
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 20px;
+            padding: 0 25px;
             font-family: monospace;
-            font-size: 0.8rem;
-            color: #00f2ff;
+            font-size: 0.85rem;
+            color: #ffca28;
+            border-top: 1px solid rgba(255,202,40,0.3);
+            position: absolute;
+            bottom: 0;
+            width: 100%;
         }
         .hash-input { flex: 1; margin: 0 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
