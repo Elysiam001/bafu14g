@@ -317,6 +317,18 @@
         .modal-content-area { flex: 1; padding: 30px; position: relative; }
         .input-control { width: 100%; background: rgba(0,0,0,0.6); border: 1px solid #ffca28; padding: 15px; border-radius: 10px; color: #fff; font-size: 1.2rem; outline: none; margin-bottom: 20px; }
         
+        /* Premium Withdraw Styles */
+        .withdraw-form { padding: 30px; display: flex; flex-direction: column; gap: 20px; }
+        .w-input-group { position: relative; width: 100%; }
+        .w-input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #ffca28; font-size: 1.2rem; }
+        .w-input { 
+            width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,202,40,0.3); 
+            padding: 15px 15px 15px 45px; border-radius: 12px; color: #fff; font-size: 1.1rem; 
+            outline: none; transition: 0.3s;
+        }
+        .w-input:focus { border-color: #ffca28; box-shadow: 0 0 15px rgba(255,202,40,0.2); background: rgba(0,0,0,0.7); }
+        .w-input::placeholder { color: rgba(255,255,255,0.4); }
+
         .betting-panel {
             position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%) translateY(100%);
             width: 780px; z-index: 1000; display: none; justify-content: center;
@@ -391,18 +403,29 @@
         </div>
     </div>
 
-    <!-- MODAL RÚT TIỀN -->
     <div class="deposit-modal" id="withdraw-modal" style="height: auto; width: 500px;">
         <div class="modal-header">
             <div class="modal-title">RÚT TIỀN</div>
             <div class="close-modal" onclick="closeWithdrawModal()">&times;</div>
         </div>
-        <div class="modal-body" style="flex-direction: column; padding: 25px;">
-            <input type="text" id="w-bank" class="input-control" placeholder="Tên Ngân hàng (Vd: MBBank)">
-            <input type="text" id="w-account" class="input-control" placeholder="Số tài khoản">
-            <input type="text" id="w-name" class="input-control" placeholder="Tên chủ tài khoản">
-            <input type="number" id="w-amount" class="input-control" placeholder="Số tiền muốn rút">
-            <button class="bet-button" style="width: 100%; height: 50px;" onclick="submitWithdraw()">GỬI LỆNH RÚT</button>
+        <div class="withdraw-form">
+            <div class="w-input-group">
+                <i class="fas fa-university"></i>
+                <input type="text" id="w-bank" class="w-input" placeholder="Tên Ngân hàng (Vd: MBBank)">
+            </div>
+            <div class="w-input-group">
+                <i class="fas fa-credit-card"></i>
+                <input type="text" id="w-account" class="w-input" placeholder="Số tài khoản">
+            </div>
+            <div class="w-input-group">
+                <i class="fas fa-user"></i>
+                <input type="text" id="w-name" class="w-input" placeholder="Tên chủ tài khoản">
+            </div>
+            <div class="w-input-group">
+                <i class="fas fa-money-bill-wave"></i>
+                <input type="number" id="w-amount" class="w-input" placeholder="Số tiền muốn rút">
+            </div>
+            <button class="bet-button" style="width: 100%; height: 55px; font-size: 1.3rem;" onclick="submitWithdraw()">GỬI LỆNH RÚT</button>
         </div>
     </div>
 
