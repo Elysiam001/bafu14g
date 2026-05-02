@@ -571,49 +571,57 @@
         }
         
         @media (max-width: 850px) {
-            .premium-header { height: auto; padding: 10px; flex-wrap: wrap; justify-content: center; gap: 10px; }
-            .header-center { order: 3; width: 100%; display: flex !important; justify-content: center; gap: 10px; margin-top: 5px; }
-            .header-right { order: 2; }
-            .header-left { order: 1; }
-            .action-frame { border: none; background: transparent; padding: 0; gap: 15px; }
-            .h-btn { padding: 10px 25px; font-size: 0.9rem; border-radius: 8px; min-width: 120px; }
+            .premium-header { height: auto !important; padding: 10px !important; flex-wrap: wrap !important; justify-content: center !important; position: relative !important; top: auto !important; left: auto !important; }
+            .header-center { order: 3; width: 100% !important; display: flex !important; justify-content: center !important; gap: 10px !important; margin-top: 10px !important; }
+            .header-right { order: 2; display: flex !important; align-items: center !important; }
+            .header-left { order: 1; flex: 1; }
+            .action-frame { border: none !important; background: transparent !important; padding: 0 !important; gap: 10px !important; }
+            .h-btn { padding: 8px 20px !important; font-size: 0.8rem !important; border-radius: 8px !important; min-width: 100px !important; height: auto !important; }
             
             .table-container { 
-                flex-direction: column; align-items: center; justify-content: flex-start; 
-                padding: 10px; gap: 20px; overflow-y: auto; overflow-x: hidden;
-                padding-bottom: 80px; /* Space for footer */
+                display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: flex-start !important; 
+                padding: 10px !important; gap: 10px !important; overflow-y: auto !important; overflow-x: hidden !important;
+                position: relative !important; height: calc(100vh - 150px) !important;
+                padding-bottom: 100px !important;
             }
             
             .sha-board { 
-                position: relative; left: auto; top: auto; transform: scale(0.48); 
-                margin-top: -100px; margin-bottom: -100px;
+                position: relative !important; left: auto !important; top: auto !important; 
+                transform: scale(0.48) !important; 
+                margin: -100px 0 !important;
+                flex-shrink: 0;
             }
 
             .betting-panel { 
-                position: relative; left: auto; bottom: auto; transform: none !important;
-                display: flex !important; width: 100%; max-width: 400px; margin-top: 10px;
+                position: relative !important; left: auto !important; bottom: auto !important; 
+                transform: scale(0.9) !important;
+                display: flex !important; width: 100% !important; max-width: 380px !important;
                 opacity: 1 !important; visibility: visible !important;
+                margin-top: -30px !important;
             }
-            .bet-frame { background: rgba(30, 20, 15, 0.8); border-radius: 20px; padding: 15px; }
-            .chip-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-            .s-chip { width: 100%; height: 45px; font-size: 0.9rem; }
-            .btn-confirm-big { width: 100%; height: 55px; font-size: 1.4rem; margin: 10px 0; }
-            .btn-x2, .btn-cancel-red { flex: 1; height: 50px; }
+            .bet-frame { background: rgba(30, 20, 15, 0.9) !important; border-radius: 20px !important; padding: 12px !important; }
+            .chip-bar { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 8px !important; }
+            .s-chip { width: 100% !important; height: 40px !important; font-size: 0.8rem !important; }
+            .btn-confirm-big { width: 100% !important; height: 45px !important; font-size: 1.2rem !important; margin: 8px 0 !important; }
+            .btn-x2, .btn-cancel-red { flex: 1 !important; height: 40px !important; font-size: 0.8rem !important; }
 
-            .chat-modal { width: 90vw; height: 50vh; left: 5vw; top: 10vh; right: auto; border-radius: 15px; }
-            .rank-modal, .deposit-modal, .withdraw-modal, .soicau-modal { 
-                width: 95vw !important; height: 80vh !important;
-            }
+            .chat-modal { width: 95vw !important; height: 50vh !important; left: 2.5vw !important; top: 10vh !important; right: auto !important; border-radius: 15px !important; }
             
             .mobile-footer { display: flex !important; }
         }
 
-        /* LANDSCAPE MOBILE */
         @media (max-width: 850px) and (orientation: landscape) {
-            .table-container { flex-direction: row; align-items: center; justify-content: center; padding-top: 50px; }
-            .sha-board { transform: scale(0.45); margin: 0; }
-            .betting-panel { max-width: 280px; margin-left: -50px; transform: scale(0.85) !important; }
-            .chip-bar { grid-template-columns: repeat(2, 1fr); }
+            .premium-header { height: 40px !important; padding: 5px 15px !important; flex-wrap: nowrap !important; }
+            .header-center { width: auto !important; order: 2 !important; margin-top: 0 !important; }
+            .header-left { order: 1 !important; }
+            .header-right { order: 3 !important; }
+            .h-btn { padding: 4px 12px !important; font-size: 0.7rem !important; min-width: 80px !important; }
+
+            .table-container { flex-direction: row !important; align-items: center !important; justify-content: center !important; height: calc(100vh - 110px) !important; gap: 0 !important; }
+            .sha-board { transform: scale(0.42) !important; margin: 0 -180px !important; }
+            .betting-panel { transform: scale(0.7) !important; max-width: 300px !important; margin: 0 -40px !important; }
+            .chip-bar { grid-template-columns: repeat(3, 1fr) !important; }
+            .mobile-footer { height: 50px !important; }
         }
 
         .mobile-footer {
