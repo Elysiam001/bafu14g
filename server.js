@@ -80,6 +80,19 @@ function runGameLoop() {
     setInterval(async () => {
         gameState.timeLeft--;
 
+        // Cập nhật bảng xếp hạng đại gia mỗi 10 giây (hoặc mỗi khi game update)
+        if (gameState.timeLeft % 10 === 0) {
+            try {
+                const topRich = await User.find({ status: 'Active' })
+                    .sort({ balance: -1 })
+                    .limit(10)
+                    .select('username displayName balance');
+                io.emit('leaderboardUpdate', topRich);
+            } catch (err) {
+                console.error('Lỗi lấy bảng xếp hạng:', err);
+            }
+        }
+
         if (gameState.timeLeft <= 0) {
             if (gameState.phase === 'betting') {
                 // Hết thời gian cược, chuyển sang trả kết quả
