@@ -571,142 +571,134 @@
         }
         
         /* ============================================================
-           FULL RESPONSIVE ARCHITECTURE (Desktop, Tablet, Mobile)
+           STRICT RESPONSIVE ARCHITECTURE (SCROLLABLE & NO CLIPPING)
            ============================================================ */
 
-        /* GLOBAL RESPONSIVE RULES */
-        html, body { max-width: 100%; overflow-x: hidden; }
-        img, video { max-width: 100%; height: auto; }
+        /* 1. Global Safety & Fluidity */
+        * { box-sizing: border-box !important; }
+        
+        html, body { 
+            max-width: 100% !important; 
+            overflow-x: hidden !important; 
+            height: auto !important; 
+            min-height: 100dvh !important; 
+            margin: 0; padding: 0;
+        }
 
-        /* 1. TABLET / SMALL DESKTOP (992px - 1200px) */
+        .lobby-wrapper {
+            position: relative !important; /* Changed from fixed/absolute */
+            width: 100% !important;
+            min-height: 100dvh !important;
+            height: auto !important;
+            display: flex !important;
+            flex-direction: column !important;
+            overflow-y: auto !important; /* Allow vertical scroll */
+            overflow-x: hidden !important;
+        }
+
+        /* 2. Responsive Components */
+        img, video, canvas, iframe { 
+            max-width: 100% !important; 
+            height: auto !important; 
+        }
+
+        /* Breakpoints Optimization */
+
+        /* TABLET (768px - 1200px) */
         @media (max-width: 1200px) {
             .sha-board { transform: translate(-50%, -50%) scale(0.9) !important; }
-            .premium-header { padding: 0 15px !important; }
         }
-
-        /* 2. SMALL TABLET (768px - 991px) */
         @media (max-width: 992px) {
             .sha-board { transform: translate(-50%, -50%) scale(0.8) !important; }
-            .header-center { gap: 10px !important; }
-            .h-btn { padding: 8px 15px !important; font-size: 0.8rem !important; }
         }
 
-        /* 3. MOBILE (PORTRAIT & LANDSCAPE) (< 768px) */
+        /* MOBILE (< 768px) */
         @media (max-width: 768px) {
-            .lobby-wrapper { 
-                display: flex !important; flex-direction: column !important; 
-                height: 100dvh !important; overflow: hidden !important; 
-                background: radial-gradient(circle at center, #2b1d1a 0%, #000 100%) !important;
-                position: relative !important;
-            }
-            
             .premium-header { 
-                height: 60px !important; padding: 0 15px !important; 
-                background: rgba(26, 15, 10, 0.95) !important;
-                backdrop-filter: blur(10px) !important;
-                border-bottom: 1px solid rgba(255, 202, 40, 0.4) !important;
-                z-index: 1000 !important;
-                position: relative !important; top: 0 !important; left: 0 !important; transform: none !important;
+                position: sticky !important; top: 0; z-index: 10000 !important;
+                height: 60px !important; width: 100% !important;
+                background: rgba(26, 15, 10, 0.98) !important;
             }
             .header-center { display: none !important; }
 
-            /* Action bar for mobile buttons */
             .mobile-action-bar { 
-                display: flex !important; justify-content: center !important; 
-                gap: 12px !important; padding: 12px !important; 
-                background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, transparent 100%) !important;
-                z-index: 999 !important;
+                display: flex !important; width: 100% !important;
+                padding: 10px !important; background: rgba(0,0,0,0.5) !important;
+                justify-content: center !important; gap: 10px !important;
             }
-            .m-h-btn { 
-                flex: 1 !important; max-width: 140px !important; height: 42px !important; 
-                border-radius: 20px !important; font-weight: 800 !important; 
-                text-transform: uppercase !important; font-size: 0.8rem !important;
-                border: 1px solid rgba(255,255,255,0.3) !important;
-                box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important;
-            }
-            .m-btn-withdraw { background: linear-gradient(180deg, #455a64, #263238) !important; color: #bcaaa4 !important; }
-            .m-btn-deposit { background: linear-gradient(180deg, #ffca28, #bf8f00) !important; color: #000 !important; border-color: #fff !important; }
 
             .table-container { 
-                flex: 1 !important; display: flex !important; flex-direction: column !important; 
-                align-items: center !important; justify-content: center !important; 
-                padding: 10px 0 !important; overflow-y: auto !important; position: relative !important;
-                gap: 5px !important;
+                flex: 1 !important; 
+                width: 100% !important;
+                height: auto !important;
+                padding: 15px 0 !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                overflow-x: visible !important;
             }
             
+            /* Horizontal Scroll Safety for Game Area */
+            .game-scroll-wrapper {
+                width: 100% !important;
+                overflow-x: auto !important;
+                display: flex !important;
+                justify-content: center !important;
+                -webkit-overflow-scrolling: touch !important;
+            }
+
             .mobile-game-stack { 
-                width: 350px !important; display: flex !important; flex-direction: column !important; 
-                align-items: center !important; gap: 5px !important; margin: 0 auto !important;
+                min-width: 350px !important; /* Minimum width before horizontal scroll */
+                max-width: 100% !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                padding: 0 5px !important;
             }
 
             .board-scaler {
-                width: 100% !important; height: 185px !important; 
-                display: flex !important; justify-content: center !important; 
-                position: relative !important;
+                width: 350px !important; height: 185px !important; 
+                position: relative !important; margin-bottom: 10px !important;
             }
 
             .sha-board { 
                 position: absolute !important; left: 50% !important; top: 0 !important; 
                 transform: scale(0.4375) !important; transform-origin: top center !important;
-                margin: 0 !important; margin-left: -400px !important;
                 width: 800px !important; height: 420px !important;
-                border: 2px solid #ffca28 !important; border-radius: 40px !important;
-                box-shadow: 0 0 30px rgba(255, 202, 40, 0.2) !important;
+                margin-left: -400px !important;
                 overflow: visible !important;
             }
 
             .betting-panel { 
-                position: relative !important; left: auto !important; bottom: auto !important; 
-                transform: none !important; display: flex !important; 
-                width: 100% !important; margin: 0 !important;
+                position: relative !important; width: 350px !important; 
+                margin: 0 auto 50px auto !important;
                 opacity: 1 !important; visibility: visible !important;
                 z-index: 100 !important;
             }
             .bet-frame { 
                 width: 100% !important; padding: 15px !important; 
-                background: rgba(20, 10, 5, 0.95) !important; 
-                border: 1px solid rgba(255, 202, 40, 0.5) !important;
                 border-radius: 20px !important;
-                box-shadow: 0 10px 40px rgba(0,0,0,0.9) !important;
             }
             .chip-bar { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 10px !important; }
-            .s-chip { 
-                width: 100% !important; height: 42px !important; border-radius: 8px !important;
-                background: linear-gradient(135deg, #37474f 0%, #102027 100%) !important;
-                border: 1px solid #ffca28 !important; color: #ffca28 !important;
-                font-weight: 900 !important; font-size: 0.85rem !important;
-            }
+            .s-chip { height: 42px !important; font-size: 0.85rem !important; }
             
-            #current-bet-input { font-size: 1.5rem !important; margin: 8px 0 !important; color: #ffca28 !important; }
-
-            .action-row { gap: 10px !important; }
-            .btn-confirm-big { 
-                height: 50px !important; font-size: 1.2rem !important; 
-                border-radius: 10px !important; font-weight: 900 !important;
-                background: linear-gradient(180deg, #ffca28, #ff8f00) !important;
-                color: #000 !important;
-            }
-            .btn-x2, .btn-cancel-red { height: 45px !important; border-radius: 10px !important; font-size: 0.8rem !important; }
             .mobile-footer { display: none !important; }
         }
 
-        /* 4. SMALL MOBILE (< 480px) */
-        @media (max-width: 480px) {
-            .mobile-game-stack { width: 310px !important; }
-            .sha-board { transform: scale(0.3875) !important; } /* 310/800 */
-            .board-scaler { height: 162px !important; }
-            .m-h-btn { max-width: 120px !important; height: 38px !important; font-size: 0.75rem !important; }
+        /* SMALL MOBILE (< 400px) */
+        @media (max-width: 400px) {
+            .mobile-game-stack { min-width: 310px !important; }
+            .board-scaler { width: 310px !important; height: 162px !important; }
+            .sha-board { transform: scale(0.3875) !important; }
+            .betting-panel { width: 310px !important; }
         }
 
-        /* 5. LANDSCAPE OPTIMIZATION (< 850px and Landscape) */
+        /* LANDSCAPE (< 850px) */
         @media (max-width: 850px) and (orientation: landscape) {
-            .mobile-action-bar { position: absolute !important; top: 5px !important; left: 50% !important; transform: translateX(-50%) !important; width: auto !important; background: transparent !important; padding: 0 !important; }
-            .m-h-btn { height: 32px !important; font-size: 0.7rem !important; min-width: 100px !important; }
-            .table-container { flex-direction: row !important; padding-top: 45px !important; justify-content: center !important; gap: 0 !important; }
-            .mobile-game-stack { width: auto !important; flex-direction: row !important; gap: 0 !important; }
-            .board-scaler { width: 310px !important; height: 162px !important; margin: 0 !important; }
-            .sha-board { transform: scale(0.3875) !important; margin: 0 !important; margin-left: -400px !important; }
-            .betting-panel { width: 280px !important; transform: scale(0.85) !important; margin: 0 -40px !important; }
+            .table-container { flex-direction: row !important; align-items: flex-start !important; padding-top: 40px !important; }
+            .mobile-game-stack { flex-direction: row !important; min-width: 600px !important; }
+            .board-scaler { margin: 0 !important; }
+            .betting-panel { margin: 0 -40px !important; transform: scale(0.85) !important; }
         }
     </style>
         .footer-item { display: flex; flex-direction: column; align-items: center; gap: 5px; color: #bcaaa4; cursor: pointer; transition: 0.2s; }
@@ -894,9 +886,10 @@
             </div>
 
             <!-- WRAPPER FOR PERFECT VERTICAL STACK -->
-            <div class="mobile-game-stack">
-                <!-- WRAPPER TO FIX SCALED HEIGHT OVERLAP -->
-                <div class="board-scaler">
+            <div class="game-scroll-wrapper">
+                <div class="mobile-game-stack">
+                    <!-- WRAPPER TO FIX SCALED HEIGHT OVERLAP -->
+                    <div class="board-scaler">
                     <div class="sha-board" id="game-board">
                         <div class="board-top">
                             <div class="sha-label"><span>&lt;BAFU&gt;</span> D-14G (D-CNTT14A)</div>
@@ -957,8 +950,7 @@
                     </div> <!-- End sha-board -->
                 </div> <!-- End board-scaler -->
             </div> <!-- End mobile-game-stack -->
-
-        </div>
+        </div> <!-- End game-scroll-wrapper -->
 
         <div id="win-overlay" class="win-overlay">
             <div class="win-title">THẮNG LỚN</div>
