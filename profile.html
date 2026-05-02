@@ -267,32 +267,17 @@
             opacity: 0;
         }
 
-        .history-bar {
+        .history-row {
             position: absolute; bottom: 0; left: 0; right: 0;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            background: rgba(0,0,0,0.5);
-            border-top: 1.5px solid #ffca28;
-            border-radius: 0 0 40px 40px;
-            z-index: 5;
+            display: flex; gap: 10px; justify-content: center; padding: 12px;
+            background: rgba(0,0,0,0.4);
+            border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
+            border-top: 1px solid rgba(255,202,40,0.1);
         }
-        .h-dot { width: 14px; height: 14px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); }
+        .h-dot { width: 14px; height: 14px; border-radius: 50%; box-shadow: 0 0 10px rgba(0,0,0,0.5); border: 1.5px solid rgba(255,255,255,0.2); }
         .h-dot.red { background: #ff1744; box-shadow: 0 0 10px #ff1744; }
         .h-dot.white { background: #fff; box-shadow: 0 0 10px #fff; }
 
-        .bottom-sha {
-            height: 40px;
-            background: rgba(0,0,0,0.8);
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 20px;
-            font-family: monospace;
-            font-size: 0.8rem;
-            color: #00f2ff;
-        }
-        .hash-input { flex: 1; margin: 0 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
         /* WIN RADIANT EFFECT - ULTRA INTENSE */
         .winner .tai-text, .winner .xiu-text {
@@ -747,11 +732,6 @@
                 <div class="b-btn pos-hand"><i class="fas fa-hand-paper"></i></div>
 
                 <div class="history-row" id="history-row"></div>
-                <div class="bottom-sha">
-                    <span>Chuỗi KQ:</span>
-                    <div class="hash-input" id="hash-text">Loading SHA256...</div>
-                    <span style="cursor: pointer;">COPY</span>
-                </div>
 
                 <!-- BET PANEL -->
                 <div class="betting-panel" id="betting-panel">
@@ -884,7 +864,6 @@
                 dot.className = `h-dot ${h.result === 'Tai' ? 'red' : 'white'}`;
                 hRow.appendChild(dot);
             });
-            document.getElementById('hash-text').innerText = 'SHA256:' + btoa(state.timeLeft + 'bafu').substring(0, 24);
         });
 
         socket.on('leaderboardUpdate', (data) => {
