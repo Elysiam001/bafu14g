@@ -570,81 +570,139 @@
             .deposit-modal, .soicau-modal, .rank-modal, .withdraw-modal { width: 95% !important; max-width: 95vw; }
         }
         
+        /* ============================================================
+           MOBILE NUCLEAR RESET & OPTIMIZATION
+           ============================================================ */
         @media (max-width: 850px) {
-            .lobby-wrapper { display: flex; flex-direction: column; height: 100dvh; overflow: hidden; }
-            
-            .premium-header { 
-                height: 50px !important; padding: 5px 10px !important; 
-                flex-shrink: 0; background: #2b1d1a !important;
-                border-bottom: 1px solid #ffca28;
+            /* 1. Global Reset for Mobile */
+            .lobby-wrapper, .table-container, .sha-board, .betting-panel, 
+            .premium-header, .header-center, .header-right, .header-left,
+            .user-section, .action-frame, .board-top {
+                position: relative !important;
+                top: auto !important;
+                left: auto !important;
+                right: auto !important;
+                bottom: auto !important;
+                transform: none !important;
+                margin: 0 !important;
+                display: flex !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
             }
-            .header-center { display: none !important; }
-            .header-right { gap: 8px !important; }
-            .h-icon { font-size: 1.1rem !important; }
-            .user-display-name { font-size: 0.75rem !important; }
-            .avatar-circle { width: 35px !important; height: 35px !important; }
+            
+            .lobby-wrapper { 
+                flex-direction: column !important; 
+                height: 100dvh !important; 
+                overflow: hidden !important; 
+            }
+            
+            /* 2. Header Mobile Style */
+            .premium-header { 
+                height: auto !important; 
+                padding: 5px 10px !important; 
+                flex-direction: row !important;
+                justify-content: space-between !important;
+                border-bottom: 2px solid #ffca28 !important;
+                background: #1a0f0a !important;
+                z-index: 1000 !important;
+            }
+            .header-center { display: none !important; } /* Hide old buttons */
+            .header-left { width: auto !important; flex: 0 1 auto !important; }
+            .header-right { width: auto !important; flex: 0 1 auto !important; gap: 8px !important; }
+            .user-section { width: auto !important; gap: 10px !important; }
+            .avatar-circle { width: 40px !important; height: 40px !important; border-width: 2px !important; }
+            .vip-text { font-size: 0.8rem !important; }
+            .username-text { font-size: 0.8rem !important; margin: 0 !important; }
+            .balance-item { font-size: 0.8rem !important; gap: 5px !important; }
+            .h-icon { width: 32px !important; height: 32px !important; font-size: 1rem !important; border-radius: 8px !important; }
 
-            /* New mobile-only action bar for Deposit/Withdraw */
+            /* 3. New Action Bar */
             .mobile-action-bar { 
-                display: flex !important; justify-content: center; gap: 15px; padding: 10px;
-                background: rgba(0,0,0,0.3); flex-shrink: 0;
+                display: flex !important; 
+                padding: 10px !important; 
+                gap: 15px !important; 
+                background: rgba(0,0,0,0.5) !important;
+                justify-content: center !important;
             }
             .m-h-btn { 
-                flex: 1; max-width: 150px; height: 40px; 
-                border-radius: 10px; font-weight: 900; color: #fff; border: 2px solid #fff;
-                text-transform: uppercase; font-size: 0.9rem; cursor: pointer;
+                flex: 1 !important; max-width: 160px !important; 
+                height: 45px !important; border-radius: 12px !important;
+                font-weight: 900 !important; font-size: 1rem !important;
+                border: 2px solid #fff !important; text-transform: uppercase !important;
+                color: #fff !important; cursor: pointer !important;
             }
-            .m-btn-withdraw { background: linear-gradient(180deg, #455a64, #263238); }
-            .m-btn-deposit { background: linear-gradient(180deg, #ffa000, #ff6f00); border-color: #ffca28; }
+            .m-btn-withdraw { background: linear-gradient(180deg, #546e7a, #263238) !important; }
+            .m-btn-deposit { background: linear-gradient(180deg, #ff8f00, #bf360c) !important; border-color: #ffca28 !important; }
 
+            /* 4. Game Table Area */
             .table-container { 
-                flex: 1; display: flex !important; flex-direction: column !important; 
-                align-items: center !important; justify-content: center !important; 
-                padding: 5px !important; gap: 5px !important; overflow-y: auto !important;
+                flex: 1 !important; 
+                flex-direction: column !important; 
+                padding: 10px !important; 
+                gap: 0 !important;
+                overflow-y: auto !important;
+                justify-content: flex-start !important;
                 background: transparent !important;
             }
             
+            /* The "Magic" to center the board correctly while scaled */
             .sha-board { 
-                position: relative !important; left: auto !important; top: auto !important; 
+                display: block !important;
                 transform: scale(0.44) !important; 
-                margin: -110px 0 !important; flex-shrink: 0;
-                transform-origin: center center;
+                transform-origin: top center !important;
+                margin-top: 10px !important;
+                margin-bottom: -220px !important; /* Counteract scale empty space */
+                width: 800px !important; 
+                height: 420px !important;
+                flex-shrink: 0 !important;
+                border-radius: 30px !important;
+                overflow: visible !important;
             }
+            
+            .board-top { width: 100% !important; justify-content: center !important; }
 
+            /* 5. Betting Panel Area */
             .betting-panel { 
-                position: relative !important; left: auto !important; bottom: auto !important; 
-                transform: scale(0.85) !important;
-                display: flex !important; width: 100% !important; max-width: 360px !important;
-                margin: -35px auto 0 !important;
+                display: flex !important; 
+                width: 100% !important; 
+                max-width: 380px !important; 
+                margin: 0 auto 80px auto !important;
+                padding: 10px !important;
                 opacity: 1 !important; visibility: visible !important;
+                z-index: 500 !important;
             }
-            .bet-frame { background: rgba(26, 15, 10, 0.98) !important; border-radius: 15px !important; padding: 10px !important; box-shadow: 0 0 20px #000; }
-            .chip-bar { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 6px !important; }
-            .s-chip { width: 100% !important; height: 38px !important; font-size: 0.8rem !important; border-radius: 6px !important; }
-            .btn-confirm-big { width: 100% !important; height: 45px !important; font-size: 1.2rem !important; margin: 8px 0 !important; }
-            .btn-x2, .btn-cancel-red { flex: 1 !important; height: 40px !important; font-size: 0.8rem !important; }
+            .bet-frame { 
+                width: 100% !important; 
+                background: rgba(26, 15, 10, 0.98) !important; 
+                border: 2px solid #ffca28 !important;
+                border-radius: 20px !important; 
+                padding: 12px !important; 
+                gap: 10px !important;
+            }
+            .chip-bar { 
+                display: grid !important; 
+                grid-template-columns: repeat(3, 1fr) !important; 
+                gap: 10px !important; 
+            }
+            .s-chip { width: 100% !important; height: 42px !important; font-size: 0.9rem !important; }
+            .btn-confirm-big { width: 100% !important; height: 50px !important; font-size: 1.4rem !important; margin: 5px 0 !important; }
+            .btn-x2, .btn-cancel-red { flex: 1 !important; height: 45px !important; }
 
-            .mobile-footer { display: flex !important; height: 60px !important; flex-shrink: 0; }
+            /* 6. Footer Navigation */
+            .mobile-footer { display: flex !important; height: 70px !important; position: fixed !important; bottom: 0; left: 0; }
         }
 
+        /* LANDSCAPE SPECIFIC FIXES */
         @media (max-width: 850px) and (orientation: landscape) {
-            .mobile-action-bar { position: absolute; top: 5px; left: 50%; transform: translateX(-50%); background: transparent; padding: 0; z-index: 10007; }
-            .m-h-btn { height: 32px; font-size: 0.7rem; min-width: 80px; }
-            .table-container { flex-direction: row !important; gap: 0 !important; }
-            .sha-board { transform: scale(0.4) !important; margin: 0 -190px !important; }
-            .betting-panel { transform: scale(0.7) !important; margin: 0 -45px !important; max-width: 260px !important; }
-            .mobile-footer { height: 45px !important; }
+            .mobile-action-bar { position: absolute !important; top: 5px !important; left: 50% !important; transform: translateX(-50%) !important; width: auto !important; background: transparent !important; }
+            .m-h-btn { height: 32px !important; min-width: 90px !important; font-size: 0.7rem !important; }
+            .table-container { flex-direction: row !important; padding-top: 40px !important; justify-content: center !important; }
+            .sha-board { transform: scale(0.4) !important; margin: 0 -220px !important; }
+            .betting-panel { transform: scale(0.85) !important; margin: 0 -40px !important; width: 280px !important; }
+            .chip-bar { grid-template-columns: repeat(2, 1fr) !important; }
+            .mobile-footer { height: 50px !important; }
         }
-        
-        .mobile-action-bar { display: none; }
-
-        .mobile-footer {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 70px;
-            background: linear-gradient(180deg, #1a0f0a 0%, #000 100%);
-            border-top: 1px solid rgba(255,202,40,0.3);
-            display: none; align-items: center; justify-content: space-around;
-            z-index: 10005;
-        }
+    </style>
         .footer-item { display: flex; flex-direction: column; align-items: center; gap: 5px; color: #bcaaa4; cursor: pointer; transition: 0.2s; }
         .footer-item i { font-size: 1.4rem; color: #ffca28; }
         .footer-item span { font-size: 0.7rem; font-weight: 900; text-transform: uppercase; }
