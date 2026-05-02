@@ -493,14 +493,14 @@
 
         /* CHAT MODAL - PREMIUM CASINO STYLE */
         .chat-modal {
-            position: fixed; top: 50%; right: 20px; transform: translateY(-50%) scale(0.9);
+            position: absolute; top: 0; right: -360px;
             width: 350px; height: 500px; background: linear-gradient(180deg, #2c1a32 0%, #1a0f1d 100%);
             border: 3px solid #ffca28; border-radius: 20px; z-index: 10004; display: none; flex-direction: column;
-            box-shadow: 0 0 40px rgba(0,0,0,1); opacity: 0; transition: 0.3s;
+            box-shadow: 0 0 40px rgba(0,0,0,1); opacity: 0; transition: opacity 0.3s, transform 0.3s;
+            cursor: default;
         }
-        .chat-modal.active { transform: translateY(-50%) scale(1); opacity: 1; display: flex; }
-        
-        .chat-tabs { display: flex; height: 50px; background: rgba(0,0,0,0.3); border-bottom: 2px solid #ffca28; }
+        .chat-modal.active { opacity: 1; display: flex; }
+        .chat-tabs { display: flex; height: 50px; background: rgba(0,0,0,0.3); border-bottom: 2px solid #ffca28; cursor: move; }
         .chat-tab { flex: 1; display: flex; align-items: center; justify-content: center; color: #ffca28; font-weight: 900; cursor: pointer; font-size: 0.9rem; }
         .chat-tab.active { background: linear-gradient(180deg, #ffca28, #bf360c); color: #fff; }
 
@@ -633,22 +633,6 @@
         </div>
     </div>
 
-    <!-- MODAL CHAT -->
-    <div class="chat-modal" id="chat-modal">
-        <div class="chat-tabs">
-            <div class="chat-tab active">CHAT</div>
-            <div class="chat-tab">VIP CƯỢC</div>
-            <div class="close-modal" style="top: 5px; right: 5px; font-size: 1.5rem;" onclick="closeChatModal()">&times;</div>
-        </div>
-        <div class="chat-messages" id="chat-messages">
-            <div class="chat-msg"><span class="chat-user" style="color: #ff9100;">Hệ thống:</span> <span class="chat-text">Chào mừng bạn đến với BAFU Game!</span></div>
-        </div>
-        <div class="chat-input-area">
-            <input type="text" class="chat-input" id="chat-input" placeholder="Nhấn để chat..." onkeypress="if(event.key==='Enter') sendChatMessage()">
-            <div class="chat-send" onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></div>
-        </div>
-    </div>
-
     <div class="lobby-wrapper">
         <header class="premium-header">
             <div class="user-section">
@@ -678,6 +662,22 @@
         </header>
 
         <div class="table-container" style="flex: 1; position: relative;">
+            <!-- MODAL CHAT -->
+            <div class="chat-modal" id="chat-modal">
+                <div class="chat-tabs" id="chat-drag-handle">
+                    <div class="chat-tab active">CHAT</div>
+                    <div class="chat-tab">VIP CƯỢC</div>
+                    <div class="close-modal" style="top: 5px; right: 5px; font-size: 1.5rem;" onclick="closeChatModal()">&times;</div>
+                </div>
+                <div class="chat-messages" id="chat-messages">
+                    <div class="chat-msg"><span class="chat-user" style="color: #ff9100;">Hệ thống:</span> <span class="chat-text">Chào mừng bạn đến với BAFU Game!</span></div>
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" class="chat-input" id="chat-input" placeholder="Nhấn để chat...">
+                    <div class="chat-send" onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></div>
+                </div>
+            </div>
+
             <div class="sha-board" id="game-board">
                 <div class="board-top">
                     <div class="sha-label"><span>&lt;BAFU&gt;</span> D-14G (D-CNTT14A)</div>
@@ -889,7 +889,54 @@
             const modal = document.getElementById('chat-modal');
             modal.style.display = 'flex';
             setTimeout(() => modal.classList.add('active'), 10);
+            
+            // Fix Enter Key
+            document.getElementById('chat-input').addEventListener('keydown', (e) => {
+                if(e.key === 'Enter') {
+                    sendChatMessage();
+                    e.preventDefault();
+                }
+            });
+
+            // Draggable Logic
+            dragElement(document.getElementById("chat-modal"));
         }
+
+        function dragElement(elmnt) {
+            var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            if (document.getElementById("chat-drag-handle")) {
+                document.getElementById("chat-drag-handle").onmousedown = dragMouseDown;
+            } else {
+                elmnt.onmousedown = dragMouseDown;
+            }
+
+            function dragMouseDown(e) {
+                e = e || window.event;
+                e.preventDefault();
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+            }
+
+            function elementDrag(e) {
+                e = e || window.event;
+                e.preventDefault();
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+                elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+                elmnt.style.right = "auto"; // Override right:-360px
+            }
+
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+        }
+
         function closeChatModal() {
             const modal = document.getElementById('chat-modal');
             modal.classList.remove('active');
