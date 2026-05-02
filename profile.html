@@ -11,15 +11,15 @@
         /* --- BEAUTY MAX OVERHAUL --- */
         .lobby-wrapper {
             width: 100%;
-            min-height: 100vh;
-            min-height: 100dvh;
+            height: 100vh;
+            height: 100dvh;
             background: 
                 linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
                 url('casino_bg_v2.png') no-repeat center center/cover !important;
             display: flex;
             flex-direction: column;
-            overflow-x: hidden;
-            position: relative;
+            overflow: hidden;
+            position: fixed; top: 0; left: 0;
             padding-top: env(safe-area-inset-top);
         }
 
@@ -572,19 +572,23 @@
         
         @media (max-width: 480px) {
             .sha-board { 
-                transform: translate(-50%, -50%) scale(0.46); 
+                transform: translate(-50%, -50%) scale(0.42); 
             }
-            .lobby-wrapper { overflow-y: auto; padding-top: 5px; }
-            .premium-header { height: 50px; padding: 0 10px; }
-            .header-left { gap: 5px; }
-            .user-display-name { font-size: 0.75rem; }
-            .chat-modal { width: 100vw; height: 45vh; right: 0; bottom: 0; border-radius: 20px 20px 0 0; }
-            .betting-panel { width: 95vw; bottom: -10px; }
-            .bet-frame { padding: 10px; gap: 8px; }
-            .chip-bar { flex-wrap: wrap; gap: 4px; }
-            .s-chip { width: 55px; height: 32px; font-size: 0.7rem; }
-            .btn-confirm-big { width: 150px; height: 40px; font-size: 1.1rem; }
-            .btn-x2, .btn-cancel-red { width: 70px; height: 40px; }
+            .lobby-wrapper { overflow: hidden; padding-top: 2px; }
+            .premium-header { height: 45px; padding: 0 8px; }
+            .header-left { gap: 4px; }
+            .user-display-name { font-size: 0.7rem; }
+            .chat-modal { width: 100vw; height: 35vh; right: 0; bottom: 0; border-radius: 20px 20px 0 0; }
+            .rank-modal, .deposit-modal, .withdraw-modal, .soicau-modal { 
+                width: 90vw !important; height: 70vh !important; top: 50% !important; left: 50% !important; 
+                transform: translate(-50%, -50%) scale(1) !important;
+            }
+            .betting-panel { width: 95vw; bottom: -5px; }
+            .bet-frame { padding: 8px; gap: 5px; }
+            .chip-bar { gap: 3px; }
+            .s-chip { width: 48px; height: 30px; font-size: 0.65rem; }
+            .btn-confirm-big { width: 130px; height: 38px; font-size: 1rem; }
+            .btn-x2, .btn-cancel-red { width: 60px; height: 38px; font-size: 0.8rem; }
         }
 
         @media (max-height: 600px) {
