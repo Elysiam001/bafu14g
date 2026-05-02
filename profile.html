@@ -191,7 +191,7 @@
             display: flex; align-items: center; justify-content: center;
             box-shadow: 0 0 50px rgba(255, 202, 40, 0.4);
             z-index: 10;
-            margin-top: -50px; /* Dịch bát lên trên nhiều hơn để không chèn vào lịch sử */
+            margin-top: -95px; /* Dịch bát lên trên nhiều hơn nữa để hoàn toàn không chèn vào lịch sử */
         }
 
         .sha-timer-circle {
@@ -255,12 +255,17 @@
             opacity: 0;
         }
 
-        .history-row {
+        .history-bar {
+            position: absolute; bottom: 0; left: 0; right: 0;
             height: 40px;
-            background: rgba(0,0,0,0.4);
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            padding: 0 20px;
-            border-radius: 0 0 30px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: rgba(0,0,0,0.5);
+            border-top: 1.5px solid #ffca28;
+            border-radius: 0 0 40px 40px;
+            z-index: 5;
         }
         .h-dot { width: 14px; height: 14px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); }
         .h-dot.red { background: #ff1744; box-shadow: 0 0 10px #ff1744; }
