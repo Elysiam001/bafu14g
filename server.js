@@ -396,6 +396,27 @@ io.on('connection', (socket) => {
             console.error('Lỗi duyệt rút:', err);
         }
     });
+
+    // --- XỬ LÝ CHAT ---
+    socket.on('chatMessage', async (msg) => {
+        if (!msg || msg.trim() === '') return;
+        try {
+            const username = onlineSockets.get(socket.id);
+            if (!username) return;
+
+            const user = await User.findOne({ username });
+            const displayName = user ? (user.displayName || user.username) : username;
+
+            io.emit('chatUpdate', {
+                username: username,
+                displayName: displayName,
+                message: msg.substring(0, 200), // Giới hạn 200 ký tự
+                time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+            });
+        } catch (err) {
+            console.error('Lỗi chat:', err);
+        }
+    });
 });
 
 const PORT = process.env.PORT || 3000;

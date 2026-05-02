@@ -490,6 +490,30 @@
         
         .rank-name { flex: 1; font-weight: 700; color: #fff; font-size: 1rem; }
         .rank-bal { color: #ffca28; font-weight: 900; font-family: monospace; font-size: 1.1rem; }
+
+        /* CHAT MODAL - PREMIUM CASINO STYLE */
+        .chat-modal {
+            position: fixed; top: 50%; right: 20px; transform: translateY(-50%) scale(0.9);
+            width: 350px; height: 500px; background: linear-gradient(180deg, #2c1a32 0%, #1a0f1d 100%);
+            border: 3px solid #ffca28; border-radius: 20px; z-index: 10004; display: none; flex-direction: column;
+            box-shadow: 0 0 40px rgba(0,0,0,1); opacity: 0; transition: 0.3s;
+        }
+        .chat-modal.active { transform: translateY(-50%) scale(1); opacity: 1; display: flex; }
+        
+        .chat-tabs { display: flex; height: 50px; background: rgba(0,0,0,0.3); border-bottom: 2px solid #ffca28; }
+        .chat-tab { flex: 1; display: flex; align-items: center; justify-content: center; color: #ffca28; font-weight: 900; cursor: pointer; font-size: 0.9rem; }
+        .chat-tab.active { background: linear-gradient(180deg, #ffca28, #bf360c); color: #fff; }
+
+        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .chat-msg { font-size: 0.95rem; line-height: 1.4; word-wrap: break-word; }
+        .chat-user { font-weight: 900; margin-right: 8px; color: #00e676; } /* Default Green like in image */
+        .chat-user.me { color: #ffca28; }
+        .chat-text { color: #fff; }
+        
+        .chat-input-area { height: 70px; padding: 10px; background: rgba(0,0,0,0.5); display: flex; gap: 10px; align-items: center; }
+        .chat-input { flex: 1; background: rgba(255,255,255,0.05); border: 1.5px solid #ffca28; border-radius: 10px; padding: 8px 15px; color: #fff; outline: none; font-size: 0.9rem; }
+        .chat-send { width: 45px; height: 45px; background: linear-gradient(180deg, #00acc1, #006064); border: 2px solid #fff; border-radius: 10px; color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .chat-send:hover { transform: scale(1.1); }
     </style>
 </head>
 <body>
@@ -609,6 +633,22 @@
         </div>
     </div>
 
+    <!-- MODAL CHAT -->
+    <div class="chat-modal" id="chat-modal">
+        <div class="chat-tabs">
+            <div class="chat-tab active">CHAT</div>
+            <div class="chat-tab">VIP CƯỢC</div>
+            <div class="close-modal" style="top: 5px; right: 5px; font-size: 1.5rem;" onclick="closeChatModal()">&times;</div>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <div class="chat-msg"><span class="chat-user" style="color: #ff9100;">Hệ thống:</span> <span class="chat-text">Chào mừng bạn đến với BAFU Game!</span></div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" class="chat-input" id="chat-input" placeholder="Nhấn để chat..." onkeypress="if(event.key==='Enter') sendChatMessage()">
+            <div class="chat-send" onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></div>
+        </div>
+    </div>
+
     <div class="lobby-wrapper">
         <header class="premium-header">
             <div class="user-section">
@@ -647,7 +687,7 @@
                     <div class="b-btn pos-4"><i class="fas fa-times"></i></div>
                 </div>
 
-                <div class="b-btn pos-chat"><i class="fas fa-comments"></i></div>
+                <div class="b-btn pos-chat" onclick="openChatModal()"><i class="fas fa-comments"></i></div>
 
                 <div class="betting-grid">
                     <div class="side" id="side-tai">
@@ -843,6 +883,35 @@
             modal.classList.remove('active');
             setTimeout(() => modal.style.display = 'none', 300);
         }
+
+        // CHAT LOGIC
+        function openChatModal() {
+            const modal = document.getElementById('chat-modal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('active'), 10);
+        }
+        function closeChatModal() {
+            const modal = document.getElementById('chat-modal');
+            modal.classList.remove('active');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const msg = input.value;
+            if(!msg) return;
+            socket.emit('chatMessage', msg);
+            input.value = '';
+        }
+        socket.on('chatUpdate', (data) => {
+            const box = document.getElementById('chat-messages');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'chat-msg';
+            const colors = ['#00e676', '#00e5ff', '#ff1744', '#fbc02d', '#ea80fc'];
+            const color = colors[Math.abs(data.username.length) % colors.length];
+            msgDiv.innerHTML = `<span class="chat-user" style="color: ${color}">${data.displayName}:</span> <span class="chat-text">${data.message}</span>`;
+            box.appendChild(msgDiv);
+            box.scrollTop = box.scrollHeight;
+        });
 
         socket.on('betConfirmed', (data) => {
             myBets[data.side] += data.amount;
