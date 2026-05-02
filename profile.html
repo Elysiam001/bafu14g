@@ -603,23 +603,24 @@
                 flex: 1 !important; display: flex !important; flex-direction: column !important; 
                 align-items: center !important; justify-content: center !important; 
                 padding: 10px !important; overflow-y: auto !important; position: relative !important;
-                gap: 5px !important; margin-bottom: 70px !important;
+                gap: 5px !important; margin-bottom: 0 !important;
             }
             
             .board-scaler {
-                width: 352px !important; /* 800 * 0.44 */
-                height: 185px !important; /* 420 * 0.44 */
+                width: 350px !important;
+                height: 185px !important;
                 display: flex !important;
                 justify-content: center !important;
                 align-items: flex-start !important;
                 flex-shrink: 0 !important;
                 position: relative !important;
-                margin-bottom: 8px !important;
+                margin: 0 auto 5px auto !important;
             }
 
             .sha-board { 
                 position: absolute !important; left: 50% !important; top: 0 !important; 
-                transform: scale(0.44) !important; transform-origin: top center !important;
+                transform: scale(0.4375) !important; /* (350/800) */
+                transform-origin: top center !important;
                 margin: 0 !important; width: 800px !important; height: 420px !important;
                 display: block !important;
                 margin-left: -400px !important;
@@ -628,10 +629,11 @@
             .betting-panel { 
                 position: relative !important; left: auto !important; bottom: auto !important; 
                 transform: none !important; display: flex !important; 
-                width: 352px !important; /* Match board width exactly */
+                width: 350px !important; /* Exact match */
                 margin: 0 auto !important;
                 opacity: 1 !important; visibility: visible !important;
                 z-index: 10 !important;
+                box-sizing: border-box !important;
             }
             .bet-frame { 
                 width: 100% !important; min-width: 0 !important; padding: 12px !important; 
@@ -659,19 +661,7 @@
                 color: #fff !important; border: 1px solid #fff !important;
             }
             .btn-x2, .btn-cancel-red { flex: 1 !important; height: 50px !important; font-size: 0.9rem !important; border-radius: 10px !important; }
-
-            .mobile-footer { 
-                display: flex !important; position: fixed !important; bottom: 0 !important; 
-                left: 0 !important; width: 100% !important; height: 70px !important;
-                background: #111 !important; border-top: 1px solid #ffca28 !important;
-                justify-content: space-around !important; align-items: center !important;
-                z-index: 10005 !important;
-            }
-            .footer-item { 
-                display: flex !important; flex-direction: column !important; 
-                align-items: center !important; gap: 4px !important;
-                width: 25% !important; position: relative !important;
-            }
+            .mobile-footer { display: none !important; }
         }
 
         @media (max-width: 850px) and (orientation: landscape) {
