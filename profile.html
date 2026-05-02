@@ -620,11 +620,31 @@
                 opacity: 1 !important; visibility: visible !important;
             }
             .bet-frame { 
-                width: 100% !important; min-width: 0 !important; padding: 12px !important; 
-                background: rgba(20, 10, 5, 0.95) !important; border: 2px solid #ffca28 !important;
+                width: 100% !important; min-width: 0 !important; padding: 15px !important; 
+                background: linear-gradient(180deg, #2d1b10 0%, #1a0f0a 100%) !important; 
+                border: 2px solid #f3c34d !important; border-radius: 20px !important;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 0 10px rgba(243, 195, 77, 0.2) !important;
             }
-            .chip-bar { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; }
-            .s-chip { width: 100% !important; height: 42px !important; }
+            .chip-bar { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 10px !important; margin-bottom: 15px !important; }
+            .s-chip { 
+                width: 100% !important; height: 45px !important; border-radius: 8px !important;
+                background: linear-gradient(135deg, #4e342e 0%, #212121 100%) !important;
+                border: 1px solid #f3c34d !important; color: #f3c34d !important;
+                font-weight: 900 !important; font-size: 0.9rem !important;
+                box-shadow: 0 3px 6px rgba(0,0,0,0.4) !important;
+            }
+            .s-chip:active { background: #f3c34d !important; color: #000 !important; transform: scale(0.95) !important; }
+            
+            .btn-confirm-big { 
+                width: 100% !important; height: 55px !important; font-size: 1.5rem !important; 
+                margin: 10px 0 !important; border-radius: 12px !important;
+                background: linear-gradient(180deg, #fff176 0%, #fbc02d 100%) !important;
+                color: #3e2723 !important; border: 2px solid #fff !important;
+                box-shadow: 0 5px 15px rgba(251, 192, 45, 0.4) !important;
+            }
+            .btn-x2 { background: linear-gradient(180deg, #43a047, #1b5e20) !important; color: #fff !important; border: 1px solid #fff !important; clip-path: none !important; border-radius: 8px !important; }
+            .btn-cancel-red { background: linear-gradient(180deg, #e53935, #b71c1c) !important; color: #fff !important; border: 1px solid #fff !important; clip-path: none !important; border-radius: 8px !important; }
+            .action-row { width: 100% !important; gap: 10px !important; }
 
             .mobile-footer { 
                 display: flex !important; position: fixed !important; bottom: 0 !important; 
