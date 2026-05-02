@@ -606,31 +606,42 @@
                 gap: 5px !important; margin-bottom: 0 !important;
             }
             
-            .board-scaler {
+            /* Unified container for perfect alignment */
+            .mobile-game-stack {
                 width: 350px !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                gap: 5px !important;
+                margin: 0 auto !important;
+            }
+
+            .board-scaler {
+                width: 100% !important;
                 height: 185px !important;
                 display: flex !important;
                 justify-content: center !important;
                 align-items: flex-start !important;
                 flex-shrink: 0 !important;
                 position: relative !important;
-                margin: 0 auto 5px auto !important;
+                overflow: visible !important;
             }
 
             .sha-board { 
                 position: absolute !important; left: 50% !important; top: 0 !important; 
-                transform: scale(0.4375) !important; /* (350/800) */
+                transform: scale(0.4375) !important; /* 350/800 */
                 transform-origin: top center !important;
                 margin: 0 !important; width: 800px !important; height: 420px !important;
                 display: block !important;
                 margin-left: -400px !important;
+                border-radius: 30px !important;
             }
 
             .betting-panel { 
                 position: relative !important; left: auto !important; bottom: auto !important; 
                 transform: none !important; display: flex !important; 
-                width: 350px !important; /* Exact match */
-                margin: 0 auto !important;
+                width: 100% !important; 
+                margin: 0 !important;
                 opacity: 1 !important; visibility: visible !important;
                 z-index: 10 !important;
                 box-sizing: border-box !important;
@@ -850,76 +861,77 @@
                     <div class="close-modal" style="top: 10px; right: 10px; font-size: 1.5rem;" onclick="closeChatModal()">&times;</div>
                 </div>
                 <div class="chat-messages" id="chat-messages">
-                    <div class="chat-msg"><span class="chat-user" style="color: #ff9100;">Hệ thống:</span> <span class="chat-text">Chào mừng bạn đến với BAFU Game!</span></div>
-                </div>
                 <div class="chat-input-area">
                     <input type="text" class="chat-input" id="chat-input" placeholder="Nhập nội dung...">
                     <div class="chat-send" onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></div>
                 </div>
             </div>
 
-            <!-- WRAPPER TO FIX SCALED HEIGHT OVERLAP -->
-            <div class="board-scaler">
-                <div class="sha-board" id="game-board">
-                <div class="board-top">
-                    <div class="sha-label"><span>&lt;BAFU&gt;</span> D-14G (D-CNTT14A)</div>
-                    <div class="b-btn pos-1"><i class="fas fa-history"></i></div>
-                    <div class="b-btn pos-2" onclick="openRankModal()"><i class="fas fa-trophy"></i></div>
-                    <div class="b-btn pos-3"><i class="fas fa-question"></i></div>
-                    <div class="b-btn pos-chat" onclick="openChatModal()"><i class="fas fa-comments"></i></div>
-                </div>
-
-                <div class="betting-grid">
-                    <div class="side" id="side-tai">
-                        <h2 class="tai-text">TÀI</h2>
-                        <div class="side-val" id="tai-total">0</div>
-                        <button class="bet-button" onclick="showBetPanel('Tai')">ĐẶT CƯỢC</button>
-                        <div class="username-text" style="color: #fff; margin-top: 5px;">Bạn: <span id="tai-personal" style="color: #ffca28;">0</span></div>
-                    </div>
-
-                        <div class="dice-center" id="game-bowl-container">
-                            <div class="dice-list" id="dice-list">
-                                <i class="fas fa-dice-one"></i><i class="fas fa-dice-two"></i><i class="fas fa-dice-three"></i>
-                            </div>
-                            <div class="bowl-overlay" id="actual-bowl"></div>
-                            <div class="sha-timer-circle" id="timer"><span>30</span></div>
+            <!-- WRAPPER FOR PERFECT VERTICAL STACK -->
+            <div class="mobile-game-stack">
+                <!-- WRAPPER TO FIX SCALED HEIGHT OVERLAP -->
+                <div class="board-scaler">
+                    <div class="sha-board" id="game-board">
+                        <div class="board-top">
+                            <div class="sha-label"><span>&lt;BAFU&gt;</span> D-14G (D-CNTT14A)</div>
+                            <div class="b-btn pos-1"><i class="fas fa-history"></i></div>
+                            <div class="b-btn pos-2" onclick="openRankModal()"><i class="fas fa-trophy"></i></div>
+                            <div class="b-btn pos-3"><i class="fas fa-question"></i></div>
+                            <div class="b-btn pos-chat" onclick="openChatModal()"><i class="fas fa-comments"></i></div>
                         </div>
 
-                    <div class="side" id="side-xiu">
-                        <h2 class="xiu-text">XỈU</h2>
-                        <div class="side-val" id="xiu-total">0</div>
-                        <button class="bet-button" onclick="showBetPanel('Xiu')">ĐẶT CƯỢC</button>
-                        <div class="username-text" style="color: #fff; margin-top: 5px;">Bạn: <span id="xiu-personal" style="color: #ffca28;">0</span></div>
+                        <div class="betting-grid">
+                            <div class="side" id="side-tai">
+                                <h2 class="tai-text">TÀI</h2>
+                                <div class="side-val" id="tai-total">0</div>
+                                <button class="bet-button" onclick="showBetPanel('Tai')">ĐẶT CƯỢC</button>
+                                <div class="username-text" style="color: #fff; margin-top: 5px;">Bạn: <span id="tai-personal" style="color: #ffca28;">0</span></div>
+                            </div>
+
+                            <div class="dice-center" id="game-bowl-container">
+                                <div class="dice-list" id="dice-list">
+                                    <i class="fas fa-dice-one"></i><i class="fas fa-dice-two"></i><i class="fas fa-dice-three"></i>
+                                </div>
+                                <div class="bowl-overlay" id="actual-bowl"></div>
+                                <div class="sha-timer-circle" id="timer"><span>30</span></div>
+                            </div>
+
+                            <div class="side" id="side-xiu">
+                                <h2 class="xiu-text">XỈU</h2>
+                                <div class="side-val" id="xiu-total">0</div>
+                                <button class="bet-button" onclick="showBetPanel('Xiu')">ĐẶT CƯỢC</button>
+                                <div class="username-text" style="color: #fff; margin-top: 5px;">Bạn: <span id="xiu-personal" style="color: #ffca28;">0</span></div>
+                            </div>
+                        </div>
+
+                        <div class="b-btn pos-stats" onclick="openSoiCauModal()"><i class="fas fa-chart-bar"></i></div>
+                        <div class="b-btn pos-hand"><i class="fas fa-hand-paper"></i></div>
+
+                        <div class="history-row" id="history-row"></div>
+                    </div> <!-- End sha-board -->
+                </div> <!-- End board-scaler -->
+
+                <!-- BET PANEL MOVED OUTSIDE FOR NO OVERLAP -->
+                <div class="betting-panel" id="betting-panel">
+                    <div class="bet-frame">
+                        <div class="chip-bar">
+                            <div class="s-chip" onclick="addMoney(10000)">10K</div>
+                            <div class="s-chip" onclick="addMoney(50000)">50K</div>
+                            <div class="s-chip" onclick="addMoney(100000)">100K</div>
+                            <div class="s-chip" onclick="addMoney(500000)">500K</div>
+                            <div class="s-chip" onclick="addMoney(1000000)">1M</div>
+                            <div class="s-chip" onclick="addMoney(5000000)">5M</div>
+                        </div>
+                        <div style="font-size: 1.5rem; color: #00f2ff; font-weight: 900; margin: 5px 0;" id="current-bet-input">0</div>
+                        <div class="action-row">
+                            <button class="btn-premium btn-x2" onclick="currentBetAmount *= 2; updateBetInput()">X2</button>
+                            <button class="btn-premium btn-confirm-big" onclick="confirmBet()">ĐẶT CƯỢC</button>
+                            <button class="btn-premium btn-cancel-red" onclick="hideBetPanel()">HUỶ</button>
+                        </div>
                     </div>
                 </div>
+            </div> <!-- End mobile-game-stack -->
 
-                <div class="b-btn pos-stats" onclick="openSoiCauModal()"><i class="fas fa-chart-bar"></i></div>
-                <div class="b-btn pos-hand"><i class="fas fa-hand-paper"></i></div>
-
-                <div class="history-row" id="history-row"></div>
-
-                </div> <!-- End sha-board -->
-            </div> <!-- End board-scaler -->
-
-            <!-- BET PANEL MOVED OUTSIDE FOR NO OVERLAP -->
-            <div class="betting-panel" id="betting-panel">
-                <div class="bet-frame">
-                    <div class="chip-bar">
-                        <div class="s-chip" onclick="addMoney(10000)">10K</div>
-                        <div class="s-chip" onclick="addMoney(50000)">50K</div>
-                        <div class="s-chip" onclick="addMoney(100000)">100K</div>
-                        <div class="s-chip" onclick="addMoney(500000)">500K</div>
-                        <div class="s-chip" onclick="addMoney(1000000)">1M</div>
-                        <div class="s-chip" onclick="addMoney(5000000)">5M</div>
-                    </div>
-                    <div style="font-size: 1.5rem; color: #00f2ff; font-weight: 900; margin: 5px 0;" id="current-bet-input">0</div>
-                    <div class="action-row">
-                        <button class="btn-premium btn-x2" onclick="currentBetAmount *= 2; updateBetInput()">X2</button>
-                        <button class="btn-premium btn-confirm-big" onclick="confirmBet()">ĐẶT CƯỢC</button>
-                        <button class="btn-premium btn-cancel-red" onclick="hideBetPanel()">HUỶ</button>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <div id="win-overlay" class="win-overlay">
