@@ -127,19 +127,19 @@
             width: 40px; height: 40px;
             background: rgba(255,255,255,0.1);
             backdrop-filter: blur(5px);
-            border: 1px solid #00f2ff;
+            border: 1px solid #ffca28;
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: 0.2s;
+            cursor: pointer; transition: 0.3s;
+            color: #fff;
         }
-        .b-btn:hover { background: #00f2ff; color: #000; box-shadow: 0 0 20px #00f2ff; }
+        .b-btn:hover { background: #ffca28; color: #3e2723; box-shadow: 0 0 15px #ffca28; transform: none; }
         .b-btn i { font-size: 1.2rem; }
 
         .pos-1 { left: 15px; top: 15px; }
         .pos-2 { left: 65px; top: 15px; }
         .pos-3 { right: 65px; top: 15px; }
-        .pos-4 { right: 15px; top: 15px; }
-        .pos-chat { right: 10px; top: 120px; }
+        .pos-chat { right: 15px; top: 15px; }
         .pos-stats { left: 10px; bottom: 85px; }
         .pos-hand { right: 10px; bottom: 85px; }
 
@@ -704,10 +704,8 @@
                     <div class="b-btn pos-1"><i class="fas fa-history"></i></div>
                     <div class="b-btn pos-2" onclick="openRankModal()"><i class="fas fa-trophy"></i></div>
                     <div class="b-btn pos-3"><i class="fas fa-question"></i></div>
-                    <div class="b-btn pos-4"><i class="fas fa-times"></i></div>
+                    <div class="b-btn pos-chat" onclick="openChatModal()"><i class="fas fa-comments"></i></div>
                 </div>
-
-                <div class="b-btn pos-chat" onclick="openChatModal()"><i class="fas fa-comments"></i></div>
 
                 <div class="betting-grid">
                     <div class="side" id="side-tai">
