@@ -101,7 +101,7 @@
         }
 
         .board-top {
-            height: 50px;
+            height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -136,12 +136,17 @@
         .b-btn:hover { background: #ffca28; color: #3e2723; box-shadow: 0 0 15px #ffca28; transform: none; }
         .b-btn i { font-size: 1.2rem; }
 
-        .pos-1 { left: 15px; top: 15px; }
-        .pos-2 { left: 65px; top: 15px; }
-        .pos-3 { right: 65px; top: 15px; }
-        .pos-chat { right: 15px; top: 15px; }
+        .pos-1 { left: 15px; top: 50%; transform: translateY(-50%); }
+        .pos-2 { left: 65px; top: 50%; transform: translateY(-50%); }
+        .pos-3 { right: 65px; top: 50%; transform: translateY(-50%); }
+        .pos-chat { right: 15px; top: 50%; transform: translateY(-50%); }
         .pos-stats { left: 10px; bottom: 85px; }
         .pos-hand { right: 10px; bottom: 85px; }
+        
+        /* Stabilize hover for these specific buttons */
+        .pos-1:hover, .pos-2:hover, .pos-3:hover, .pos-chat:hover { 
+            transform: translateY(-50%) scale(1) !important; 
+        }
 
         .betting-grid {
             flex: 1;
