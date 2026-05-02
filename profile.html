@@ -268,11 +268,14 @@
         }
 
         .history-row {
-            display: flex; gap: 10px; justify-content: center; padding: 10px 10px 5px 10px;
-            background: rgba(0,0,0,0.5);
-            border-top: 1px solid rgba(255,202,40,0.2);
-            margin-top: auto;
-            border-radius: 0 0 27px 27px;
+            position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 8px; justify-content: center; padding: 5px 15px;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,202,40,0.3);
+            border-radius: 20px;
+            z-index: 100;
+            width: auto;
+            max-width: 90%;
         }
         .h-dot { width: 14px; height: 14px; border-radius: 50%; box-shadow: 0 0 10px rgba(0,0,0,0.5); border: 1.5px solid rgba(255,255,255,0.2); }
         .h-dot.red { background: #ff1744; box-shadow: 0 0 10px #ff1744; }
