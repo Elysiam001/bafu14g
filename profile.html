@@ -13,11 +13,12 @@
             width: 100vw !important;
             height: 100vh !important;
             background: 
-                linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)),
+                linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
                 url('casino_bg_v2.png') no-repeat center center/cover !important;
             display: flex !important;
             flex-direction: column !important;
             overflow: hidden !important;
+            position: fixed; top: 0; left: 0;
         }
 
         .premium-header { 
@@ -98,6 +99,35 @@
             display: flex;
             flex-direction: column;
             user-select: none;
+            transition: transform 0.3s;
+        }
+
+        /* MOBILE RESPONSIVE SCALING */
+        @media (max-width: 850px) {
+            .sha-board {
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+        }
+        @media (max-width: 750px) {
+            .sha-board {
+                transform: translate(-50%, -50%) scale(0.75);
+            }
+        }
+        @media (max-width: 600px) {
+            .sha-board {
+                transform: translate(-50%, -50%) scale(0.6);
+            }
+        }
+        @media (max-width: 480px) {
+            .sha-board {
+                transform: translate(-50%, -50%) scale(0.45);
+            }
+            .chat-modal { width: 95vw; right: 2.5vw; height: 80vh; }
+        }
+        @media (max-height: 500px) {
+            .sha-board {
+                transform: translate(-50%, -50%) scale(0.65);
+            }
         }
 
         .board-top {
@@ -139,6 +169,7 @@
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; transition: 0.3s;
             color: #fff;
+            touch-action: none;
         }
         .b-btn:hover { background: #ffca28; color: #3e2723; box-shadow: 0 0 15px #ffca28; transform: none; }
         .b-btn i { font-size: 1.2rem; }
@@ -926,29 +957,35 @@
             var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
             if (document.getElementById("chat-drag-handle")) {
                 document.getElementById("chat-drag-handle").onmousedown = dragMouseDown;
+                document.getElementById("chat-drag-handle").ontouchstart = dragMouseDown;
             } else {
                 elmnt.onmousedown = dragMouseDown;
+                elmnt.ontouchstart = dragMouseDown;
             }
 
             function dragMouseDown(e) {
                 e = e || window.event;
-                e.preventDefault();
-                pos3 = e.clientX;
-                pos4 = e.clientY;
+                // Nếu là mobile touch, đừng chặn mặc định để còn scroll đc nếu cần, nhưng ở đây ta muốn drag
+                if(e.type !== 'touchstart') e.preventDefault(); 
+                pos3 = (e.clientX !== undefined) ? e.clientX : e.touches[0].clientX;
+                pos4 = (e.clientY !== undefined) ? e.clientY : e.touches[0].clientY;
                 document.onmouseup = closeDragElement;
                 document.onmousemove = elementDrag;
+                document.ontouchend = closeDragElement;
+                document.ontouchmove = elementDrag;
             }
 
             function elementDrag(e) {
                 e = e || window.event;
-                e.preventDefault();
-                pos1 = pos3 - e.clientX;
-                pos2 = pos4 - e.clientY;
-                pos3 = e.clientX;
-                pos4 = e.clientY;
+                const clientX = (e.clientX !== undefined) ? e.clientX : e.touches[0].clientX;
+                const clientY = (e.clientY !== undefined) ? e.clientY : e.touches[0].clientY;
+                pos1 = pos3 - clientX;
+                pos2 = pos4 - clientY;
+                pos3 = clientX;
+                pos4 = clientY;
                 elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
                 elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-                elmnt.style.right = "auto"; // Override right:-360px
+                elmnt.style.right = "auto"; 
             }
 
             function closeDragElement() {
