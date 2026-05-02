@@ -892,16 +892,19 @@
             setTimeout(() => modal.classList.add('active'), 10);
             
             if(!chatInitialized) {
-                // Fix Enter Key
-                document.getElementById('chat-input').addEventListener('keydown', (e) => {
-                    if(e.key === 'Enter') {
-                        sendChatMessage();
-                        e.preventDefault();
-                    }
-                });
-
                 // Draggable Logic
                 dragElement(document.getElementById("chat-modal"));
+                
+                // Fix Enter Key
+                const input = document.getElementById('chat-input');
+                if(input) {
+                    input.addEventListener('keydown', (e) => {
+                        if(e.key === 'Enter') {
+                            sendChatMessage();
+                            e.preventDefault();
+                        }
+                    });
+                }
                 chatInitialized = true;
             }
         }

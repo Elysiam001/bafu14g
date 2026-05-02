@@ -196,6 +196,7 @@ io.on('connection', (socket) => {
             socket.emit('balanceUpdate', { balance: user.balance });
             
             // Thêm vào danh sách online
+            socket.username = username; // Lưu thẳng vào socket object
             onlineSockets.set(socket.id, username);
             gameState.onlineUsers = Array.from(new Set(onlineSockets.values()));
             io.emit('gameUpdate', gameState);
@@ -401,8 +402,8 @@ io.on('connection', (socket) => {
     socket.on('chatMessage', async (msg) => {
         if (!msg || msg.trim() === '') return;
         try {
-            const username = onlineSockets.get(socket.id);
-            if (!username) return;
+            const username = socket.username || onlineSockets.get(socket.id);
+            if (!username) return console.log('Chat error: No username for socket', socket.id);
 
             const user = await User.findOne({ username });
             const displayName = user ? (user.displayName || user.username) : username;
@@ -410,7 +411,7 @@ io.on('connection', (socket) => {
             io.emit('chatUpdate', {
                 username: username,
                 displayName: displayName,
-                message: msg.substring(0, 200), // Giới hạn 200 ký tự
+                message: msg.substring(0, 200),
                 time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
             });
         } catch (err) {
