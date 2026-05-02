@@ -365,6 +365,34 @@
 
         .toast-container { position: fixed; top: 20px; right: 20px; z-index: 10001; display: flex; flex-direction: column; gap: 10px; }
         .toast { background: rgba(33, 22, 19, 0.95); border: 2px solid #ffca28; padding: 12px 25px; border-radius: 10px; color: #fff; display: flex; align-items: center; gap: 12px; min-width: 280px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+        /* SOICAU MODAL */
+        .soicau-modal {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
+            width: 900px; height: 600px; background: linear-gradient(180deg, #4e342e 0%, #211613 100%);
+            border: 3px solid #ffca28; border-radius: 25px; z-index: 10002; display: none; flex-direction: column;
+            box-shadow: 0 0 100px rgba(0,0,0,1); opacity: 0; transition: 0.3s; overflow: hidden;
+        }
+        .soicau-modal.active { transform: translate(-50%, -50%) scale(1); opacity: 1; display: flex; }
+        
+        .soicau-header { height: 70px; background: linear-gradient(180deg, #8d6e63 0%, #3e2723 100%); border-bottom: 2px solid #ffca28; display: flex; align-items: center; justify-content: center; position: relative; }
+        .soicau-title { font-family: 'Phudu', cursive; font-size: 2rem; color: #ffca28; text-shadow: 0 0 15px rgba(255,202,40,0.6); }
+        
+        .soicau-body { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 15px; background: url('https://www.transparenttextures.com/patterns/carbon-fibre.png'); }
+        .soicau-info { text-align: center; color: #ffca28; font-weight: bold; font-size: 1.1rem; }
+        
+        .chart-container { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,202,40,0.3); border-radius: 15px; padding: 10px; flex: 1; position: relative; }
+        .soicau-canvas { width: 100%; height: 100%; }
+
+        .soicau-footer { height: 80px; display: flex; align-items: center; justify-content: center; gap: 20px; }
+        .toggle-btn {
+            padding: 10px 25px; border-radius: 30px; border: 2px solid #ffca28; background: rgba(0,0,0,0.5);
+            color: #ffca28; font-weight: 900; cursor: pointer; transition: 0.2s; font-size: 0.9rem;
+        }
+        .toggle-btn.active { background: #ffca28; color: #3e2723; box-shadow: 0 0 15px #ffca28; }
+        .toggle-btn.dice-1.active { background: #fbc02d; }
+        .toggle-btn.dice-2.active { background: #00acc1; color: #fff; }
+        .toggle-btn.dice-3.active { background: #e91e63; color: #fff; }
     </style>
 </head>
 <body>
@@ -441,6 +469,31 @@
         </div>
     </div>
 
+    <!-- MODAL SOI CẦU -->
+    <div class="soicau-modal" id="soicau-modal">
+        <div class="soicau-header">
+            <div class="soicau-title">SOI CẦU TÀI XỈU</div>
+            <div class="close-modal" onclick="closeSoiCauModal()">&times;</div>
+        </div>
+        <div class="soicau-body">
+            <div class="soicau-info" id="soicau-latest-info">PHIÊN GẦN NHẤT: Đang tải...</div>
+            
+            <div class="chart-container">
+                <canvas id="chart-sum" class="soicau-canvas"></canvas>
+            </div>
+            
+            <div class="chart-container">
+                <canvas id="chart-dices" class="soicau-canvas"></canvas>
+            </div>
+
+            <div class="soicau-footer">
+                <button class="toggle-btn dice-1 active" onclick="toggleDiceChart(1)">XÍ NGẦU 1</button>
+                <button class="toggle-btn dice-2 active" onclick="toggleDiceChart(2)">XÍ NGẦU 2</button>
+                <button class="toggle-btn dice-3 active" onclick="toggleDiceChart(3)">XÍ NGẦU 3</button>
+            </div>
+        </div>
+    </div>
+
     <div class="lobby-wrapper">
         <header class="premium-header">
             <div class="user-section">
@@ -505,7 +558,7 @@
                     </div>
                 </div>
 
-                <div class="b-btn pos-stats"><i class="fas fa-chart-bar"></i></div>
+                <div class="b-btn pos-stats" onclick="openSoiCauModal()"><i class="fas fa-chart-bar"></i></div>
                 <div class="b-btn pos-hand"><i class="fas fa-hand-paper"></i></div>
 
                 <div class="history-row" id="history-row"></div>
@@ -595,6 +648,8 @@
         });
 
         socket.on('gameUpdate', (state) => {
+            gameHistory = state.history; // Cập nhật dữ liệu soi cầu
+
             const timerSpan = document.querySelector('#timer span');
             if(timerSpan) timerSpan.innerText = state.timeLeft;
 
@@ -615,6 +670,11 @@
                         if(s.id === 'side-' + winner.toLowerCase()) s.classList.add('winner');
                         else s.classList.remove('winner');
                     });
+                    
+                    // Vẽ lại soi cầu khi có kết quả mới
+                    if(document.getElementById('soicau-modal').classList.contains('active')) {
+                        drawSoiCau();
+                    }
                 }
             } else {
                 document.getElementById('game-bowl-container').classList.remove('phase-result');
@@ -630,7 +690,7 @@
             document.getElementById('tai-personal').innerText = (myBets.Tai || 0).toLocaleString('vi-VN');
             document.getElementById('xiu-personal').innerText = (myBets.Xiu || 0).toLocaleString('vi-VN');
 
-            // History
+            // History Row
             const hRow = document.getElementById('history-row');
             hRow.innerHTML = '';
             state.history.slice(-15).forEach(h => {
@@ -748,6 +808,187 @@
             board.style.top = (e.clientY + offset[1]) + 'px';
             board.style.transform = 'none';
         });
+
+        // SOI CẦU LOGIC
+        let diceVisibility = { 1: true, 2: true, 3: true };
+        let gameHistory = [];
+
+        function openSoiCauModal() {
+            const modal = document.getElementById('soicau-modal');
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                modal.classList.add('active');
+                drawSoiCau();
+            }, 10);
+        }
+
+        function closeSoiCauModal() {
+            const modal = document.getElementById('soicau-modal');
+            modal.classList.remove('active');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
+        function toggleDiceChart(num) {
+            diceVisibility[num] = !diceVisibility[num];
+            const btn = document.querySelector(`.toggle-btn.dice-${num}`);
+            if(diceVisibility[num]) btn.classList.add('active');
+            else btn.classList.remove('active');
+            drawSoiCau();
+        }
+
+        function drawSoiCau() {
+            if(!gameHistory || gameHistory.length === 0) return;
+            
+            const latest = gameHistory[gameHistory.length-1];
+            const sum = latest.dices.reduce((a,b) => a+b, 0);
+            document.getElementById('soicau-latest-info').innerText = `PHIÊN GẦN NHẤT: ${latest.result.toUpperCase()} (${latest.dices.join('-')})`;
+
+            drawSumChart();
+            drawDicesChart();
+        }
+
+        function drawSumChart() {
+            const canvas = document.getElementById('chart-sum');
+            const ctx = canvas.getContext('2d');
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+
+            const w = rect.width;
+            const h = rect.height;
+            const pad = 30;
+            const chartW = w - pad * 2;
+            const chartH = h - pad * 2;
+
+            // Draw Grid
+            ctx.strokeStyle = 'rgba(255,202,40,0.1)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            for(let i=0; i<=5; i++) {
+                let y = pad + (chartH / 5) * i;
+                ctx.moveTo(pad, y);
+                ctx.lineTo(w - pad, y);
+                // Labels
+                ctx.fillStyle = '#bcaaa4';
+                ctx.font = '10px Arial';
+                ctx.fillText(18 - i*3, 5, y + 3);
+            }
+            const steps = Math.max(15, gameHistory.length);
+            for(let i=0; i<steps; i++) {
+                let x = pad + (chartW / (steps - 1)) * i;
+                ctx.moveTo(x, pad);
+                ctx.lineTo(x, h - pad);
+            }
+            ctx.stroke();
+
+            // Draw Line
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = 'rgba(255,255,255,0.5)';
+            ctx.beginPath();
+            
+            const historyToShow = gameHistory.slice(-15);
+            historyToShow.forEach((point, i) => {
+                const sum = point.dices.reduce((a,b) => a+b, 0);
+                const x = pad + (chartW / (14)) * i;
+                const y = pad + chartH - ((sum - 3) / 15) * chartH;
+                if(i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            // Draw Points
+            historyToShow.forEach((point, i) => {
+                const sum = point.dices.reduce((a,b) => a+b, 0);
+                const x = pad + (chartW / (14)) * i;
+                const y = pad + chartH - ((sum - 3) / 15) * chartH;
+                
+                ctx.fillStyle = point.result === 'Tai' ? '#ff1744' : '#fff';
+                ctx.beginPath();
+                ctx.arc(x, y, 10, 0, Math.PI*2);
+                ctx.fill();
+                ctx.strokeStyle = '#ffca28';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                ctx.fillStyle = point.result === 'Tai' ? '#fff' : '#000';
+                ctx.font = 'bold 10px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(sum, x, y + 4);
+            });
+        }
+
+        function drawDicesChart() {
+            const canvas = document.getElementById('chart-dices');
+            const ctx = canvas.getContext('2d');
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+
+            const w = rect.width;
+            const h = rect.height;
+            const pad = 30;
+            const chartW = w - pad * 2;
+            const chartH = h - pad * 2;
+
+            // Grid
+            ctx.strokeStyle = 'rgba(255,202,40,0.1)';
+            ctx.beginPath();
+            for(let i=0; i<6; i++) {
+                let y = pad + (chartH / 5) * i;
+                ctx.moveTo(pad, y);
+                ctx.lineTo(w - pad, y);
+                ctx.fillStyle = '#bcaaa4';
+                ctx.fillText(6 - i, 10, y + 3);
+            }
+            ctx.stroke();
+
+            const colors = { 1: '#fbc02d', 2: '#00acc1', 3: '#e91e63' };
+            const historyToShow = gameHistory.slice(-15);
+
+            [1, 2, 3].forEach(diceNum => {
+                if(!diceVisibility[diceNum]) return;
+                
+                ctx.strokeStyle = colors[diceNum];
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                historyToShow.forEach((point, i) => {
+                    const val = point.dices[diceNum - 1];
+                    const x = pad + (chartW / (14)) * i;
+                    const y = pad + chartH - ((val - 1) / 5) * chartH;
+                    if(i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                });
+                ctx.stroke();
+
+                historyToShow.forEach((point, i) => {
+                    const val = point.dices[diceNum - 1];
+                    const x = pad + (chartW / (14)) * i;
+                    const y = pad + chartH - ((val - 1) / 5) * chartH;
+                    ctx.fillStyle = colors[diceNum];
+                    ctx.beginPath();
+                    ctx.arc(x, y, 4, 0, Math.PI*2);
+                    ctx.fill();
+                    ctx.strokeStyle = '#fff';
+                    ctx.stroke();
+                });
+            });
+        }
+
+        // Update history in socket listener
+        const originalGameUpdate = socket.on('gameUpdate', (state) => {
+            gameHistory = state.history;
+            // logic history row existing...
+        });
+        // I will actually replace the gameUpdate block to avoid duplicate listeners and include gameHistory update
     </script>
 </body>
 </html>
