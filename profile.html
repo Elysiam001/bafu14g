@@ -12,7 +12,6 @@
         .lobby-wrapper {
             width: 100%;
             height: 100vh;
-            height: 100dvh;
             background: 
                 linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
                 url('casino_bg_v2.png') no-repeat center center/cover !important;
@@ -570,54 +569,26 @@
             .deposit-modal, .soicau-modal, .rank-modal, .withdraw-modal { width: 95% !important; max-width: 95vw; }
         }
         
-        /* ============================================================
-           STRICT RESPONSIVE ARCHITECTURE (SCROLLABLE & NO CLIPPING)
-           ============================================================ */
-
-        /* 1. Global Safety & Fluidity */
-        * { box-sizing: border-box !important; }
+        /* 1. Global Reset Safety */
+        .mobile-action-bar { display: none; }
+        .game-scroll-wrapper { width: 100%; height: 100%; position: relative; }
         
-        html, body { 
-            max-width: 100% !important; 
-            overflow-x: hidden !important; 
-            height: auto !important; 
-            min-height: 100dvh !important; 
-            margin: 0; padding: 0;
-        }
+        /* 2. MOBILE & TABLET OVERRIDES (STRICTLY ISOLATED) */
+        @media (max-width: 1199px) {
+            * { box-sizing: border-box !important; }
+            html, body { overflow-x: hidden; }
+            
+            .lobby-wrapper {
+                position: relative !important;
+                height: auto !important;
+                min-height: 100dvh !important;
+                overflow-y: auto !important;
+                overflow-x: hidden !important;
+            }
 
-        .lobby-wrapper {
-            position: relative !important; /* Changed from fixed/absolute */
-            width: 100% !important;
-            min-height: 100dvh !important;
-            height: auto !important;
-            display: flex !important;
-            flex-direction: column !important;
-            overflow-y: auto !important; /* Allow vertical scroll */
-            overflow-x: hidden !important;
-        }
-
-        /* 2. Responsive Components */
-        img, video, canvas, iframe { 
-            max-width: 100% !important; 
-            height: auto !important; 
-        }
-
-        /* Breakpoints Optimization */
-
-        /* TABLET (768px - 1200px) */
-        @media (max-width: 1200px) {
-            .sha-board { transform: translate(-50%, -50%) scale(0.9) !important; }
-        }
-        @media (max-width: 992px) {
-            .sha-board { transform: translate(-50%, -50%) scale(0.8) !important; }
-        }
-
-        /* MOBILE (< 768px) */
-        @media (max-width: 768px) {
             .premium-header { 
                 position: sticky !important; top: 0; z-index: 10000 !important;
                 height: 60px !important; width: 100% !important;
-                background: rgba(26, 15, 10, 0.98) !important;
             }
             .header-center { display: none !important; }
 
@@ -635,10 +606,9 @@
                 display: flex !important;
                 flex-direction: column !important;
                 align-items: center !important;
-                overflow-x: visible !important;
+                justify-content: center !important;
             }
             
-            /* Horizontal Scroll Safety for Game Area */
             .game-scroll-wrapper {
                 width: 100% !important;
                 overflow-x: auto !important;
@@ -648,17 +618,16 @@
             }
 
             .mobile-game-stack { 
-                min-width: 350px !important; /* Minimum width before horizontal scroll */
-                max-width: 100% !important;
+                min-width: 350px !important;
                 display: flex !important;
                 flex-direction: column !important;
                 align-items: center !important;
-                padding: 0 5px !important;
             }
 
             .board-scaler {
                 width: 350px !important; height: 185px !important; 
                 position: relative !important; margin-bottom: 10px !important;
+                display: flex !important; justify-content: center !important;
             }
 
             .sha-board { 
@@ -678,9 +647,21 @@
             .bet-frame { 
                 width: 100% !important; padding: 15px !important; 
                 border-radius: 20px !important;
+                background: rgba(20, 10, 5, 0.95) !important;
+                border: 1px solid rgba(255, 202, 40, 0.5) !important;
             }
             .chip-bar { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 10px !important; }
-            .s-chip { height: 42px !important; font-size: 0.85rem !important; }
+            .s-chip { 
+                height: 42px !important; font-size: 0.85rem !important; 
+                background: linear-gradient(135deg, #37474f 0%, #102027 100%) !important;
+                border: 1px solid #ffca28 !important; color: #ffca28 !important;
+                font-weight: 900 !important; border-radius: 8px !important;
+            }
+            
+            #current-bet-input { font-size: 1.5rem !important; margin: 8px 0 !important; color: #ffca28 !important; }
+            .action-row { gap: 10px !important; width: 100% !important; display: flex !important; }
+            .btn-confirm-big { flex: 2 !important; height: 50px !important; border-radius: 10px !important; background: linear-gradient(180deg, #ffca28, #ff8f00) !important; }
+            .btn-x2, .btn-cancel-red { flex: 1 !important; height: 45px !important; border-radius: 10px !important; }
             
             .mobile-footer { display: none !important; }
         }
@@ -696,7 +677,7 @@
         /* LANDSCAPE (< 850px) */
         @media (max-width: 850px) and (orientation: landscape) {
             .table-container { flex-direction: row !important; align-items: flex-start !important; padding-top: 40px !important; }
-            .mobile-game-stack { flex-direction: row !important; min-width: 600px !important; }
+            .mobile-game-stack { flex-direction: row !important; min-width: 620px !important; }
             .board-scaler { margin: 0 !important; }
             .betting-panel { margin: 0 -40px !important; transform: scale(0.85) !important; }
         }
