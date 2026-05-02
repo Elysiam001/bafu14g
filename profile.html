@@ -570,38 +570,63 @@
             .deposit-modal, .soicau-modal, .rank-modal, .withdraw-modal { width: 95% !important; max-width: 95vw; }
         }
         
-        @media (max-width: 480px) {
+        @media (max-width: 850px) {
+            .premium-header { height: auto; padding: 10px; flex-wrap: wrap; justify-content: center; gap: 10px; }
+            .header-center { order: 3; width: 100%; display: flex !important; justify-content: center; gap: 10px; margin-top: 5px; }
+            .header-right { order: 2; }
+            .header-left { order: 1; }
+            .action-frame { border: none; background: transparent; padding: 0; gap: 15px; }
+            .h-btn { padding: 10px 25px; font-size: 0.9rem; border-radius: 8px; min-width: 120px; }
+            
+            .table-container { 
+                flex-direction: column; align-items: center; justify-content: flex-start; 
+                padding: 10px; gap: 20px; overflow-y: auto; overflow-x: hidden;
+                padding-bottom: 80px; /* Space for footer */
+            }
+            
             .sha-board { 
-                transform: translate(-50%, -50%) scale(0.42); 
+                position: relative; left: auto; top: auto; transform: scale(0.48); 
+                margin-top: -100px; margin-bottom: -100px;
             }
-            .lobby-wrapper { overflow: hidden; padding-top: 2px; }
-            .premium-header { height: 45px; padding: 0 5px; justify-content: space-between; }
-            .header-left { gap: 3px; max-width: 40%; }
-            .header-center { display: flex !important; } /* Restore buttons */
-            .action-frame { gap: 4px; padding: 2px; border: none; background: transparent; }
-            .h-btn { padding: 4px 6px; font-size: 0.6rem; min-width: auto; }
-            .header-right { gap: 8px; }
-            .h-icon { font-size: 1rem; }
-            .user-display-name { font-size: 0.6rem; }
-            .avatar-circle { width: 30px; height: 30px; }
-            
-            .chat-modal { width: 100vw; height: 35vh; right: 0; bottom: 0; border-radius: 20px 20px 0 0; }
-            .rank-modal, .deposit-modal, .withdraw-modal, .soicau-modal { 
-                width: 90vw !important; height: 70vh !important; top: 50% !important; left: 50% !important; 
-                transform: translate(-50%, -50%) scale(1) !important;
-            }
-            
-            /* Move betting panel INSIDE the board area on mobile to avoid overflow */
+
             .betting-panel { 
-                width: 90%; bottom: 20px; transform: translateX(-50%) translateY(0); 
-                background: rgba(26, 15, 10, 0.95);
+                position: relative; left: auto; bottom: auto; transform: none !important;
+                display: flex !important; width: 100%; max-width: 400px; margin-top: 10px;
+                opacity: 1 !important; visibility: visible !important;
             }
-            .bet-frame { padding: 8px; gap: 5px; }
-            .chip-bar { gap: 3px; }
-            .s-chip { width: 45px; height: 28px; font-size: 0.6rem; }
-            .btn-confirm-big { width: 120px; height: 35px; font-size: 0.9rem; }
-            .btn-x2, .btn-cancel-red { width: 55px; height: 35px; font-size: 0.7rem; }
+            .bet-frame { background: rgba(30, 20, 15, 0.8); border-radius: 20px; padding: 15px; }
+            .chip-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+            .s-chip { width: 100%; height: 45px; font-size: 0.9rem; }
+            .btn-confirm-big { width: 100%; height: 55px; font-size: 1.4rem; margin: 10px 0; }
+            .btn-x2, .btn-cancel-red { flex: 1; height: 50px; }
+
+            .chat-modal { width: 90vw; height: 50vh; left: 5vw; top: 10vh; right: auto; border-radius: 15px; }
+            .rank-modal, .deposit-modal, .withdraw-modal, .soicau-modal { 
+                width: 95vw !important; height: 80vh !important;
+            }
+            
+            .mobile-footer { display: flex !important; }
         }
+
+        /* LANDSCAPE MOBILE */
+        @media (max-width: 850px) and (orientation: landscape) {
+            .table-container { flex-direction: row; align-items: center; justify-content: center; padding-top: 50px; }
+            .sha-board { transform: scale(0.45); margin: 0; }
+            .betting-panel { max-width: 280px; margin-left: -50px; transform: scale(0.85) !important; }
+            .chip-bar { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .mobile-footer {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 70px;
+            background: linear-gradient(180deg, #1a0f0a 0%, #000 100%);
+            border-top: 1px solid rgba(255,202,40,0.3);
+            display: none; align-items: center; justify-content: space-around;
+            z-index: 10005;
+        }
+        .footer-item { display: flex; flex-direction: column; align-items: center; gap: 5px; color: #bcaaa4; cursor: pointer; transition: 0.2s; }
+        .footer-item i { font-size: 1.4rem; color: #ffca28; }
+        .footer-item span { font-size: 0.7rem; font-weight: 900; text-transform: uppercase; }
+        .footer-item:hover { color: #fff; }
 
         @media (max-height: 600px) {
              .sha-board { transform: translate(-50%, -50%) scale(0.7); }
@@ -842,6 +867,25 @@
             <div class="win-amount" id="win-amount-text">+0</div>
         </div>
         <div id="toast-container" class="toast-container"></div>
+        
+        <footer class="mobile-footer">
+            <div class="footer-item">
+                <i class="fas fa-gift"></i>
+                <span>Sự kiện</span>
+            </div>
+            <div class="footer-item" onclick="openSoiCauModal()">
+                <i class="fas fa-history"></i>
+                <span>Lịch sử</span>
+            </div>
+            <div class="footer-item">
+                <i class="fas fa-book"></i>
+                <span>Hướng dẫn</span>
+            </div>
+            <div class="footer-item" onclick="openChatModal()">
+                <i class="fas fa-headset"></i>
+                <span>Live Chat</span>
+            </div>
+        </footer>
     </div>
 
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
