@@ -429,16 +429,23 @@
             background: linear-gradient(180deg, #795548 0%, #3e2723 100%);
             border: 2px solid #8d6e63; color: #d7ccc8;
             padding: 8px 30px; border-radius: 50px; font-weight: 900;
-            cursor: pointer; transition: 0.2s; font-size: 0.9rem;
+            cursor: pointer; transition: 0.2s; font-size: 1rem;
             text-shadow: 0 1px 2px #000;
+            position: relative; min-width: 150px;
         }
-        .btn-dice-toggle.active {
-            border-color: #ffca28; color: #fff;
-            box-shadow: 0 0 15px rgba(255,202,40,0.4);
+        .btn-dice-toggle::before, .btn-dice-toggle::after {
+            content: ''; position: absolute; top: 50%; transform: translateY(-50%);
+            width: 15px; height: 100%; border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 50%; opacity: 0; transition: 0.2s;
         }
-        .btn-dice-toggle.dice-1.active { background: linear-gradient(180deg, #fbc02d, #f57f17); color: #3e2723; }
-        .btn-dice-toggle.dice-2.active { background: linear-gradient(180deg, #00acc1, #006064); color: #fff; }
-        .btn-dice-toggle.dice-3.active { background: linear-gradient(180deg, #e91e63, #880e4f); color: #fff; }
+        .btn-dice-toggle::before { left: -5px; border-right: 0; }
+        .btn-dice-toggle::after { right: -5px; border-left: 0; }
+        
+        .btn-dice-toggle.active::before, .btn-dice-toggle.active::after { opacity: 1; border-color: #ffca28; }
+
+        .btn-dice-toggle.dice-1.active { background: linear-gradient(180deg, #d4af37, #8b6b23); color: #fff; box-shadow: 0 0 15px #d4af37; }
+        .btn-dice-toggle.dice-2.active { background: linear-gradient(180deg, #0097a7, #006064); color: #fff; box-shadow: 0 0 15px #0097a7; }
+        .btn-dice-toggle.dice-3.active { background: linear-gradient(180deg, #e91e63, #ad1457); color: #fff; box-shadow: 0 0 15px #e91e63; }
     </style>
 </head>
 <body>
@@ -1028,7 +1035,7 @@
                 ctx.stroke();
             }
 
-            const colors = { 1: '#fbc02d', 2: '#00acc1', 3: '#e91e63' };
+            const colors = { 1: '#fbc02d', 2: '#00acc1', 3: '#ff1744' }; // Die 3 is Red
             const historyToShow = gameHistory.slice(-18);
 
             [1, 2, 3].forEach(diceNum => {
@@ -1053,10 +1060,10 @@
                     
                     ctx.fillStyle = colors[diceNum];
                     ctx.beginPath();
-                    ctx.arc(x, y, 5, 0, Math.PI*2);
+                    ctx.arc(x, y, 6, 0, Math.PI*2); // Bigger dots
                     ctx.fill();
                     ctx.strokeStyle = '#fff';
-                    ctx.lineWidth = 1;
+                    ctx.lineWidth = 1.5;
                     ctx.stroke();
                 });
             });
