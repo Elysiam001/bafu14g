@@ -62,6 +62,14 @@ const withdrawSchema = new mongoose.Schema({
 });
 const Withdraw = mongoose.model('Withdraw', withdrawSchema);
 
+// Schema Lịch sử phiên
+const historySchema = new mongoose.Schema({
+    dices: [Number],
+    result: String,
+    createdAt: { type: Date, default: Date.now }
+});
+const History = mongoose.model('History', historySchema);
+
 // Trạng thái Game
 let gameState = {
     timeLeft: 30,
@@ -108,8 +116,11 @@ function runGameLoop() {
                 
                 const sum = gameState.lastDices.reduce((a, b) => a + b, 0);
                 const winningSide = sum >= 11 ? 'Tai' : 'Xiu';
-                gameState.history.push({ dices: gameState.lastDices, result: winningSide });
-                if (gameState.history.length > 20) gameState.history.shift();
+                
+                // Lưu vào MongoDB
+                const newHistory = await History.create({ dices: gameState.lastDices, result: winningSide });
+                gameState.history.push(newHistory);
+                if (gameState.history.length > 30) gameState.history.shift();
 
                 console.log(`Kết quả: ${gameState.lastDices.join(', ')} - ${winningSide}`);
 
@@ -148,6 +159,17 @@ function runGameLoop() {
         io.emit('gameUpdate', gameState);
     }, 1000);
 }
+
+// Khởi tạo lịch sử từ DB
+async function initHistory() {
+    try {
+        const hist = await History.find().sort({ createdAt: -1 }).limit(30);
+        gameState.history = hist.reverse();
+    } catch (err) {
+        console.error('Lỗi khởi tạo history:', err);
+    }
+}
+initHistory();
 
 runGameLoop();
 
