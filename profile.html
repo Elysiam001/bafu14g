@@ -10,15 +10,15 @@
     <style>
         /* --- BEAUTY MAX OVERHAUL --- */
         .lobby-wrapper {
-            width: 100vw !important;
-            height: 100vh !important;
+            width: 100%;
+            min-height: 100vh;
             background: 
                 linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
                 url('casino_bg_v2.png') no-repeat center center/cover !important;
-            display: flex !important;
-            flex-direction: column !important;
-            overflow: hidden !important;
-            position: fixed; top: 0; left: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
         }
 
         .premium-header { 
@@ -102,32 +102,14 @@
             transition: transform 0.3s;
         }
 
-        /* MOBILE RESPONSIVE SCALING */
-        @media (max-width: 850px) {
-            .sha-board {
-                transform: translate(-50%, -50%) scale(0.9);
-            }
-        }
-        @media (max-width: 750px) {
-            .sha-board {
-                transform: translate(-50%, -50%) scale(0.75);
-            }
-        }
-        @media (max-width: 600px) {
-            .sha-board {
-                transform: translate(-50%, -50%) scale(0.6);
-            }
-        }
-        @media (max-width: 480px) {
-            .sha-board {
-                transform: translate(-50%, -50%) scale(0.45);
-            }
-            .chat-modal { width: 95vw; right: 2.5vw; height: 80vh; }
-        }
-        @media (max-height: 500px) {
-            .sha-board {
-                transform: translate(-50%, -50%) scale(0.65);
-            }
+        .table-container {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: visible;
         }
 
         .board-top {
@@ -530,6 +512,7 @@
             border: 2.5px solid #ffca28; border-radius: 20px; z-index: 10004; display: none; flex-direction: column;
             box-shadow: 0 10px 40px rgba(0,0,0,0.8); opacity: 0; transition: opacity 0.3s;
             overflow: hidden;
+            max-width: 90vw;
         }
         .chat-modal.active { opacity: 1; display: flex; }
         
@@ -566,7 +549,48 @@
             cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(191,54,12,0.4);
         }
         .chat-send:hover { transform: scale(1.05); filter: brightness(1.1); }
+        
+        /* --- RESPONSIVE MEDIA QUERIES --- */
+        @media (max-width: 1200px) {
+            .sha-board { transform: translate(-50%, -50%) scale(0.9); }
+        }
+        
+        @media (max-width: 992px) {
+            .sha-board { transform: translate(-50%, -50%) scale(0.8); }
+            .premium-header { padding: 0 15px; }
+            .header-center { display: none; }
+        }
+        
+        @media (max-width: 768px) {
+            .sha-board { transform: translate(-50%, -50%) scale(0.65); }
+            .user-balance-area { font-size: 1rem; }
+            .chat-modal { width: 320px; height: 400px; bottom: 20px; top: auto; right: 10px; }
+            .deposit-modal, .soicau-modal, .rank-modal, .withdraw-modal { width: 95% !important; max-width: 95vw; }
+        }
+        
+        @media (max-width: 480px) {
+            .sha-board { 
+                transform: translate(-50%, -50%) scale(0.48); 
+            }
+            .lobby-wrapper { overflow-y: auto; }
+            .premium-header { height: 60px; }
+            .header-left { gap: 10px; }
+            .user-display-name { font-size: 0.8rem; }
+            .chat-modal { width: 100vw; height: 60vh; right: 0; bottom: 0; border-radius: 20px 20px 0 0; }
+        }
+
+        @media (max-height: 600px) {
+             .sha-board { transform: translate(-50%, -50%) scale(0.7); }
+        }
+        @media (max-height: 450px) {
+             .sha-board { transform: translate(-50%, -50%) scale(0.5); }
+        }
+
+        img, video { max-width: 100%; height: auto; }
+        * { box-sizing: border-box; }
+        body { overflow-x: hidden; width: 100%; margin: 0; }
     </style>
+
 </head>
 <body>
     <!-- MODAL NẠP TIỀN -->
@@ -713,7 +737,7 @@
             </div>
         </header>
 
-        <div class="table-container" style="flex: 1; position: relative;">
+        <div class="table-container">
             <!-- MODAL CHAT -->
             <div class="chat-modal" id="chat-modal">
                 <div class="chat-header" id="chat-drag-handle">
