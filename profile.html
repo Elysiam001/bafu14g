@@ -108,17 +108,24 @@
             position: relative;
         }
         .sha-label { 
-            font-family: 'Phudu', cursive; font-size: 1.3rem; font-weight: 900;
-            background: linear-gradient(180deg, #3e2723 0%, #1a0f0a 100%);
-            border: 2px solid #ffca28; border-top: 0;
-            border-radius: 0 0 20px 20px;
-            padding: 5px 40px; min-width: 320px;
-            color: #ffca28; 
+            font-family: 'Phudu', cursive; font-size: 1.4rem; font-weight: 900;
+            background: linear-gradient(180deg, #d4af37 0%, #bf360c 50%, #5d4037 100%);
+            border: 2px solid #fff; border-top: 0;
+            border-radius: 0 0 25px 25px;
+            padding: 8px 50px; min-width: 350px;
+            color: #fff; 
             text-align: center; white-space: nowrap;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
-            text-shadow: 0 0 8px rgba(255,202,40,0.6);
-            letter-spacing: 1px;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.8), 0 0 15px rgba(255,202,40,0.4);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8), 0 0 10px #ffca28;
+            letter-spacing: 1.5px;
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            border-bottom: 3px solid #ffca28;
+        }
+        .sha-label::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 50%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 100%);
+            border-radius: 0 0 25px 25px;
         }
         .sha-label span { color: #fff; text-shadow: 0 0 5px #ffca28; }
 
