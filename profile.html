@@ -770,6 +770,7 @@
             gameDice = new GameDice(document.getElementById('dice-list'));
             gameBowl = new GameBowl(document.getElementById('actual-bowl'));
             socket.emit('getUserData', myUsername);
+            socket.emit('getUserInfo', myUsername);
         });
 
         function updateVIP(balance) {

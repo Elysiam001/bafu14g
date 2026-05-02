@@ -252,6 +252,8 @@ io.on('connection', (socket) => {
                 user = new User({ username });
                 await user.save();
             }
+            socket.username = username; // Cần thiết cho chat
+            onlineSockets.set(socket.id, username);
             socket.emit('userDataUpdate', user);
         } catch (err) {
             console.error(err);
