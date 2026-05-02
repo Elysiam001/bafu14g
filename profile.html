@@ -996,6 +996,7 @@
 
         function drawDicesChart() {
             const canvas = document.getElementById('chart-dices');
+            if(!canvas) return;
             const ctx = canvas.getContext('2d');
             const dpr = window.devicePixelRatio || 1;
             const rect = canvas.getBoundingClientRect();
@@ -1011,13 +1012,14 @@
             const chartW = w - padX * 2;
             const chartH = h - padY * 2;
 
-            // Grid
+            // Background Grid
             ctx.strokeStyle = 'rgba(141,110,99,0.3)';
             ctx.lineWidth = 1;
+            
+            // Y-Axis (1 to 6)
             ctx.fillStyle = '#8d6e63';
             ctx.font = 'bold 11px Arial';
             ctx.textAlign = 'right';
-            
             for(let i=0; i<6; i++) {
                 const y = padY + (chartH / 5) * i;
                 ctx.beginPath();
@@ -1026,6 +1028,8 @@
                 ctx.stroke();
                 ctx.fillText(6 - i, padX - 10, y + 4);
             }
+
+            // X-Axis (Sessions)
             const steps = 18;
             for(let i=0; i<=steps; i++) {
                 const x = padX + (chartW / steps) * i;
@@ -1035,9 +1039,10 @@
                 ctx.stroke();
             }
 
-            const colors = { 1: '#fbc02d', 2: '#00acc1', 3: '#ff1744' }; // Die 3 is Red
+            const colors = { 1: '#d4af37', 2: '#00acc1', 3: '#ff1744' }; 
             const historyToShow = gameHistory.slice(-18);
 
+            // Draw each dice line
             [1, 2, 3].forEach(diceNum => {
                 if(!diceVisibility[diceNum]) return;
                 
@@ -1053,6 +1058,7 @@
                 });
                 ctx.stroke();
 
+                // Draw points for each dice
                 historyToShow.forEach((point, i) => {
                     const val = point.dices[diceNum - 1];
                     const x = padX + (chartW / steps) * i;
@@ -1060,10 +1066,11 @@
                     
                     ctx.fillStyle = colors[diceNum];
                     ctx.beginPath();
-                    ctx.arc(x, y, 6, 0, Math.PI*2); // Bigger dots
+                    ctx.arc(x, y, 5, 0, Math.PI*2);
                     ctx.fill();
+                    
                     ctx.strokeStyle = '#fff';
-                    ctx.lineWidth = 1.5;
+                    ctx.lineWidth = 1;
                     ctx.stroke();
                 });
             });
