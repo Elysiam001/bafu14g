@@ -493,10 +493,10 @@
 
         /* CHAT MODAL - PREMIUM CASINO STYLE */
         .chat-modal {
-            position: absolute; top: 0; right: -360px;
+            position: absolute; top: 20px; right: 20px;
             width: 350px; height: 500px; background: linear-gradient(180deg, #2c1a32 0%, #1a0f1d 100%);
             border: 3px solid #ffca28; border-radius: 20px; z-index: 10004; display: none; flex-direction: column;
-            box-shadow: 0 0 40px rgba(0,0,0,1); opacity: 0; transition: opacity 0.3s, transform 0.3s;
+            box-shadow: 0 0 40px rgba(0,0,0,1); opacity: 0; transition: opacity 0.3s;
             cursor: default;
         }
         .chat-modal.active { opacity: 1; display: flex; }
@@ -885,21 +885,25 @@
         }
 
         // CHAT LOGIC
+        let chatInitialized = false;
         function openChatModal() {
             const modal = document.getElementById('chat-modal');
             modal.style.display = 'flex';
             setTimeout(() => modal.classList.add('active'), 10);
             
-            // Fix Enter Key
-            document.getElementById('chat-input').addEventListener('keydown', (e) => {
-                if(e.key === 'Enter') {
-                    sendChatMessage();
-                    e.preventDefault();
-                }
-            });
+            if(!chatInitialized) {
+                // Fix Enter Key
+                document.getElementById('chat-input').addEventListener('keydown', (e) => {
+                    if(e.key === 'Enter') {
+                        sendChatMessage();
+                        e.preventDefault();
+                    }
+                });
 
-            // Draggable Logic
-            dragElement(document.getElementById("chat-modal"));
+                // Draggable Logic
+                dragElement(document.getElementById("chat-modal"));
+                chatInitialized = true;
+            }
         }
 
         function dragElement(elmnt) {
