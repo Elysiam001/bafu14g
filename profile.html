@@ -366,33 +366,79 @@
         .toast-container { position: fixed; top: 20px; right: 20px; z-index: 10001; display: flex; flex-direction: column; gap: 10px; }
         .toast { background: rgba(33, 22, 19, 0.95); border: 2px solid #ffca28; padding: 12px 25px; border-radius: 10px; color: #fff; display: flex; align-items: center; gap: 12px; min-width: 280px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 
-        /* SOICAU MODAL */
+        /* SOICAU MODAL - PREMIUM OVERHAUL */
         .soicau-modal {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
-            width: 900px; height: 600px; background: linear-gradient(180deg, #4e342e 0%, #211613 100%);
-            border: 3px solid #ffca28; border-radius: 25px; z-index: 10002; display: none; flex-direction: column;
-            box-shadow: 0 0 100px rgba(0,0,0,1); opacity: 0; transition: 0.3s; overflow: hidden;
+            width: 950px; height: 650px; 
+            background: #2b1d1a; 
+            border: 2px solid #8d6e63; border-radius: 40px; z-index: 10002; display: none; flex-direction: column;
+            box-shadow: 0 0 50px rgba(0,0,0,0.9), inset 0 0 100px rgba(0,0,0,0.5); 
+            opacity: 0; transition: 0.3s; overflow: hidden;
+            padding: 10px;
         }
         .soicau-modal.active { transform: translate(-50%, -50%) scale(1); opacity: 1; display: flex; }
         
-        .soicau-header { height: 70px; background: linear-gradient(180deg, #8d6e63 0%, #3e2723 100%); border-bottom: 2px solid #ffca28; display: flex; align-items: center; justify-content: center; position: relative; }
-        .soicau-title { font-family: 'Phudu', cursive; font-size: 2rem; color: #ffca28; text-shadow: 0 0 15px rgba(255,202,40,0.6); }
-        
-        .soicau-body { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 15px; background: url('https://www.transparenttextures.com/patterns/carbon-fibre.png'); }
-        .soicau-info { text-align: center; color: #ffca28; font-weight: bold; font-size: 1.1rem; }
-        
-        .chart-container { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,202,40,0.3); border-radius: 15px; padding: 10px; flex: 1; position: relative; }
-        .soicau-canvas { width: 100%; height: 100%; }
-
-        .soicau-footer { height: 80px; display: flex; align-items: center; justify-content: center; gap: 20px; }
-        .toggle-btn {
-            padding: 10px 25px; border-radius: 30px; border: 2px solid #ffca28; background: rgba(0,0,0,0.5);
-            color: #ffca28; font-weight: 900; cursor: pointer; transition: 0.2s; font-size: 0.9rem;
+        .soicau-inner {
+            flex: 1; border: 2px solid #ffca28; border-radius: 35px;
+            background: linear-gradient(180deg, #5d4037 0%, #2b1d1a 100%);
+            display: flex; flex-direction: column; position: relative;
         }
-        .toggle-btn.active { background: #ffca28; color: #3e2723; box-shadow: 0 0 15px #ffca28; }
-        .toggle-btn.dice-1.active { background: #fbc02d; }
-        .toggle-btn.dice-2.active { background: #00acc1; color: #fff; }
-        .toggle-btn.dice-3.active { background: #e91e63; color: #fff; }
+
+        .soicau-header { 
+            height: 60px; display: flex; align-items: center; justify-content: center; position: relative; 
+            margin-top: -15px;
+        }
+        .soicau-plaque {
+            background: linear-gradient(180deg, #3e2723 0%, #1a0f0a 100%);
+            border: 2px solid #ffca28; border-radius: 15px 15px 30px 30px;
+            padding: 5px 60px; min-width: 300px; text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+        }
+        .soicau-title { font-family: 'Phudu', cursive; font-size: 1.6rem; color: #ffca28; text-transform: uppercase; }
+        
+        .close-soicau {
+            position: absolute; right: 20px; top: 25px; width: 40px; height: 40px;
+            background: radial-gradient(circle, #ff1744, #b71c1c);
+            border: 2px solid #fff; border-radius: 50%; color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 1.5rem; font-weight: bold;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5); z-index: 10;
+        }
+
+        .soicau-body { flex: 1; padding: 10px 30px; display: flex; flex-direction: column; gap: 10px; }
+        .soicau-info { text-align: center; color: #ffd54f; font-weight: 900; font-size: 1.1rem; margin-bottom: 5px; }
+        
+        .chart-box { 
+            background: rgba(0,0,0,0.4); border: 1.5px solid #8d6e63; border-radius: 10px; 
+            flex: 1; position: relative; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .nav-arrow {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            width: 50px; height: 50px; background: rgba(0,0,0,0.5);
+            border: 2px solid #ffca28; border-radius: 50%; color: #ffca28;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 1.5rem; transition: 0.2s;
+        }
+        .nav-arrow:hover { background: #ffca28; color: #000; }
+        .arrow-left { left: -60px; }
+        .arrow-right { right: -60px; }
+
+        .soicau-footer { height: 70px; display: flex; align-items: center; justify-content: center; gap: 15px; }
+        .btn-dice-toggle {
+            background: linear-gradient(180deg, #795548 0%, #3e2723 100%);
+            border: 2px solid #8d6e63; color: #d7ccc8;
+            padding: 8px 30px; border-radius: 50px; font-weight: 900;
+            cursor: pointer; transition: 0.2s; font-size: 0.9rem;
+            text-shadow: 0 1px 2px #000;
+        }
+        .btn-dice-toggle.active {
+            border-color: #ffca28; color: #fff;
+            box-shadow: 0 0 15px rgba(255,202,40,0.4);
+        }
+        .btn-dice-toggle.dice-1.active { background: linear-gradient(180deg, #fbc02d, #f57f17); color: #3e2723; }
+        .btn-dice-toggle.dice-2.active { background: linear-gradient(180deg, #00acc1, #006064); color: #fff; }
+        .btn-dice-toggle.dice-3.active { background: linear-gradient(180deg, #e91e63, #880e4f); color: #fff; }
     </style>
 </head>
 <body>
@@ -471,25 +517,32 @@
 
     <!-- MODAL SOI CẦU -->
     <div class="soicau-modal" id="soicau-modal">
-        <div class="soicau-header">
-            <div class="soicau-title">SOI CẦU TÀI XỈU</div>
-            <div class="close-modal" onclick="closeSoiCauModal()">&times;</div>
-        </div>
-        <div class="soicau-body">
-            <div class="soicau-info" id="soicau-latest-info">PHIÊN GẦN NHẤT: Đang tải...</div>
-            
-            <div class="chart-container">
-                <canvas id="chart-sum" class="soicau-canvas"></canvas>
+        <div class="soicau-inner">
+            <div class="soicau-header">
+                <div class="soicau-plaque">
+                    <div class="soicau-title">SOI CẦU TÀI XỈU</div>
+                </div>
+                <div class="close-soicau" onclick="closeSoiCauModal()">&times;</div>
             </div>
             
-            <div class="chart-container">
-                <canvas id="chart-dices" class="soicau-canvas"></canvas>
-            </div>
+            <div class="soicau-body">
+                <div class="soicau-info" id="soicau-latest-info">PHIÊN GẦN NHẤT: (#1804651) TÀI (3-3-6)</div>
+                
+                <div class="chart-box">
+                    <div class="nav-arrow arrow-left"><i class="fas fa-chevron-left"></i></div>
+                    <canvas id="chart-sum" class="soicau-canvas" style="width: 100%; height: 100%;"></canvas>
+                    <div class="nav-arrow arrow-right"><i class="fas fa-chevron-right"></i></div>
+                </div>
+                
+                <div class="chart-box">
+                    <canvas id="chart-dices" class="soicau-canvas" style="width: 100%; height: 100%;"></canvas>
+                </div>
 
-            <div class="soicau-footer">
-                <button class="toggle-btn dice-1 active" onclick="toggleDiceChart(1)">XÍ NGẦU 1</button>
-                <button class="toggle-btn dice-2 active" onclick="toggleDiceChart(2)">XÍ NGẦU 2</button>
-                <button class="toggle-btn dice-3 active" onclick="toggleDiceChart(3)">XÍ NGẦU 3</button>
+                <div class="soicau-footer">
+                    <button class="btn-dice-toggle dice-1 active" onclick="toggleDiceChart(1)">XÍ NGẦU 1</button>
+                    <button class="btn-dice-toggle dice-2 active" onclick="toggleDiceChart(2)">XÍ NGẦU 2</button>
+                    <button class="btn-dice-toggle dice-3 active" onclick="toggleDiceChart(3)">XÍ NGẦU 3</button>
+                </div>
             </div>
         </div>
     </div>
@@ -830,7 +883,7 @@
 
         function toggleDiceChart(num) {
             diceVisibility[num] = !diceVisibility[num];
-            const btn = document.querySelector(`.toggle-btn.dice-${num}`);
+            const btn = document.querySelector(`.btn-dice-toggle.dice-${num}`);
             if(diceVisibility[num]) btn.classList.add('active');
             else btn.classList.remove('active');
             drawSoiCau();
@@ -840,8 +893,7 @@
             if(!gameHistory || gameHistory.length === 0) return;
             
             const latest = gameHistory[gameHistory.length-1];
-            const sum = latest.dices.reduce((a,b) => a+b, 0);
-            document.getElementById('soicau-latest-info').innerText = `PHIÊN GẦN NHẤT: ${latest.result.toUpperCase()} (${latest.dices.join('-')})`;
+            document.getElementById('soicau-latest-info').innerHTML = `PHIÊN GẦN NHẤT <span style="color:#fff">(#${Math.floor(Math.random()*1000000)})</span> <br> <span style="font-size:0.9rem">${latest.result.toUpperCase()} (${latest.dices.join('-')})</span>`;
 
             drawSumChart();
             drawDicesChart();
@@ -859,65 +911,77 @@
 
             const w = rect.width;
             const h = rect.height;
-            const pad = 30;
-            const chartW = w - pad * 2;
-            const chartH = h - pad * 2;
+            const padX = 40;
+            const padY = 20;
+            const chartW = w - padX * 2;
+            const chartH = h - padY * 2;
 
-            // Draw Grid
-            ctx.strokeStyle = 'rgba(255,202,40,0.1)';
+            // Background Grid
+            ctx.strokeStyle = 'rgba(141,110,99,0.3)';
             ctx.lineWidth = 1;
-            ctx.beginPath();
-            for(let i=0; i<=5; i++) {
-                let y = pad + (chartH / 5) * i;
-                ctx.moveTo(pad, y);
-                ctx.lineTo(w - pad, y);
-                // Labels
-                ctx.fillStyle = '#bcaaa4';
-                ctx.font = '10px Arial';
-                ctx.fillText(18 - i*3, 5, y + 3);
-            }
-            const steps = Math.max(15, gameHistory.length);
-            for(let i=0; i<steps; i++) {
-                let x = pad + (chartW / (steps - 1)) * i;
-                ctx.moveTo(x, pad);
-                ctx.lineTo(x, h - pad);
-            }
-            ctx.stroke();
-
-            // Draw Line
-            ctx.strokeStyle = '#fff';
-            ctx.lineWidth = 2;
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = 'rgba(255,255,255,0.5)';
-            ctx.beginPath();
             
-            const historyToShow = gameHistory.slice(-15);
-            historyToShow.forEach((point, i) => {
-                const sum = point.dices.reduce((a,b) => a+b, 0);
-                const x = pad + (chartW / (14)) * i;
-                const y = pad + chartH - ((sum - 3) / 15) * chartH;
-                if(i === 0) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
+            // Y-Axis labels and lines
+            ctx.fillStyle = '#8d6e63';
+            ctx.font = 'bold 11px Arial';
+            ctx.textAlign = 'right';
+            const yLabels = [18, 15, 12, 9, 6, 3];
+            yLabels.forEach((val, i) => {
+                const y = padY + (chartH / 5) * i;
+                ctx.beginPath();
+                ctx.moveTo(padX, y);
+                ctx.lineTo(w - padX, y);
+                ctx.stroke();
+                ctx.fillText(val, padX - 10, y + 4);
             });
-            ctx.stroke();
-            ctx.shadowBlur = 0;
+
+            // X-Axis lines
+            const steps = 18; // Hiển thị 18 ô lưới
+            for(let i=0; i<=steps; i++) {
+                const x = padX + (chartW / steps) * i;
+                ctx.beginPath();
+                ctx.moveTo(x, padY);
+                ctx.lineTo(x, h - padY);
+                ctx.stroke();
+            }
+
+            // Draw History Lines
+            const historyToShow = gameHistory.slice(-18);
+            if(historyToShow.length > 1) {
+                ctx.strokeStyle = '#ffca28';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                historyToShow.forEach((point, i) => {
+                    const sum = point.dices.reduce((a,b) => a+b, 0);
+                    const x = padX + (chartW / steps) * i;
+                    const y = padY + chartH - ((sum - 3) / 15) * chartH;
+                    if(i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                });
+                ctx.stroke();
+            }
 
             // Draw Points
             historyToShow.forEach((point, i) => {
                 const sum = point.dices.reduce((a,b) => a+b, 0);
-                const x = pad + (chartW / (14)) * i;
-                const y = pad + chartH - ((sum - 3) / 15) * chartH;
+                const x = padX + (chartW / steps) * i;
+                const y = padY + chartH - ((sum - 3) / 15) * chartH;
+                
+                // Outer glow
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = point.result === 'Tai' ? 'rgba(255,23,68,0.5)' : 'rgba(255,255,255,0.5)';
                 
                 ctx.fillStyle = point.result === 'Tai' ? '#ff1744' : '#fff';
                 ctx.beginPath();
                 ctx.arc(x, y, 10, 0, Math.PI*2);
                 ctx.fill();
+                
+                ctx.shadowBlur = 0;
                 ctx.strokeStyle = '#ffca28';
-                ctx.lineWidth = 1;
+                ctx.lineWidth = 1.5;
                 ctx.stroke();
 
                 ctx.fillStyle = point.result === 'Tai' ? '#fff' : '#000';
-                ctx.font = 'bold 10px Arial';
+                ctx.font = 'bold 10px Montserrat';
                 ctx.textAlign = 'center';
                 ctx.fillText(sum, x, y + 4);
             });
@@ -935,24 +999,37 @@
 
             const w = rect.width;
             const h = rect.height;
-            const pad = 30;
-            const chartW = w - pad * 2;
-            const chartH = h - pad * 2;
+            const padX = 40;
+            const padY = 20;
+            const chartW = w - padX * 2;
+            const chartH = h - padY * 2;
 
             // Grid
-            ctx.strokeStyle = 'rgba(255,202,40,0.1)';
-            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(141,110,99,0.3)';
+            ctx.lineWidth = 1;
+            ctx.fillStyle = '#8d6e63';
+            ctx.font = 'bold 11px Arial';
+            ctx.textAlign = 'right';
+            
             for(let i=0; i<6; i++) {
-                let y = pad + (chartH / 5) * i;
-                ctx.moveTo(pad, y);
-                ctx.lineTo(w - pad, y);
-                ctx.fillStyle = '#bcaaa4';
-                ctx.fillText(6 - i, 10, y + 3);
+                const y = padY + (chartH / 5) * i;
+                ctx.beginPath();
+                ctx.moveTo(padX, y);
+                ctx.lineTo(w - padX, y);
+                ctx.stroke();
+                ctx.fillText(6 - i, padX - 10, y + 4);
             }
-            ctx.stroke();
+            const steps = 18;
+            for(let i=0; i<=steps; i++) {
+                const x = padX + (chartW / steps) * i;
+                ctx.beginPath();
+                ctx.moveTo(x, padY);
+                ctx.lineTo(x, h - padY);
+                ctx.stroke();
+            }
 
             const colors = { 1: '#fbc02d', 2: '#00acc1', 3: '#e91e63' };
-            const historyToShow = gameHistory.slice(-15);
+            const historyToShow = gameHistory.slice(-18);
 
             [1, 2, 3].forEach(diceNum => {
                 if(!diceVisibility[diceNum]) return;
@@ -962,8 +1039,8 @@
                 ctx.beginPath();
                 historyToShow.forEach((point, i) => {
                     const val = point.dices[diceNum - 1];
-                    const x = pad + (chartW / (14)) * i;
-                    const y = pad + chartH - ((val - 1) / 5) * chartH;
+                    const x = padX + (chartW / steps) * i;
+                    const y = padY + chartH - ((val - 1) / 5) * chartH;
                     if(i === 0) ctx.moveTo(x, y);
                     else ctx.lineTo(x, y);
                 });
@@ -971,13 +1048,15 @@
 
                 historyToShow.forEach((point, i) => {
                     const val = point.dices[diceNum - 1];
-                    const x = pad + (chartW / (14)) * i;
-                    const y = pad + chartH - ((val - 1) / 5) * chartH;
+                    const x = padX + (chartW / steps) * i;
+                    const y = padY + chartH - ((val - 1) / 5) * chartH;
+                    
                     ctx.fillStyle = colors[diceNum];
                     ctx.beginPath();
-                    ctx.arc(x, y, 4, 0, Math.PI*2);
+                    ctx.arc(x, y, 5, 0, Math.PI*2);
                     ctx.fill();
                     ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 1;
                     ctx.stroke();
                 });
             });
