@@ -107,7 +107,20 @@
             justify-content: center;
             position: relative;
         }
-        .sha-label { font-family: 'Phudu', cursive; font-size: 1.4rem; color: #00f2ff; text-shadow: 0 0 10px #00f2ff; }
+        .sha-label { 
+            font-family: 'Phudu', cursive; font-size: 1.3rem; font-weight: 900;
+            background: linear-gradient(180deg, #3e2723 0%, #1a0f0a 100%);
+            border: 2px solid #ffca28; border-top: 0;
+            border-radius: 0 0 20px 20px;
+            padding: 5px 40px; min-width: 320px;
+            color: #ffca28; 
+            text-align: center; white-space: nowrap;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+            text-shadow: 0 0 8px rgba(255,202,40,0.6);
+            letter-spacing: 1px;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .sha-label span { color: #fff; text-shadow: 0 0 5px #ffca28; }
 
         .b-btn {
             position: absolute;
@@ -622,7 +635,7 @@
         <div class="table-container" style="flex: 1; position: relative;">
             <div class="sha-board" id="game-board">
                 <div class="board-top">
-                    <div class="sha-label">&lt;BAFU&gt; D-14G (D-CNTT14A)</div>
+                    <div class="sha-label"><span>&lt;BAFU&gt;</span> D-14G (D-CNTT14A)</div>
                     <div class="b-btn pos-1"><i class="fas fa-history"></i></div>
                     <div class="b-btn pos-2" onclick="openRankModal()"><i class="fas fa-trophy"></i></div>
                     <div class="b-btn pos-3"><i class="fas fa-question"></i></div>
