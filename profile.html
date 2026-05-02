@@ -575,20 +575,32 @@
                 transform: translate(-50%, -50%) scale(0.42); 
             }
             .lobby-wrapper { overflow: hidden; padding-top: 2px; }
-            .premium-header { height: 45px; padding: 0 8px; }
-            .header-left { gap: 4px; }
-            .user-display-name { font-size: 0.7rem; }
+            .premium-header { height: 45px; padding: 0 5px; justify-content: space-between; }
+            .header-left { gap: 3px; max-width: 40%; }
+            .header-center { display: flex !important; } /* Restore buttons */
+            .action-frame { gap: 4px; padding: 2px; border: none; background: transparent; }
+            .h-btn { padding: 4px 6px; font-size: 0.6rem; min-width: auto; }
+            .header-right { gap: 8px; }
+            .h-icon { font-size: 1rem; }
+            .user-display-name { font-size: 0.6rem; }
+            .avatar-circle { width: 30px; height: 30px; }
+            
             .chat-modal { width: 100vw; height: 35vh; right: 0; bottom: 0; border-radius: 20px 20px 0 0; }
             .rank-modal, .deposit-modal, .withdraw-modal, .soicau-modal { 
                 width: 90vw !important; height: 70vh !important; top: 50% !important; left: 50% !important; 
                 transform: translate(-50%, -50%) scale(1) !important;
             }
-            .betting-panel { width: 95vw; bottom: -5px; }
+            
+            /* Move betting panel INSIDE the board area on mobile to avoid overflow */
+            .betting-panel { 
+                width: 90%; bottom: 20px; transform: translateX(-50%) translateY(0); 
+                background: rgba(26, 15, 10, 0.95);
+            }
             .bet-frame { padding: 8px; gap: 5px; }
             .chip-bar { gap: 3px; }
-            .s-chip { width: 48px; height: 30px; font-size: 0.65rem; }
-            .btn-confirm-big { width: 130px; height: 38px; font-size: 1rem; }
-            .btn-x2, .btn-cancel-red { width: 60px; height: 38px; font-size: 0.8rem; }
+            .s-chip { width: 45px; height: 28px; font-size: 0.6rem; }
+            .btn-confirm-big { width: 120px; height: 35px; font-size: 0.9rem; }
+            .btn-x2, .btn-cancel-red { width: 55px; height: 35px; font-size: 0.7rem; }
         }
 
         @media (max-height: 600px) {
